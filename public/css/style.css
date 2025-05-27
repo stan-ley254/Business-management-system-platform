@@ -1,0 +1,488 @@
+/* Custom styles for navbar */
+.custom-nav-item {
+    background-color: #006400; /* Dark Green Background */
+    border: 1px solid #006400;
+    border-radius: 5px;
+    color: white;
+    margin-right: 10px;
+  }
+
+  .strikethrough {
+          text-decoration: line-through;
+          color: red;
+      }
+      .strikethrough {
+        text-decoration: line-through;
+        color: #999;
+    }
+    
+    #loading-spinner {
+        z-index: 9999;
+        background: rgba(255, 255, 255, 0.8);
+    }
+    
+    .update-cart-form input {
+        width: 100px;
+        display: inline-block;
+    }
+  .custom-nav-item .nav-link {
+    color: white;
+  }
+
+  .custom-nav-item .dropdown-menu {
+    background-color: #f8f9fa; /* Bootstrap light background */
+  }
+
+  .custom-brand {
+    margin-right: auto;
+    font-size: 20px;
+  }
+
+  .custom {
+    font-size: 16px;
+  }
+      .custom-container {
+          padding: 20px;
+          background-color: #f8f9fa;
+          margin-top:20px;
+          margin-bottom:10px;
+          border-radius: 8px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .custom-section {
+        background-color: #e9ecef;
+          padding: 15px;
+          margin-bottom: 15px;
+          border-radius: 8px;
+         
+      }
+      .message{
+position:fixed;
+
+}
+.container-xxl {
+  max-width: 100%; /* Ensure the container doesn’t exceed the screen width */
+  overflow-x: hidden; /* Prevents horizontal scrolling */
+}
+      .custom-link {
+          display: block;
+          padding: 10px;
+          margin-bottom: 10px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          background-color: white;
+          text-align: center;
+          text-decoration: none;
+          color: #000;
+          transition: background-color 0.2s ease;
+      }
+
+      .custom-link:hover {
+          background-color: #f1f1f1;
+      }
+
+      .custom-title {
+          font-size: 18px;
+          font-weight: bold;
+          color: #28a745;
+      }
+
+      .custom-divider {
+          height: 1px;
+          background-color: #ddd;
+          margin: 15px 0;
+      }
+
+       /* Custom styles */
+       .custom-header {
+          background-color: #28a745;
+          color: white;
+          padding: 10px;
+          border-top-left-radius: 8px;
+          border-top-right-radius: 8px;
+          font-size: 20px;
+          font-weight: bold;
+      }
+
+      .custom-form-container {
+          background-color: #f8f9fa;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-group label {
+          font-weight: bold;
+      }
+
+      .form-control {
+          border-radius: 4px;
+          border: 1px solid #ddd;
+      }
+
+      .btn-custom {
+          background-color: #004085;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 4px;
+          transition: background-color 0.2s ease;
+          border: none;
+      }
+
+      .btn-custom:hover {
+          background-color: #003366;
+      }
+
+      .custom-table-container {
+          padding: 5px;
+          background-color: #f8f9fa;
+          border-radius: 8px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+          margin-top: 20px;
+          width:100%;
+          max-height: 50vh; /* Set a maximum height for the form container */
+          overflow-y: auto; /* Make the form scrollable */
+          overflow-x: auto; /* Enable horizontal scroll for the table */
+          max-width: 100%; /* Prevents the table from overflowing */
+      }
+        /* Sidebar styles */
+        .sidebar {
+          background-color: #eaf5e3;
+          padding: 20px;
+          height: 100vh;
+          width: 280px;
+          overflow-y: auto;
+          position:fixed;
+          
+         
+          
+      }
+
+      .sidebar h3 {
+          color: #6a9e44;
+          font-weight: bold;
+      }
+
+      .sidebar ul {
+          padding-left: 0;
+      }
+
+      .sidebar ul li {
+          list-style: none;
+          margin: 15px 0;
+          font-weight: bold;
+      }
+
+      .sidebar ul li a {
+          text-decoration: none;
+          color: black; /* List items set to black */
+      }
+
+      .sidebar ul li a:hover {
+          text-decoration: underline;
+          color: #28a745;
+      }
+
+      .custom-header {
+          background-color: #6a9e44;
+          color: white;
+          padding: 15px;
+          border-radius: 8px 8px 0 0;
+          font-size: 20px;
+          font-weight: bold;
+          margin-bottom: 20px;
+      }
+      .custom-header .btn-group {
+          display: flex;
+          justify-content: space-between;
+          gap: 15px;
+      }
+      .custom-form-container {
+          background-color: #e9ecef;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          max-height: 80vh; /* Set a maximum height for the form container */
+          overflow-y: auto; /* Make the form scrollable */
+      }
+      .custom-container-color {
+          background-color: #dde9f6; /* Light grey for contrast */
+      }
+      .custom-container-color-1 {
+          background-color: #ddeaff; /* Light grey for contrast */
+      }
+      .custom-container-color-2{
+        background-color: #e5e6ff;
+      }
+     
+/* Sidebar buttons */
+.btn-sidebar {
+          width: 100%;
+          margin-bottom: 10px;
+      }
+      .custom-form-container {
+        max-width: 100%; /* Keep the form within its container */
+        box-sizing: border-box;
+      }
+
+      .btn-custom {
+          background-color: #004085;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 4px;
+          transition: background-color 0.2s ease;
+      }
+
+      .btn-custom:hover {
+          background-color: #003366;
+      }
+
+      /* Main content styling */
+      .main-content {
+          margin-left: 270px; /* Adjust the margin for the main content to make space for the sidebar */
+          padding: 10px;
+          overflow-x: hidden; /* Prevent horizontal overflow */
+          display: flex;
+          flex-direction: column;
+      }
+
+      /* Adjust sidebar and content for smaller screens */
+      @media (max-width: 992px) {
+          .sidebar {
+              position: relative;
+              width: 100%;
+              height: auto;
+          }
+
+          .main-content {
+              margin-left: 0;
+          }
+
+          .toggle-sidebar-btn {
+              display: block;
+              margin-bottom: 15px;
+              background-color: #6a9e44;
+              color: white;
+              border: none;
+              width: 100%;
+          }
+      }
+
+      @media (min-width: 992px) {
+          .toggle-sidebar-btn {
+              display: none;
+          }
+
+          .main-content {
+              margin-left: 270px; /* Sidebar width for desktop */
+          }
+          .custom-icon{
+    color:#4ba4ff;
+  }
+      }
+.custom_style {
+    background-color: #f0f4f5; /* Overall background color */
+    padding: 20px;
+  }
+  .card_custom{
+  position: relative;
+display: -ms-flexbox;
+display: flex;
+-ms-flex-direction: column;
+flex-direction: column;
+min-width: 0;
+margin: 20px;
+word-wrap: break-word;
+background-color: #f8f9fa;
+background-clip: border-box;
+border: 1px solid rgba(0, 0, 0, 0.125);
+border-radius: 0.25rem;
+  }
+  .card-custom {
+    background-color: #4ba4ff;
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    margin-top:10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius:8px;
+  }
+  .card-custom-2 {
+    background-color: #006400;
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    margin-top:10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius:8px;
+  }
+
+  .custom-container {
+          background-color: #e9ecef;
+          padding: 20px;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          max-height: 80vh; /* Set a maximum height for the form container */
+          overflow-y: auto; /* Make the form scrollable */
+          margin-top:15px;
+          max-width: 100%; /* Keep the form within its container */
+          box-sizing: border-box;
+      }
+
+  .quick-links-card {
+    height: 100%;
+  }
+  .quick-links-list a {
+    color: white;
+    display: block;
+    margin-bottom: 10px;
+    text-decoration: none;
+  }
+  .quick-links-list a:hover {
+    text-decoration: underline;
+  }
+  .custom-icon{
+    color:#4ba4ff;
+  }
+
+  /* From Uiverse.io by Li-Deheng */ 
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    --color: hsl(0, 0%, 87%);
+    --animation: 2s ease-in-out infinite;
+  }
+  
+  .loader .circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: solid 2px var(--color);
+    border-radius: 50%;
+    margin: 0 10px;
+    background-color: transparent;
+    animation: circle-keys var(--animation);
+  }
+  
+  .loader .circle .dot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--color);
+    animation: dot-keys var(--animation);
+  }
+  
+  .loader .circle .outline {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    animation: outline-keys var(--animation);
+  }
+  
+  .circle:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+  
+  .circle:nth-child(3) {
+    animation-delay: 0.6s;
+  }
+  
+  .circle:nth-child(4) {
+    animation-delay: 0.9s;
+  }
+  
+  .circle:nth-child(5) {
+    animation-delay: 1.2s;
+  }
+  
+  .circle:nth-child(2) .dot {
+    animation-delay: 0.3s;
+  }
+  
+  .circle:nth-child(3) .dot {
+    animation-delay: 0.6s;
+  }
+  
+  .circle:nth-child(4) .dot {
+    animation-delay: 0.9s;
+  }
+  
+  .circle:nth-child(5) .dot {
+    animation-delay: 1.2s;
+  }
+  
+  .circle:nth-child(1) .outline {
+    animation-delay: 0.9s;
+  }
+  
+  .circle:nth-child(2) .outline {
+    animation-delay: 1.2s;
+  }
+  
+  .circle:nth-child(3) .outline {
+    animation-delay: 1.5s;
+  }
+  
+  .circle:nth-child(4) .outline {
+    animation-delay: 1.8s;
+  }
+  
+  .circle:nth-child(5) .outline {
+    animation-delay: 2.1s;
+  }
+  
+  @keyframes circle-keys {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  
+    50% {
+      transform: scale(1.5);
+      opacity: 0.5;
+    }
+  
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes dot-keys {
+    0% {
+      transform: scale(1);
+    }
+  
+    50% {
+      transform: scale(0);
+    }
+  
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes outline-keys {
+    0% {
+      transform: scale(0);
+      outline: solid 20px var(--color);
+      outline-offset: 0;
+      opacity: 1;
+    }
+  
+    100% {
+      transform: scale(1);
+      outline: solid 0 transparent;
+      outline-offset: 20px;
+      opacity: 0;
+    }
+  }
