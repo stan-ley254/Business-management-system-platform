@@ -60,5 +60,3 @@ EXPOSE $PORT
 
 # Start PHP-FPM and Caddy
 CMD ["/bin/sh", "-c", "php-fpm -D && caddy run --config /etc/caddy/Caddyfile"]
-
-CMD ["apache2-foreground"]
