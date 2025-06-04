@@ -23,7 +23,7 @@
   <div class="card ">
     <form  class="form-group"method="get" action="{{url('/searchCustomeradmin')}}">
       <div class="card-body">
-<input class="input-group mb-2 " name="searchCustomeradmin" placeholder="search customer by ..name...or phone number" value="{{isset($searchCustomeradmin) ? $searchCustomeradmin : ''}}">
+<input class="input-group mb-2 " name="searchCustomeradmin" placeholder="search staff by ..name...or email address" value="{{isset($searchCustomeradmin) ? $searchCustomeradmin : ''}}">
 <button type="submit" class="btn btn-success">Search</button>
 
       

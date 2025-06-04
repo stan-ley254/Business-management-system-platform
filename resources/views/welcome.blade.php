@@ -118,15 +118,17 @@
         </div>
     </section>
 
-    <section id="about" class="container mt-2">
-        <div class="section-title">
+    <section id="about" class="card mx-4 mt-2 p-2">
+        <div class="card-title">
             <h2 class="text-success">About Justartech</h2>
+    </div>
+            <div class="card-body">
             <p>Justarttech is your reliable partner in digital innovation. We blend traditional business knowledge with advanced digital tools — including AI and automation — to create smart, secure, and scalable systems tailored for real-world needs.</p>
         </div>
     </section>
 
-    <section id="services" class="container p-2">
-        <div class="section-title">
+    <section id="services" class="card  mx-4 p-2">
+        <div class="card-title">
             <h2 class="text-success">Our Services</h2>
         </div>
         <div class="row">
@@ -160,7 +162,7 @@
         </div>
     </section>
 
-    <section id="contact" class="container p-2">
+    <section id="contact" class="card mx-4 p-2">
         <div class="section-title">
             <h2 class="text-success">Contact Us</h2>
             <p>Have questions, want a demo, or interested in collaboration? Reach out now.</p>

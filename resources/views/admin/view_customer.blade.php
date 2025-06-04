@@ -67,8 +67,8 @@
                 
                 <!-- Add more table cells for other attributes -->
                 <td>
-                    <button class="button rounded-pill btn-success"><a class="link" href="{{ url('editCustomeradmin', $customer->id) }}">edit customer</a></button>
-                   <button class="button rounded-pill btn-danger"> <a class="link" href="{{ url('destroyCustomeradmin', $customer->id) }}">Delete</a></button>
+                  <a class="btn btn-info" href="{{ url('editCustomeradmin', $customer->id) }}">edit customer</a>
+                   <a onclick="return confirm('Are you sure you want to delete this customer')" class="btn btn-danger" href="{{ url('destroyCustomeradmin', $customer->id) }}">Delete</a>
                     <!-- Add delete button with form submission if needed -->
                 </td>
             </tr>
