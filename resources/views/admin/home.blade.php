@@ -81,7 +81,9 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body">
                     <h5 class="card-title text-success">Total Sales</h5>
-                    <h3>₵0.00</h3>
+                   <div class="mt-4">
+                    <h4><span id="period-total"></span></h4>
+                </div>
                 </div>
             </div>
         </div>

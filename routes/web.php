@@ -27,7 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::middleware(['auth', 'role:user'])->group(function () {
+    Route::middleware(['auth','weigher', 'role:user'])->group(function () {
     Route::get('/viewSales', [SuperController::class, 'viewSales']);
     Route::get('/deleteSale{id}', [SuperController::class, 'deleteSale']);
     Route::post('/filterSales', [SuperController::class, 'filterSales']);
@@ -84,13 +84,13 @@ Route::middleware('auth')->group(function () {
  
 });
 
-    Route::middleware(['auth', 'role:admin'])->get('/homeAdmin', [AdminController::class, 'homeAdmin']);
+    Route::middleware(['auth','weigher', 'role:admin'])->get('/homeAdmin', [AdminController::class, 'homeAdmin']);
 
-    Route::middleware(['auth', 'role:user'])->get('/homeUser', [SuperController::class, 'homeUser']);
+    Route::middleware(['auth','weigher' ,'role:user'])->get('/homeUser', [SuperController::class, 'homeUser']);
 
     Route::middleware(['auth', 'only.superadmin'])->get('/homeSuperAdmin', [BusinessController::class, 'homeSuperAdmin']);
     
-    Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(['auth','weigher','role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
         Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
@@ -98,7 +98,7 @@ Route::middleware('auth')->group(function () {
         
     });
 
-    Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::middleware(['auth','weigher','role:admin'])->group(function () {
  // Category Routes
  Route::get('/view_category', [AdminController::class, 'view_category']);
  Route::post('/add_category', [AdminController::class, 'add_category']);
@@ -144,15 +144,18 @@ Route::middleware('auth')->group(function () {
     
     Route::middleware(['auth', 'only.superadmin'])->prefix('s#uperadmin')->name('superadmin.')->group(function () {
         Route::resource('businesses', BusinessController::class);
-       
-     
+       // routes/web.php
+
     });
     Route::middleware(['auth', 'only.superadmin'])->get('/homeSuperAdmin', [BusinessController::class, 'homeSuperAdmin']);
     Route::middleware(['auth', 'only.superadmin'])->get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
         Route::middleware(['auth', 'only.superadmin'])->post('register', [RegisteredUserController::class, 'store']);
+Route::middleware(['auth', 'only.superadmin'])->get('/superadmin/set-due-date', [BusinessController::class, 'showSetDueDateForm'])->name('superadmin.businesses.set_due_date_form');
+Route::middleware(['auth', 'only.superadmin'])->post('/superadmin/set-due-date', [BusinessController::class, 'updateDueDate'])->name('superadmin.businesses.set_due_date');
 
+     
    
     Route::post('/stkpush', [MpesaController::class, 'stkPush']);
 Route::post('/mpesa/callback', [MpesaController::class, 'callback'])->name('mpesa.callback');

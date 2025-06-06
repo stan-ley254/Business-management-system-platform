@@ -108,6 +108,7 @@
                 <th>Name</th>
                 <th>Created</th>
                 <th>Status</th>
+                <th>Next Payment Due</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -118,6 +119,7 @@
             <tr>
                 <td>{{ $business->name }}</td>
                 <td>{{ $business->created_at->diffForHumans() }}</td>
+                
                 <td>
                 @if($business->is_active)
                     <span class="badge bg-success">Active</span>
@@ -125,7 +127,7 @@
                     <span class="badge bg-danger">Inactive</span>
                 @endif
             </td>
-          
+          <td>{{ $business->next_payment_due ? $business->next_payment_due->format('M d, Y') : 'N/A' }}</td>
                 <td>
              <div class="mt-2">
              <form method="POST" action="{{ url('/toggleBusiness', $business->id) }}">

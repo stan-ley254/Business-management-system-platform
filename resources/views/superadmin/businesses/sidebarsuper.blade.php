@@ -34,7 +34,7 @@
             <span class="nav-link">Navigation</span>
         </li>
         <li class="nav-item menu-items">
-            <a class="nav-link" href="{{url('/homeAdmin')}}">
+            <a class="nav-link" href="{{url('/homeSuperAdmin')}}">
               <span class="menu-icon">
                 <i class="mdi mdi-home"></i>
               </span>
@@ -89,11 +89,11 @@
             </div>
         </li>
         <li class="nav-item menu-items">
-            <a class="nav-link" href="{{url('viewCustomeradmin')}}">
+            <a class="nav-link" href="{{route('superadmin.businesses.set_due_date_form')}}">
               <span class="menu-icon">
                 <i class="mdi mdi-account-multiple"></i>
               </span>
-              <span class="menu-title">Customers</span>
+              <span class="menu-title">Due Dates Settings</span>
             </a>
         </li>
         <li class="nav-item menu-items">

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('businesses', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->boolean('is_active')->default(false);
+            $table->date('next_payment_due')->nullable();
+        $table->boolean('is_active')->default(true);
             $table->string('mpesa_short_code')->nullable();
             $table->text('mpesa_consumer_key')->nullable();
             $table->text('mpesa_consumer_secret')->nullable();
