@@ -1,18 +1,22 @@
-# Use official PHP image with required extensions
 FROM php:8.2-fpm
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies
+# Install required system packages and PHP extensions
 RUN apt-get update && apt-get install -y \
-    git \
-    curl \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
     libpng-dev \
-    libonig-dev \
-    libxml2-dev \
+    libwebp-dev \
+    libxpm-dev \
+    libzip-dev \
     zip \
     unzip \
+    git \
+    curl \
+    libonig-dev \
+    libxml2-dev \
     sqlite3 \
     libsqlite3-dev \
     cron \
@@ -20,36 +24,36 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm
 
-# Install Composer globally
+# GD setup + Laravel required extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm && \
+    docker-php-ext-install gd pdo pdo_sqlite mbstring bcmath exif pcntl zip
+
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy existing application directory contents
+# Copy Laravel app
 COPY . /var/www/html
 
-# Install PHP dependencies
+# Permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
+
+# Composer install
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Set permissions for Laravel
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache
-
-# Install npm dependencies and build assets
+# npm install & vite build
 RUN npm install && npm run build
 
-# Copy Nginx configuration
+# Laravel scheduler cron
+COPY ./docker/laravel_scheduler /etc/cron.d/laravel_scheduler
+RUN chmod 0644 /etc/cron.d/laravel_scheduler && crontab /etc/cron.d/laravel_scheduler
+
+# Nginx config
 COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Copy SQLite DB if needed
-RUN touch /var/www/html/database/database.sqlite
+# Create database if not exists
+RUN touch database/database.sqlite
 
-# Add cron job for Laravel scheduler
-COPY ./docker/laravel_scheduler /etc/cron.d/laravel_scheduler
-RUN chmod 0644 /etc/cron.d/laravel_scheduler
-RUN crontab /etc/cron.d/laravel_scheduler
-
-# Expose port 80
 EXPOSE 80
 
-# Start cron and php-fpm using supervisord or shell
 CMD cron && php artisan migrate:fresh --seed && php artisan config:cache && php artisan route:cache && php artisan view:cache && nginx -g 'daemon off;'
