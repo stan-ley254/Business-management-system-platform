@@ -16,6 +16,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -78,12 +80,39 @@ return redirect()->back();
     return redirect()->back()->with('message','product added successfully');
         }
        
-        public function homeAdmin(){
-    
-        $totalProducts = Product::count();
-        $totalCustomers = Customer::count();
-            return view('admin.home',compact('totalProducts','totalCustomers'));
-        }
+       public function homeAdmin()
+{
+    $totalProducts = Product::count();
+    $totalCustomers = Customer::count();
+
+    // Sum today's sales
+    $todaySalesTotal = Sales::whereDate('created_at', Carbon::today())->sum('total');
+
+    // Sum all-time total sales
+    $totalSales = Sales::sum('total');
+
+    // Sales data for last 7 days
+    $salesData = Sales::selectRaw('DATE(created_at) as date, SUM(total) as total')
+        ->where('created_at', '>=', Carbon::now()->subDays(7))
+        ->groupBy('date')
+        ->orderBy('date')
+        ->get();
+
+    $labels = $salesData->pluck('date')->map(function ($date) {
+        return Carbon::parse($date)->format('M d');
+    });
+
+    $totals = $salesData->pluck('total');
+
+    return view('admin.home', compact(
+        'totalProducts',
+        'totalCustomers',
+        'todaySalesTotal',
+        'totalSales',
+        'labels',
+        'totals'
+    ));
+}
 
         public function show_product()
         {
@@ -138,6 +167,14 @@ return redirect()->back();
         // Pass the product to the view
         return view('admin.edit_product',compact('category','product'));
     }
+
+     public function stockReports_admin()
+    {
+        $threshold = 5; // Define your threshold here
+        $products = Product::where('quantity', '<=', $threshold)->get();
+        return view('admin.stock_reports', compact('products'));
+    }
+    
 
     // Method to handle form submission and update the product
     public function update_product(Request $request, $id)

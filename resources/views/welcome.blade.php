@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>Justartech Solutions</title>
         <!--Styles ,bootstrap and others-->
         <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.min.css')}}" />
       <!-- font awesome style -->
@@ -17,7 +17,15 @@
         <!--<link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />-->
 
-   
+           <!-- Favicons -->
+<link rel="icon" href="/favicon_io/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon_io/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon_io/android-chrome-512x512.png">
+
+<!-- Manifest -->
+<link rel="manifest" href="/favicon_io/site.webmanifest">
+
             <style>
                
                body {

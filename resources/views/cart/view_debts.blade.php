@@ -71,7 +71,9 @@
             <div class="d-flex justify-content-center">
             {{ $debts->links() }}
         </div>
-        </div>
+</div>
+@else
+<p class="text-info">No Debts yet</p>
         @endif
     </div>
 </div>

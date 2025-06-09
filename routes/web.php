@@ -22,7 +22,7 @@ Route::get('/dashboard', function () {
 
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware('weigher','auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -117,6 +117,7 @@ Route::middleware('auth')->group(function () {
  Route::get('/searchSales', [AdminController::class, 'searchSales']);
  Route::post('/filterSalesAdmin', [AdminController::class, 'filterSalesAdmin']);
  Route::post('/clearAllproducts', [AdminController::class, 'clearAllproducts']);
+  Route::get('/stockReports_admin', [AdminController::class, 'stockReports_admin']);
 
  // Sales Routes
  Route::get('/view_sales', [AdminController::class, 'view_sales']);
@@ -135,8 +136,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware(['auth', 'verified'])->group(function () {
-        Route::get('/business/settings/mpesa', [BusinessSettingsController::class, 'editMpesa'])->name('business.mpesa.edit');
-        Route::post('/business/settings/mpesa', [BusinessSettingsController::class, 'updateMpesa'])->name('business.mpesa.update');
+        Route::get('/business/settings/edit_mpesa', [BusinessSettingsController::class, 'editMpesa'])->name('business.mpesa.edit');
+        Route::post('/business/settings/edit_mpesa', [BusinessSettingsController::class, 'updateMpesa'])->name('business.mpesa.update');
       
     });
     Route::get('/business/settings/mpesa', [BusinessSettingsController::class, 'createMpesa'])->name('business.mpesa.create');

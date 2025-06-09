@@ -8,13 +8,21 @@
     <!-- bootstrap core css -->
 <link rel="stylesheet" type="text/css" href="{{asset('/css/bootstrap.min.css')}}" />
       <!-- font awesome style -->
-    
       <link href="{{asset('/font-awesome/css/all.min.css')}}" rel="stylesheet" />
       <!-- Custom styles for this template-->
       <link href="{{asset('/css/style.css')}}" rel="stylesheet" /> 
-
         <!-- responsive style -->
         <script src="{{asset('/js/bootstrap.bundle.min.js')}}"></script>
+
+        <!-- Favicons -->
+<link rel="icon" href="/favicon_io/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon_io/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicon_io/android-chrome-512x512.png">
+
+<!-- Manifest -->
+<link rel="manifest" href="/favicon_io/site.webmanifest">
+
     </head>
     <body>
  <!-- Navbar -->

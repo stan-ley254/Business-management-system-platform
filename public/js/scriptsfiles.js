@@ -4,6 +4,15 @@ $.ajaxSetup({
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
+ $(document).ready(function() {
+    // Show the success message when the page loads
+    $('#success').show();
+
+    // Set a timer to hide the success message after 5 seconds
+    setTimeout(function() {
+        $('#success').fadeOut('slow'); // Fade out slowly
+    }, 1000); // 1000 milliseconds = 1 seconds
+});
 // Function to parse and format response data
 function handleResponseData(response) {
     // Handle string responses
@@ -53,7 +62,7 @@ function showResponseMessage(response, type = 'success') {
 }
 
 $(document).ready(function() {
-    // Message handling
+    // Message handling (if you have elements with ID 'success' or 'message' you want to auto-hide)
     function handleMessages() {
         $('#success, #message').show().delay(1000).fadeOut('slow');
     }
@@ -174,7 +183,7 @@ $(document).ready(function() {
                 }
             },
             error: function() {
-                alert('Error loading cart items');
+                showResponseMessage('Error loading cart items', 'danger');
             }
         });
     }
@@ -197,11 +206,12 @@ $(document).ready(function() {
                         updateCartDisplay(response.cartItem);
                     }
                     if (response.message) {
-                        alert(response.message);
+                        // Replace showAlert with our custom showResponseMessage function
+                        showResponseMessage(response, response.status === 'success' ? 'success' : 'danger');
                     }
                 },
                 error: function(xhr) {
-                    alert(xhr.responseJSON?.message || 'Error adding item to cart');
+                    showResponseMessage(xhr.responseJSON?.message || 'Error adding item to cart', 'danger');
                 }
             });
         }
@@ -249,13 +259,13 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.status === 'success') {
                     updateCartDisplay(response.cartItem);
-                    alert(response.message);
+                    showResponseMessage(response, 'success');
                 } else {
-                    alert(response.message || 'Error updating cart');
+                    showResponseMessage(response.message || 'Error updating cart', 'danger');
                 }
             },
             error: function(xhr) {
-                alert(xhr.responseJSON?.message || 'Error updating cart');
+                showResponseMessage(xhr.responseJSON?.message || 'Error updating cart', 'danger');
             }
         });
     });
@@ -274,13 +284,14 @@ $(document).ready(function() {
                         if ($('#cart-items tr').length === 0) {
                             $('.custom-table-container').html('<p>The cart is empty.</p>');
                         }
-                        alert(response.message);
+                        // Replace default alert() with our custom message
+                        showResponseMessage(response, 'success');
                     } else {
-                        alert(response.message || 'Error deleting item');
+                        showResponseMessage(response, 'danger');
                     }
                 },
                 error: function() {
-                    alert('Error deleting item');
+                    showResponseMessage('Error deleting item', 'danger');
                 }
             });
         }
@@ -307,25 +318,25 @@ $(document).ready(function() {
         });
     });
 
-document.addEventListener('DOMContentLoaded', function () {
-    let periodTotal = 0;
+    // Update period total on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', function () {
+        let periodTotal = 0;
 
-    // Select all rows that contain the grouped cart totals
-    const totalRows = document.querySelectorAll('.total-row');
+        // Select all rows that contain the grouped cart totals
+        const totalRows = document.querySelectorAll('.total-row');
 
-    // Loop through each total row and add its value to the period total
-    totalRows.forEach(row => {
-        const total = parseFloat(row.getAttribute('data-total')) || 0;
-        periodTotal += total;
+        // Loop through each total row and add its value to the period total
+        totalRows.forEach(row => {
+            const total = parseFloat(row.getAttribute('data-total')) || 0;
+            periodTotal += total;
+        });
+
+        // Display the final period total in the designated element
+        const periodTotalElement = document.getElementById('period-total');
+        if (periodTotalElement) {
+            periodTotalElement.textContent = periodTotal.toFixed(2);
+        }
     });
-
-    // Display the final period total in the designated element
-    const periodTotalElement = document.getElementById('period-total');
-    if (periodTotalElement) {
-        periodTotalElement.textContent = periodTotal.toFixed(2);
-    }
-});
-
 
     // Product search functionality
     function fetchProducts() {
@@ -349,8 +360,7 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#product-search').on('input', fetchProducts);
     $('#category-select').on('change', fetchProducts);
 
-    // Initialize
+    // Initialize cart items and total
     loadCartItems();
     updateTotalAmount();
 });
-

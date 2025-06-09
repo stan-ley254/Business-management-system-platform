@@ -54,6 +54,7 @@
                 <li class="nav-item"> <a class="nav-link" href="{{url('/view_product')}}">Add Product</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{url('/show_product')}}">Show Product</a></li>
                 <li class="nav-item"> <a class="nav-link" href="{{route('admin.import.logs')}}">Products Import Logs</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url('stockReports_admin')}}">Stock Reports</a></li>
               </ul>
             </div>
         </li>
@@ -66,13 +67,14 @@
             </a>
         </li>
         <li class="nav-item menu-items">
-            <a class="nav-link" href="{{ url('/business/settings/mpesa') }}">
+            <a class="nav-link" href="{{ url('/business/settings/edit_mpesa') }}">
               <span class="menu-icon">
                 <i class="mdi mdi-eye-settings"></i>
               </span>
               <span class="menu-title">Settings</span>
             </a>
         </li>
+        
         <li class="nav-item menu-items">
             <a class="nav-link" data-bs-toggle="collapse" href="#users-menu" aria-expanded="false" aria-controls="users-menu">
               <span class="menu-icon">

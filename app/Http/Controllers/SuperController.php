@@ -656,59 +656,76 @@ public function filterSales(Request $request)
 
     // Other existing methods...
 
-    public function checkout(Request $request){
-        $cartId = session('cart_id');
-        $totalAmount = 0;
+    public function checkout(Request $request)
+{
+    $cartId = session('cart_id');
+$cart = Cart::find($cartId);
+$businessId = $cart->business_id;
 
-        if ($cartId) {
-            $cartItems = CartItem::where('cart_id', $cartId)->get();
-            foreach ($cartItems as $cartItem) {
-                $product = Product::find($cartItem->product_id);
-                $price = $cartItem->active_price ?? $product->price;
-                $totalAmount += $price * $cartItem->quantity;
-            }
-        }
-
-        $cartItems = CartItem::where('cart_id', session('cart_id'))->get();
-        
-        foreach ($cartItems as $cartItem) {
-            $product = Product::find($cartItem->product_id);
-            
-            if ($product) {
-                if ($product->quantity >= $cartItem->quantity) {
-                    $product->quantity -= $cartItem->quantity;
-                } else {
-                    $product->quantity = 0;
-                    $product->in_stock = false;
-                }
-                $product->save();
-
-                $sale = new Sales;
-                $sale->cart_id = $cartItem->cart_id;
-                $sale->product_name = $cartItem->product_name;
-                $sale->description = $cartItem->description;
-                $sale->price = $cartItem->price;
-                $sale->active_price = $cartItem->active_price;
-                $sale->discount_price = $cartItem->discount_price;
-                $sale->quantity = $cartItem->quantity;
-                $sale->total = $totalAmount;
-                $sale->updated_at = $cartItem->updated_at;
-                $sale->save();
-            }
-        }
-
-        CartItem::where('cart_id', session('cart_id'))->delete();
-        
-        $cart = Cart::find(session('cart_id'));
-        if ($cart) {
-            $cart->checked_out = true;
-            $cart->save();
-        }
-
-        session()->forget('cart_id');
-
-        return redirect()->back()->with('success', 'Thank you for your purchase!');
+    if (!$cartId) {
+        return redirect()->back()->with('error', 'No active cart found.');
     }
+
+    $cartItems = CartItem::where('cart_id', $cartId)->get();
+
+    if ($cartItems->isEmpty()) {
+        return redirect()->back()->with('error', 'Cart is empty.');
+    }
+
+    $productIds = $cartItems->pluck('product_id')->unique();
+    $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+
+    $totalAmount = 0;
+    $salesToInsert = [];
+
+    foreach ($cartItems as $cartItem) {
+        $product = $products[$cartItem->product_id] ?? null;
+        if (!$product) continue;
+
+        $price = $cartItem->active_price ?? $product->price;
+        $totalAmount += $price * $cartItem->quantity;
+
+        // Update product inventory
+        if ($product->quantity >= $cartItem->quantity) {
+            $product->quantity -= $cartItem->quantity;
+        } else {
+            $product->quantity = 0;
+            $product->in_stock = false;
+        }
+
+        $product->save();
+
+        $salesToInsert[] = [
+            'cart_id'        => $cartItem->cart_id,
+            'product_name'   => $cartItem->product_name,
+            'description'    => $cartItem->description,
+            'price'          => $cartItem->price,
+            'active_price'   => $cartItem->active_price,
+            'discount_price' => $cartItem->discount_price,
+            'quantity'       => $cartItem->quantity,
+            'total'          => $totalAmount,
+            'business_id'    => $businessId,
+            'updated_at'     => $cartItem->updated_at,
+            'created_at'     => now(),
+        ];
+    }
+
+    // Bulk insert sales
+    if (!empty($salesToInsert)) {
+        Sales::insert($salesToInsert);
+    }
+
+    // Clear cart items
+    CartItem::where('cart_id', $cartId)->delete();
+
+    // Mark cart as checked out
+    Cart::where('id', $cartId)->update(['checked_out' => true]);
+
+    session()->forget('cart_id');
+
+    return redirect()->back()->with('success', 'Thank you for your purchase!');
+}
+
     public function deleteCartItem($id)
     {
         try {

@@ -15,6 +15,11 @@
 
         <!-- responsive style -->
         <script src="{{asset('/js/bootstrap.bundle.min.js')}}"></script>
+        <style>
+        .strikethrough {
+            text-decoration: line-through;
+            color: red;
+        }</style>
     </head>
     <body>
  <!-- Navbar -->

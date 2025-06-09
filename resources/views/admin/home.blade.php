@@ -48,7 +48,9 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body">
                     <h5 class="card-title text-success">Today's Sales</h5>
-                    <h3>₵0.00</h3>
+                     @if(isset($todaySalesTotal) && $todaySalesTotal)
+                    <h3>Ksh {{ number_format($todaySalesTotal, 2) }}</h3>
+@endif
                 </div>
             </div>
         </div>
@@ -81,22 +83,59 @@
             <div class="card shadow-sm border-0">
                 <div class="card-body">
                     <h5 class="card-title text-success">Total Sales</h5>
-                   <div class="mt-4">
-                    <h4><span id="period-total"></span></h4>
-                </div>
+                    @if(isset($totalSales) && $totalSales)
+                   <h3>Ksh {{ number_format($totalSales, 2) }}</h3>
+                   @endif
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body">
+    <div class="card shadow-sm border-0 mb-2">
+        <div class="card-body ">
+         
             <h5 class="card-title text-success">Sales Overview</h5>
+              @if(isset($labels) && $labels)
+            @if(isset($totals) && $totals)
             <canvas id="salesChart"></canvas>
+            @endif
+            @endif
         </div>
     </div>
     </div>
     @include('admin.script')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const salesChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($labels) !!},
+            datasets: [{
+                label: '₵ Sales',
+                data: {!! json_encode($totals) !!},
+                backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                borderColor: 'rgba(40, 167, 69, 1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '₵' + value;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 
           </div>

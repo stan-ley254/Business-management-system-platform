@@ -1,5 +1,4 @@
 @include('navstore')
-
 <!-- Toggle button for sidebar (visible on smaller screens) -->
 <button class="btn toggle-sidebar-btn d-lg-none " data-bs-toggle="collapse" data-bs-target="#sidebar">
     <i class="fas fa-bars"></i> select products here
@@ -9,6 +8,9 @@
     <div class="row">
         <!-- Sidebar (collapsible for mobile screens) -->
         <nav id="sidebar" class="col-lg-3 collapse d-lg-block sidebar">
+              <div id="alert-container" class="message rounded">
+    <!-- Messages will be dynamically inserted here -->
+</div>
             <h3>Navigator</h3>
             <div class="custom-form-container custom-container-color">
                 <!-- Updated Add to Cart Form -->
@@ -80,10 +82,11 @@
                     </div>
                 @endif
             </div>
-            <div id="alert-container" class="message rounded">
+                    <div id="alert-container" class="message rounded">
     <!-- Messages will be dynamically inserted here -->
 </div>
             <div class="custom-form-container ">
+ 
                 <div class="custom-header">
                     <div class="row mb-2">
                         <div class="col-md-4 mb-1">
@@ -116,8 +119,9 @@
                         </div>
                     </div>
                 </div>
-
+   
                 <div class="custom-table-container">
+                    
                     @if(isset($cartItems) && !$cartItems->isEmpty())
                         <div class="table-responsive">
                             <table class="table table-striped">

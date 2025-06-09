@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BusinessSettingsController extends Controller
 {
@@ -12,7 +13,7 @@ class BusinessSettingsController extends Controller
       public function editMpesa()
       {
           $business = Auth::user()->business;
-          return view('business.settings.mpesa', compact('business'));
+          return view('business.settings.edit_mpesa', compact('business'));
       }
   
       public function updateMpesa(Request $request)
