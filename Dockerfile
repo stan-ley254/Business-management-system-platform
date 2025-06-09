@@ -1,46 +1,57 @@
-# --- Base PHP image with system tools ---
-FROM php:8.2-fpm-bullseye AS base
+FROM php:8.2-fpm
 
+# Set working directory
 WORKDIR /var/www/html
 
-# Install system packages
+# Install required system packages and PHP extensions
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpng-dev libjpeg-dev libfreetype6-dev \
-    libwebp-dev libxpm-dev libonig-dev libxml2-dev sqlite3 \
-    libsqlite3-dev nodejs npm cron nginx gnupg2
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libwebp-dev \
+    libxpm-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    libonig-dev \
+    libxml2-dev \
+    sqlite3 \
+    libsqlite3-dev \
+    cron \
+    nginx \
+    nodejs \
+    npm
 
-# GD extension and others
-RUN docker-php-ext-configure gd \
-    --with-freetype --with-jpeg --with-webp --with-xpm \
- && docker-php-ext-install gd pdo pdo_sqlite mbstring bcmath exif pcntl
+# GD setup + Laravel required extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm && \
+    docker-php-ext-install gd pdo pdo_sqlite mbstring bcmath exif pcntl zip
 
 # Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy Laravel project
-COPY . .
+# Copy Laravel app
+COPY . /var/www/html
 
 # Permissions
 RUN chown -R www-data:www-data /var/www/html \
- && chmod -R 775 storage bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache
 
-# Validate GD is loaded (debug)
-RUN php -m | grep -i gd
-
-# Composer install AFTER GD is loaded
+# Composer install
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Build front-end assets
+# npm install & vite build
 RUN npm install && npm run build
 
-# Laravel scheduler setup
+# Laravel scheduler cron
 COPY ./docker/laravel_scheduler /etc/cron.d/laravel_scheduler
 RUN chmod 0644 /etc/cron.d/laravel_scheduler && crontab /etc/cron.d/laravel_scheduler
 
 # Nginx config
 COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Create SQLite file
+# Create database if not exists
 RUN touch database/database.sqlite
 
 EXPOSE 80
