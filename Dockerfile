@@ -54,6 +54,11 @@ COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 # Create database if not exists
 RUN touch database/database.sqlite
 
+
+
 EXPOSE 80
 
-CMD cron && php artisan migrate:fresh --seed && php artisan config:cache && php artisan route:cache && php artisan view:cache && nginx -g 'daemon off;'
+COPY ./docker/start.sh /start.sh
+RUN chmod +x /start.sh
+CMD ["/start.sh"]
+
