@@ -45,11 +45,11 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 RUN npm install && npm run build
 
 # Laravel scheduler cron
-COPY ./docker/laravel_scheduler /etc/cron.d/laravel_scheduler
+COPY docker/laravel_scheduler /etc/cron.d/laravel_scheduler
 RUN chmod 0644 /etc/cron.d/laravel_scheduler && crontab /etc/cron.d/laravel_scheduler
 
 # Nginx config
-COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Create database if not exists
 RUN touch database/database.sqlite
@@ -58,7 +58,7 @@ RUN touch database/database.sqlite
 
 EXPOSE 80
 
-COPY ./docker/start.sh /start.sh
+COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 CMD ["/start.sh"]
 
