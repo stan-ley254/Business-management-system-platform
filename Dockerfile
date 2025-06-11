@@ -48,6 +48,27 @@ RUN npm install && npm run build
 COPY docker/laravel_scheduler /etc/cron.d/laravel_scheduler
 RUN chmod 0644 /etc/cron.d/laravel_scheduler && crontab /etc/cron.d/laravel_scheduler
 
+RUN echo 'server {
+    listen 80;
+    index index.php index.html;
+    root /var/www/html/public;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_index index.php;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}' > /etc/nginx/conf.d/default.conf
+
 # Nginx config
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
