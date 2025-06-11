@@ -22,7 +22,7 @@ services:
       - key: QUEUE_CONNECTION
         value: sync
       - key: APP_URL
-        value: https://justart-saas-link.onrender.com/  # Update if using custom domain
+        value: https://justartech-saas-link.onrender.com/  # Update if using custom domain
       - key: ASSET_URL
-        value: https://justart-saas-link.onrender.com/  # Update if using custom domain
+        value: https://justartech-saas-link.onrender.com/  # Update if using custom domain
     autoDeploy: true
