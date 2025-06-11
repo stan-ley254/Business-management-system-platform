@@ -58,7 +58,6 @@ RUN touch database/database.sqlite
 
 EXPOSE 80
 RUN echo 'server {
-    listen 80;
     index index.php index.html;
     root /var/www/html/public;
 
