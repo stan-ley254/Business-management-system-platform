@@ -48,6 +48,15 @@ RUN npm install && npm run build
 COPY docker/laravel_scheduler /etc/cron.d/laravel_scheduler
 RUN chmod 0644 /etc/cron.d/laravel_scheduler && crontab /etc/cron.d/laravel_scheduler
 
+# Nginx config
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Create database if not exists
+RUN touch database/database.sqlite
+
+
+
+EXPOSE 80
 RUN echo 'server {
     listen 80;
     index index.php index.html;
@@ -68,17 +77,6 @@ RUN echo 'server {
         deny all;
     }
 }' > /etc/nginx/conf.d/default.conf
-
-# Nginx config
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-
-# Create database if not exists
-RUN touch database/database.sqlite
-
-
-
-EXPOSE 80
-
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 CMD ["/start.sh"]
