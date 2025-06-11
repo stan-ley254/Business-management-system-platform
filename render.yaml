@@ -22,7 +22,7 @@ services:
       - key: QUEUE_CONNECTION
         value: sync
       - key: APP_URL
-        value: https://business_management_system.onrender.com/  # Update if using custom domain
+        value: https://business_management_system-1.onrender.com/  # Update if using custom domain
       - key: ASSET_URL
-        value: https://business_management_system.onrender.com/  # Update if using custom domain
+        value: https://business_management_system-1.onrender.com/  # Update if using custom domain
     autoDeploy: true
