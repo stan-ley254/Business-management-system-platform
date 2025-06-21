@@ -12,6 +12,7 @@ class ProductImportLog extends Model
         'business_id',
         'product_name',
         'quantity_added',
+         'cost_price',
         'imported_by',
     ];
 

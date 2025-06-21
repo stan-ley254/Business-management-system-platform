@@ -51,6 +51,7 @@
                     <th> Name</th>
                     <th>Description</th>
                     <th>Quantity</th>
+                    <th>Cost Price</th>
                     <th>Price</th>
                     <th>Category</th>
                     <th>Delete</th>
@@ -66,6 +67,7 @@
                 <td>{{$show->product_name}}</td>
                 <td>{{$show->description}}</td>
                 <td>{{$show->quantity}}</td>
+                 <td>{{$show->cost_price}}</td>
                 <td>{{$show->price}}</td>
                 <td>{{$show->category}}</td>
                <td>

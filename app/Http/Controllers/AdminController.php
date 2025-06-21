@@ -224,7 +224,7 @@ $product->update($request->all());
         }
 
         $header = array_map('trim', array_shift($productsArray));
-        $requiredHeaders = ['product_name', 'description', 'price', 'discount_price', 'quantity', 'in_stock', 'category'];
+        $requiredHeaders = ['product_name', 'description','cost_price', 'price', 'discount_price', 'quantity', 'in_stock', 'category'];
 
         if ($header !== $requiredHeaders) {
             return redirect()->back()->with('error', 'The uploaded file does not have the required headers.');
@@ -242,6 +242,7 @@ $product->update($request->all());
             $productValidator = Validator::make($data, [
                 'product_name' => 'required|string|max:255',
                 'description' => 'nullable|string',
+                'cost_price' => 'nullable|numeric',
                 'price' => 'required|numeric',
                 'discount_price' => 'nullable|numeric',
                 'in_stock' => 'required|numeric',
@@ -257,8 +258,13 @@ $product->update($request->all());
                 ->where('business_id', $businessId)
                 ->first();
 
+ $costPrice = isset($data['cost_price']) && is_numeric($data['cost_price'])
+                ? (float) $data['cost_price']
+                : ($existingProduct->cost_price ?? 0);
+
             if ($existingProduct) {
                 $existingProduct->quantity += (int) $data['quantity'];
+                 $existingProduct->cost_price = $costPrice;
                 $existingProduct->price = $data['price'];
                 $existingProduct->discount_price = $data['discount_price'];
                 $existingProduct->in_stock = $data['in_stock'];
@@ -268,6 +274,7 @@ $product->update($request->all());
                 Product::create([
                     'product_name' => $data['product_name'],
                     'description' => $data['description'],
+                     'cost_price' => $costPrice,
                     'price' => $data['price'],
                     'discount_price' => $data['discount_price'],
                     'quantity' => $data['quantity'],
@@ -283,6 +290,7 @@ $product->update($request->all());
                 'business_id' => $businessId,
                 'product_name' => $data['product_name'],
                 'quantity_added' => $data['quantity'],
+                 'cost_price' => $costPrice,
                 'imported_by' => $admin->name,
             ]);
         }

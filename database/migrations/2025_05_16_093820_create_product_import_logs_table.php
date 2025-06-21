@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('product_name');
     $table->integer('quantity_added');
     $table->string('imported_by');
+    $table->decimal('cost_price', 10, 2)->nullable();
+
             $table->timestamps();
         });
     }

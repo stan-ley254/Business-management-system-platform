@@ -16,11 +16,15 @@ return new class extends Migration
             $table->foreignId('business_id')->constrained()->onDelete('cascade');
             $table->string('product_name');
             $table->string('description');
+             $table->decimal('cost_price', 10, 2)->nullable(); // Used to compute stock valuation
             $table->decimal('price',10,2);
             $table->decimal('discount_price',10,2)->nullable();
             $table->integer('quantity');
             $table->boolean('in_stock')->default(true);
             $table->string('category');
+           
+$table->integer('opening_stock')->nullable();    // Used at beginning of accounting period
+
             $table->timestamps();
         });
     }

@@ -1,16 +1,16 @@
 #!/bin/bash
 
-echo "Starting PHP-FPM..."
+# Start PHP-FPM in background
 php-fpm &
 
-echo "Running Laravel setup..."
+# Run Laravel setup
 php artisan migrate:fresh --seed
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-echo "Starting cron..."
+# Start cron
 cron
 
-echo "Starting Nginx..."
+# Start Nginx in foreground
 nginx -g "daemon off;"

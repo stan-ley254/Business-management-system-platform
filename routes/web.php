@@ -95,7 +95,11 @@ Route::middleware('weigher','auth')->group(function () {
         Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
         Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
         Route::get('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
-        
+          Route::get('income-statement', [IncomeStatementController::class, 'index'])->name('admin.income-statement');
+    Route::post('income-statement/generate', [IncomeStatementController::class, 'generate'])->name('admin.income-statement.generate');
+
+    Route::resource('expenses', ExpenseController::class)->except(['show']);
+    Route::resource('other-incomes', OtherIncomeController::class)->except(['show']);
     });
 
     Route::middleware(['auth','weigher','role:admin'])->group(function () {
