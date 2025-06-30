@@ -7,6 +7,9 @@ use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\MpesaController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusinessSettingsController;
+use App\Http\Controllers\IncomeStatementController;
+use App\Http\Controllers\OtherIncomeController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -95,11 +98,7 @@ Route::middleware('weigher','auth')->group(function () {
         Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
         Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
         Route::get('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
-          Route::get('income-statement', [IncomeStatementController::class, 'index'])->name('admin.income-statement');
-    Route::post('income-statement/generate', [IncomeStatementController::class, 'generate'])->name('admin.income-statement.generate');
-
-    Route::resource('expenses', ExpenseController::class)->except(['show']);
-    Route::resource('other-incomes', OtherIncomeController::class)->except(['show']);
+  
     });
 
     Route::middleware(['auth','weigher','role:admin'])->group(function () {
@@ -107,7 +106,12 @@ Route::middleware('weigher','auth')->group(function () {
  Route::get('/view_category', [AdminController::class, 'view_category']);
  Route::post('/add_category', [AdminController::class, 'add_category']);
  Route::get('/delete_category/{id}', [AdminController::class, 'delete_category']);
+ 
+        Route::get('income-statement', [IncomeStatementController::class, 'index'])->name('admin.income-statement');
+    Route::post('income-statement/generate', [IncomeStatementController::class, 'generate'])->name('admin.income-statement.generate');
 
+    Route::resource('expenses', ExpenseController::class)->except(['show']);
+    Route::resource('other-incomes', OtherIncomeController::class)->except(['show']);
  // Product Routes
  Route::get('/view_product', [AdminController::class, 'view_product']);
  Route::post('/add_product', [AdminController::class, 'add_product']);

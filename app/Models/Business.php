@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Sales;
+use App\Models\Expense;
 
 class Business extends Model
 {
@@ -32,6 +33,7 @@ class Business extends Model
                 public function users() { return $this->hasMany(User::class); }
                 public function products() { return $this->hasMany(Product::class); }
                 public function sales() { return $this->hasMany(Sales::class); }
+                public function expense(){return $this->hasMany(Expense::class);}
                 // etc.
             
                 public function owner()

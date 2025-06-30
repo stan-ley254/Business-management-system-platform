@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\OtherIncome;
+use App\Models\Other_Income;
 class OtherIncomeController extends Controller
 {
   public function index()
 {
-    $otherIncomes = OtherIncome::where('business_id', auth()->user()->business_id)->latest()->get();
+    $otherIncomes = Other_Income::where('business_id', auth()->user()->business_id)->latest()->get();
     return view('admin.other_incomes.index', compact('otherIncomes'));
 }
 
@@ -25,7 +25,7 @@ public function store(Request $request)
         'date' => 'required|date',
     ]);
 
-    OtherIncome::create([
+    Other_Income::create([
         'business_id' => auth()->user()->business_id,
         'name' => $request->name,
         'amount' => $request->amount,
@@ -35,12 +35,12 @@ public function store(Request $request)
     return redirect()->route('other-incomes.index')->with('success', 'Other income recorded successfully.');
 }
 
-public function edit(OtherIncome $otherIncome)
+public function edit(Other_Income $otherIncome)
 {
-    return view('admin.other_incomes.edit', compact('otherIncome'));
+    return view('admin.other_incomes.create', compact('otherIncome'));
 }
 
-public function update(Request $request, OtherIncome $otherIncome)
+public function update(Request $request, Other_Income $otherIncome)
 {
     $request->validate([
         'name' => 'required|string|max:255',
@@ -53,7 +53,7 @@ public function update(Request $request, OtherIncome $otherIncome)
     return redirect()->route('other-incomes.index')->with('success', 'Other income updated successfully.');
 }
 
-public function destroy(OtherIncome $otherIncome)
+public function destroy(Other_Income $otherIncome)
 {
     $otherIncome->delete();
     return redirect()->route('other-incomes.index')->with('success', 'Other income deleted successfully.');

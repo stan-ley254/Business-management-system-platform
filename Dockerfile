@@ -34,6 +34,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy Laravel app
 COPY . /var/www/html
 
+#Post deployment payload
+
+
 # Permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
@@ -57,26 +60,7 @@ RUN touch database/database.sqlite
 
 
 EXPOSE 80
-RUN echo 'server {
-    listen 80;
-    index index.php index.html;
-    root /var/www/html/public;
 
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location ~ \.php$ {
-        include fastcgi_params;
-        fastcgi_pass 127.0.0.1:9000;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_index index.php;
-    }
-
-    location ~ /\.ht {
-        deny all;
-    }
-}' > /etc/nginx/conf.d/default.conf
 COPY docker/start.sh /start.sh
 RUN chmod +x /start.sh
 CMD ["/start.sh"]

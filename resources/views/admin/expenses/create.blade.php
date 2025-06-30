@@ -33,21 +33,26 @@
             <div class="container-md mt-2">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title text-success">Choose Period </h4>
-                       <form action="{{ route('admin.income-statement.generate') }}" method="POST">
+                        <h4 class="card-title text-success">Add Expenses </h4>
+                        <form action="{{ isset($expense) ? route('other-incomes.update', $expense) : route('other-incomes.store') }}" method="POST">
     @csrf
+    @if(isset($expense)) @method('PUT') @endif
                             <div class="form-group">
-                                <label for="start_date" class="text-success">Start Date</label>
-                                <input type="date" class="input-group" id="start_date" name="start_date" required>
+                                <label for="name" class="text-success">Name</label>
+                                <input type="text" class="input-group" id="name" name="name" value="{{ $expense->name ?? '' }}" required>
                                
                             </div>
                             <div class="form-group">
-                                <label for="end_date" class="text-success">End Date</label>
-                                <input type="date" class="input-group" id="end_date" name="end_date"  required>
+                                <label for="amount" class="text-success">Amount</label>
+                                <input type="text" class="input-group" id="amount" name="amount" value="{{ $expense->amount ?? '' }}" required>
                              
                             </div>
-                         
-                            <button type="submit" class="btn btn-primary mt-2">Generate Statement</button>
+                            <div class="form-group">
+                                <label for="date" class="text-success">Date</label>
+                                <input type="date" class="input-group" id="date" name="date" value="{{ $expense->date ?? '' }}"  required>
+                             
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-2">Submit</button>
                         </form>
                     </div>
                 </div>

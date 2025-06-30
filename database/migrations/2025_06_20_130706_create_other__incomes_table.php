@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('other__incomes', function (Blueprint $table) {
             $table->id();
              $table->foreignId('business_id')->constrained()->onDelete('cascade');
-    $table->string('source');
+    $table->string('name');
     $table->decimal('amount', 10, 2);
     $table->date('date');
             $table->timestamps();

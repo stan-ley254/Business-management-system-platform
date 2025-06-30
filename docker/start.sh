@@ -4,10 +4,8 @@
 php-fpm &
 
 # Run Laravel setup
-php artisan migrate:fresh --seed
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+CMD php artisan serve --host=0.0.0.0 --port=80
+
 
 # Start cron
 cron

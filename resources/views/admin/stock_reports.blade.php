@@ -28,7 +28,7 @@
         <div class="main-panel">
        
           <div class="content-wrapper">
-            <div class="container-xxl my-5">
+            <div class="container my-5">
     <!-- Header -->
     <div class="text-success suble-title">
         Products Stock Reports
@@ -40,7 +40,7 @@
 
 
         
-        {{-- Table Goes Here --}}
+       <div class="container-fluid"> {{-- Table Goes Here --}}
         <div class=" table-responsive">
                <table class="table table-bordered jsgrid jsgrid-table dataTables_wrapper table-primary ">
                <thead>
@@ -73,13 +73,13 @@
                 </tbody>
                </table>
                 @else
-            <p>No Stock Reports Yet</p>
+            <p class="text-black">No Stock Reports Yet</p>
             @endif
                </div>
             
     </div>
 </div>
-
+</div>
 
 
 </div>
@@ -88,6 +88,6 @@
       <!-- page-body-wrapper ends -->
     </div>
     <!-- container-scroller -->
-   
+      @include('admin.script')
   </body>
 </html>

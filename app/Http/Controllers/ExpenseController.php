@@ -10,12 +10,12 @@ class ExpenseController extends Controller
    public function index()
 {
     $expenses = Expense::where('business_id', auth()->user()->business_id)->latest()->get();
-    return view('admin.expenses.manage_expenses', compact('expenses'));
+    return view('admin.expenses.index', compact('expenses'));
 }
 
 public function create()
 {
-    return view('admin.expenses.create');
+return view('admin.expenses.create');
 }
 
 public function store(Request $request)
@@ -38,7 +38,7 @@ public function store(Request $request)
 
 public function edit(Expense $expense)
 {
-    return view('admin.expenses.manage_expenses', compact('expense'));
+    return view('admin.expenses.create', compact('expense'));
 }
 
 public function update(Request $request, Expense $expense)

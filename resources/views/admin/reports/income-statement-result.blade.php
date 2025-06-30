@@ -1,5 +1,40 @@
-<h2>Income Statement</h2>
-<ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    @include('admin.css')
+    <style>
+        .sidebar {
+            position: fixed;
+        }
+        .form_color {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+@include('admin.sidebar')
+@include('admin.header')
+    <div class="main-panel">
+      
+        <div class="content-wrapper">
+            <div class="message d-print-inline-flex rounded">
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
+            </div>
+            <div class="container-md mt-2">
+                <div class="card">
+<div class="card-body">
+       <h2>Income Statement</h2>
+    <ul class="nav flex-column sub-menu">
     <li>Net Sales: KES {{ number_format($netSales, 2) }}</li>
     <li>Cost of Sales: KES {{ number_format($costOfSales, 2) }}</li>
     <li>Gross Profit: KES {{ number_format($grossProfit, 2) }}</li>
@@ -8,22 +43,22 @@
     <li><strong>Net Profit: KES {{ number_format($netProfit, 2) }}</strong></li>
 </ul>
 
-// Blade: admin/expenses/index.blade.php
-<a href="{{ route('expenses.create') }}">Add Expense</a>
-<table>
-    <tr><th>Name</th><th>Amount</th><th>Date</th><th>Actions</th></tr>
-    @foreach($expenses as $expense)
-        <tr>
-            <td>{{ $expense->name }}</td>
-            <td>{{ $expense->amount }}</td>
-            <td>{{ $expense->date }}</td>
-            <td>
-                <a href="{{ route('expenses.edit', $expense) }}">Edit</a>
-                <form action="{{ route('expenses.destroy', $expense) }}" method="POST">
-                    @csrf @method('DELETE')
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-    @endforeach
-</table>
+<hr>
+<h3>Data Summary</h3>
+<ul class="nav flex-column sub-menu">
+    <li>Total Sales Records: {{ $salesCount }}</li>
+    <li>Total Return Inwards: {{ $returnInwardCount }}</li>
+    <li>Total Return Outwards: {{ $returnOutwardCount }}</li>
+    <li>Total Product Imports: {{ $importCount }}</li>
+    <li>Total Stock Snapshots Used: Opening - {{ $openingSnapshotDate ?? 'N/A' }}, Closing - {{ $closingSnapshotDate ?? 'N/A' }}</li>
+    <li>Total Other Income Records: {{ $otherIncomeCount }}</li>
+    <li>Total Expense Records: {{ $expenseCount }}</li>
+</ul>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @include('admin.script')
+</body>
+</html>

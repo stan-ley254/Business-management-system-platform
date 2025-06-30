@@ -111,16 +111,16 @@
               <span class="menu-icon">
                 <i class="mdi mdi-security"></i>
               </span>
-              <span class="menu-title">User Pages</span>
+              <span class="menu-title">IncomeStatement</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="auth">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href=""> Blank Page </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-404.html"> 404 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/error-500.html"> 500 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/login.html"> Login </a></li>
-                <li class="nav-item"> <a class="nav-link" href="pages/samples/register.html"> Register </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{route('admin.income-statement')}}"> Generate </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{route('expenses.index')}}"> Expenses </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('expenses.create') }}"> Add Expenses </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{route('other-incomes.index')}}"> Other Incomes </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{route('other-incomes.create')}}"> Add other incomes </a></li>
               </ul>
             </div>
           </li>

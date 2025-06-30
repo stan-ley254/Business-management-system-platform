@@ -25,7 +25,7 @@
       <div class="card-body">
 <input class="input-group mb-2 " name="searchCustomeradmin" placeholder="search customer by ..name...or phone number" value="{{isset($searchCustomeradmin) ? $searchCustomeradmin : ''}}">
 <button type="submit" class="btn btn-success">Search</button>
-
+ 
       
     </form>
     <div class=" mt-4">
@@ -40,9 +40,12 @@
         </div>
     @endif
 </div>
+ <h3>All Customers</h3>
 </div>
 </div>
+
 <div>
+
 <div class=" table-responsive">
                <table class="table table-bordered jsgrid jsgrid-table dataTables_wrapper table-primary ">
 <thead>
