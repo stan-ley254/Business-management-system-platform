@@ -3,12 +3,18 @@
 # Start PHP-FPM in background
 php-fpm &
 
-# Run Laravel setup
-CMD php artisan serve --host=0.0.0.0 --port=80
-
+# Laravel setup
+php artisan migrate --force
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
 # Start cron
 cron
 
-# Start Nginx in foreground
+# Confirm Nginx config exists (for debugging)
+echo "==== NGINX CONFIG ===="
+cat /etc/nginx/conf.d/default.conf
+
+# Start Nginx
 nginx -g "daemon off;"
