@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,5 +27,9 @@ class AppServiceProvider extends ServiceProvider
                             ->header('Pragma', 'no-cache')
                             ->header('Expires', '0');
         });
+
+         if (env('APP_ENV') === 'production') {
+        URL::forceScheme('https');
+    }
     }
 }
