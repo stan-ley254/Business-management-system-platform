@@ -35,27 +35,28 @@ RUN chmod 0644 /etc/cron.d/laravel_scheduler && crontab /etc/cron.d/laravel_sche
 
 # Write custom nginx config directly (overrides default welcome)
 RUN rm -f /etc/nginx/sites-enabled/default && \
-    echo 'server {
-        listen 80;
-        index index.php index.html;
-        root /var/www/html/public;
-
-        location / {
-            try_files $uri $uri/ /index.php?$query_string;
-        }
-
-        location ~ \.php$ {
-            try_files $uri =404;
-            fastcgi_pass 127.0.0.1:9000;
-            fastcgi_index index.php;
-            include fastcgi_params;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        }
-
-        location ~ /\.ht {
-            deny all;
-        }
-    }' > /etc/nginx/conf.d/default.conf
+    printf "%s\n" \
+    "server {" \
+    "    listen 80;" \
+    "    index index.php index.html;" \
+    "    root /var/www/html/public;" \
+    "" \
+    "    location / {" \
+    "        try_files \$uri \$uri/ /index.php?\$query_string;" \
+    "    }" \
+    "" \
+    "    location ~ \.php$ {" \
+    "        try_files \$uri =404;" \
+    "        fastcgi_pass 127.0.0.1:9000;" \
+    "        fastcgi_index index.php;" \
+    "        include fastcgi_params;" \
+    "        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;" \
+    "    }" \
+    "" \
+    "    location ~ /\.ht {" \
+    "        deny all;" \
+    "    }" \
+    "}" > /etc/nginx/conf.d/default.conf
 
 # Create SQLite DB file if not present
 RUN touch database/database.sqlite
