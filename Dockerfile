@@ -59,7 +59,10 @@ RUN rm -f /etc/nginx/sites-enabled/default && \
     "}" > /etc/nginx/conf.d/default.conf
 
 # Create SQLite DB file if not present
-RUN touch database/database.sqlite
+RUN touch database/database.sqlite \
+    && chown -R www-data:www-data database \
+    && chmod -R 775 database
+
 
 # Expose port
 EXPOSE 80
