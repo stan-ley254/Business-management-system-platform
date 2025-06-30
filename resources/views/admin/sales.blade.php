@@ -103,51 +103,54 @@
                             </tr>
                         </thead>
                         <tbody id="sales-data">
-                            @php
-                                $currentCartId = null;
-                            @endphp
+          @php
+    $currentCartId = null;
+@endphp
 
-                            @foreach($sales as $sale)
-                                @if($currentCartId !== null && $currentCartId !== $sale->cart_id)
-                                    <tr class="total-row" data-total="{{ $previousTotal }}">
-                                        <th colspan="4">Total:</th>
-                                        <td colspan="3">{{ $previousTotal }}</td>
-                                    </tr>
-                                @endif
+@foreach($sales as $index => $sale)
+    @if($currentCartId !== null && $currentCartId !== $sale->cart_id)
+        {{-- Output total for the previous cart --}}
+        <tr class="total-row" data-total="{{ $previousTotal }}">
+            <th colspan="4">Total:</th>
+            <td colspan="3">{{ $previousTotal }}</td>
+        </tr>
+    @endif
 
-                                @if($currentCartId !== $sale->cart_id)
-                                    @php
-                                        $currentCartId = $sale->cart_id;
-                                        $previousTotal = $sale->total;
-                                    @endphp
-                                @endif
+    {{-- New cart group starts --}}
+    @if($currentCartId !== $sale->cart_id)
+        @php
+            $currentCartId = $sale->cart_id;
+            $previousTotal = $sale->total;  // only update here!
+        @endphp
+    @endif
 
-                                <tr>
-                                    <td>{{ $sale->cart_id }}</td>
-                                    <td>{{ $sale->product_name }}</td>
-                                    <td>{{ $sale->description }}</td>
-                                    <td>
-                                        @if($sale->active_price)
-                                            <span class="strikethrough">{{ $sale->price }}</span>
-                                        @else
-                                            {{ $sale->price }}
-                                        @endif
-                                    </td>
-                                    <td>{{ $sale->active_price ?? 'N/A' }}</td>
-                                    <td>{{ $sale->quantity }}</td>
-                                    <td>{{ $sale->updated_at }}</td>
-                                    <td>
-                <a onclick="return confirm('Are you sure you want to Delete this')" class="btn btn-danger" href="{{url('/deleteSale',$sale->id)}}">Delete</a>
-                </td>
-                                </tr>
-                            @endforeach
+    <tr>
+        <td>{{ $sale->cart_id }}</td>
+        <td>{{ $sale->product_name }}</td>
+        <td>{{ $sale->description }}</td>
+        <td>
+            @if($sale->active_price)
+                <span class="strikethrough">{{ $sale->price }}</span>
+            @else
+                {{ $sale->price }}
+            @endif
+        </td>
+        <td>{{ $sale->active_price ?? 'N/A' }}</td>
+        <td>{{ $sale->quantity }}</td>
+        <td>{{ $sale->updated_at }}</td>
+        <td>
+            <a onclick="return confirm('Are you sure you want to Delete this')" class="btn btn-danger" href="{{url('/deleteSale',$sale->id)}}">Delete</a>
+        </td>
+    </tr>
+@endforeach
 
-                            @if($currentCartId !== null)
-                                <tr class="total-row" data-total="{{ $previousTotal }}">
-                                    <th colspan="4">Total:</th>
-                                    <td colspan="3">{{ $previousTotal }}</td>
-                                </tr>
-                            @endif
+{{-- Output the last cart total --}}
+@if($currentCartId !== null)
+    <tr class="total-row" data-total="{{ $previousTotal }}">
+        <th colspan="4">Total:</th>
+        <td colspan="3">{{ $previousTotal }}</td>
+    </tr>
+@endif
 
   </tbody>
                </table>
