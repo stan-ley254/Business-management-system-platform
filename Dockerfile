@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev libwebp-dev libxpm-dev \
     libzip-dev zip unzip git curl libonig-dev libxml2-dev \
      docker-php-ext-install pdo pdo_pgsql
-    sqlite3 libsqlite3-dev cron nginx nodejs npm
+    cron nginx nodejs npm
 
 # Configure GD and install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm && \
