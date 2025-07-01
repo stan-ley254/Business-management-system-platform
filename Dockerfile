@@ -7,7 +7,7 @@ WORKDIR /var/www/html
 RUN apt-get update && apt-get install -y \
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev libwebp-dev libxpm-dev \
     libzip-dev zip unzip git curl libonig-dev libxml2-dev \
-    libpq-dev cron nginx nodejs npm
+    libpq-dev cron nginx nodejs npm postgresql-client
 
 # Configure GD and install PHP extensions including PostgreSQL
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm && \
@@ -33,7 +33,7 @@ RUN npm install && npm run build
 COPY docker/laravel_scheduler /etc/cron.d/laravel_scheduler
 RUN chmod 0644 /etc/cron.d/laravel_scheduler && crontab /etc/cron.d/laravel_scheduler
 
-# Write custom nginx config directly (overrides default welcome)
+# Write custom nginx config directly
 RUN rm -f /etc/nginx/sites-enabled/default && \
     printf "%s\n" \
     "server {" \
