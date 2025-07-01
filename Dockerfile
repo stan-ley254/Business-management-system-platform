@@ -7,12 +7,11 @@ WORKDIR /var/www/html
 RUN apt-get update && apt-get install -y \
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev libwebp-dev libxpm-dev \
     libzip-dev zip unzip git curl libonig-dev libxml2-dev \
-     docker-php-ext-install pdo pdo_pgsql
-    cron nginx nodejs npm
+    libpq-dev cron nginx nodejs npm
 
-# Configure GD and install PHP extensions
+# Configure GD and install PHP extensions including PostgreSQL
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm && \
-    docker-php-ext-install gd pdo pdo_sqlite mbstring bcmath exif pcntl zip
+    docker-php-ext-install gd pdo pdo_pgsql mbstring bcmath exif pcntl zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -58,12 +57,6 @@ RUN rm -f /etc/nginx/sites-enabled/default && \
     "        deny all;" \
     "    }" \
     "}" > /etc/nginx/conf.d/default.conf
-
-# Create SQLite DB file if not present
-RUN touch database/database.sqlite \
-    && chown -R www-data:www-data database \
-    && chmod -R 775 database
-
 
 # Expose port
 EXPOSE 80
