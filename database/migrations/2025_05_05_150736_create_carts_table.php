@@ -18,6 +18,7 @@ return new class extends Migration
             // Other necessary columns like user_id, total_price, etc.
             $table->string('session_id')->nullable();
             $table->boolean('checked_out')->default(false);
+            
             $table->timestamps();
         });
     }

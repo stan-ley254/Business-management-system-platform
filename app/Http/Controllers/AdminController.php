@@ -300,50 +300,57 @@ $product->update($request->all());
         return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
 }
-    public function exportSales()
-    {
-        try {
-            // Fetch all sales records
-            $sales = Sales::all();
+   // Step 1: Export and store the file
+public function exportSales()
+{
+    try {
+        $sales = Sales::orderBy('created_at', 'desc')->get();
 
-            // Create a CSV file content
-            $csvContent = '';
-            $header = ['Sale ID', 'Product Name', 'Description', 'Price', 'Quantity', 'Date','Cart Total' ];
-            $csvContent .= implode(',', $header) . "\n";
+        $header = ['Sale ID', 'Product Name', 'Description', 'Price', 'Active Price', 'Quantity', 'Total', 'Date'];
+        $csvContent = implode(',', $header) . "\n";
 
-            $currentCartId = null;
-            $previousTotal = 0;
-
-            foreach ($sales as $sale) {
-                if ($currentCartId !== null && $currentCartId !== $sale->cart_id) {
-                    $csvContent .= 'Cart Total,,,,' . ',' . ',' . $previousTotal . "\n";
-                }
-
-                if ($currentCartId !== $sale->cart_id) {
-                    $currentCartId = $sale->cart_id;
-                    $previousTotal = $sale->total;
-                }
-
-                $csvContent .= $sale->cart_id . ',' . $sale->product_name . ',' . $sale->description . ',' . $sale->price . ',' . $sale->quantity . ',' . $sale->updated_at .','.','."\n";
-            }
-
-            if ($currentCartId !== null) {
-                $csvContent .= 'Cart Total,,,,' . ',' . ',' . $previousTotal . "\n";
-            }
-
-            // Generate file name and path
-            $fileName = 'sales_' . date('Y_m_d_H_i_s') . '.csv';
-            $filePath = storage_path('app/public/' . $fileName);
-
-            // Store the file in the public storage
-            Storage::disk('public')->put($fileName, $csvContent);
-
-            // Return the file for download
-            return response()->download($filePath)->deleteFileAfterSend(true);
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'An error occurred while exporting the sales data.');
+        foreach ($sales as $sale) {
+            $csvContent .= implode(',', [
+                $sale->id,
+                $this->escapeCsv($sale->product_name),
+                $this->escapeCsv($sale->description),
+                $sale->price,
+                $sale->active_price ?? 'N/A',
+                $sale->quantity,
+                $sale->total,
+                $sale->created_at,
+            ]) . "\n";
         }
+
+        $fileName = 'sales_' . now()->format('Y_m_d_H_i_s') . '.csv';
+        Storage::disk('public')->put($fileName, $csvContent);
+
+        // Redirect to a dedicated download route
+        return redirect()->route('download.sales.csv', ['filename' => $fileName])
+                         ->with('success', 'Sales exported successfully.');
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'An error occurred while exporting the sales data.');
     }
+}
+
+private function escapeCsv($value)
+{
+    return '"' . str_replace('"', '""', $value) . '"';
+}
+
+public function downloadCsv($filename)
+{
+    $filePath = storage_path('app/public/' . $filename);
+
+    if (!file_exists($filePath)) {
+        return redirect()->back()->with('error', 'The file could not be found.');
+    }
+
+    // Return download and auto-delete the file after send
+    return response()->download($filePath)->deleteFileAfterSend(true);
+}
+
 
     public function exportProductImportLogs()
 {

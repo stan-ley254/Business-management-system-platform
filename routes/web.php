@@ -106,6 +106,10 @@ Route::middleware('weigher','auth')->group(function () {
  Route::get('/view_category', [AdminController::class, 'view_category']);
  Route::post('/add_category', [AdminController::class, 'add_category']);
  Route::get('/delete_category/{id}', [AdminController::class, 'delete_category']);
+
+ Route::get('/download-sales-csv/{filename}', [AdminController::class, 'downloadCsv'])
+     ->name('download.sales.csv');
+
  
         Route::get('income-statement', [IncomeStatementController::class, 'index'])->name('admin.income-statement');
     Route::post('income-statement/generate', [IncomeStatementController::class, 'generate'])->name('admin.income-statement.generate');

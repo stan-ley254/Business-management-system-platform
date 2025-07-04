@@ -32,28 +32,18 @@
                                     <th>Price</th>
                                     <th>ActivePrice</th>
                                     <th>Quantity</th>
+                                    <th>Total (per item)</th>
                                     <th>Date</th>
                                 </tr>
                             </thead>
                             <tbody id="sales-data">
-                                @php $currentCartId = null; @endphp
+                                @php $periodTotal = 0; @endphp
                                 @foreach($sales as $sale)
-                                    @if($currentCartId !== null && $currentCartId !== $sale->cart_id)
-                                        <tr class="total-row" data-total="{{ $previousTotal }}">
-                                            <th colspan="4">Total:</th>
-                                            <td colspan="3">{{ $previousTotal }}</td>
-                                        </tr>
-                                    @endif
-                                    @if($currentCartId !== $sale->cart_id)
-                                        @php
-                                            $currentCartId = $sale->cart_id;
-                                            $previousTotal = $sale->total;
-                                        @endphp
-                                    @endif
+                                    @php $lineTotal = ($sale->active_price ?? $sale->price) * $sale->quantity; $periodTotal += $lineTotal; @endphp
                                     <tr>
-                                        <td>{{ $sale->cart_id }}</td>
-                                        <td>{{ $sale->product_name }}</td>
-                                        <td>{{ $sale->description }}</td>
+                                       <td>{{ $sale->cart_id }}</td>
+                      <td>{{ $sale->product_name }}</td>
+                      <td>{{ $sale->description }}</td>
                                         <td>
                                             @if($sale->active_price)
                                                 <span class="strikethrough">{{ $sale->price }}</span>
@@ -63,21 +53,16 @@
                                         </td>
                                         <td>{{ $sale->active_price ?? 'N/A' }}</td>
                                         <td>{{ $sale->quantity }}</td>
+                                        <td>{{ number_format($lineTotal, 2) }}</td>
                                         <td>{{ $sale->updated_at }}</td>
                                     </tr>
                                 @endforeach
-                                @if($currentCartId !== null)
-                                    <tr class="total-row" data-total="{{ $previousTotal }}">
-                                        <th colspan="4">Total:</th>
-                                        <td colspan="3">{{ $previousTotal }}</td>
-                                    </tr>
-                                @endif
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-2">
-                        <h4>Period Total: <span id="period-total"></span></h4>
-                    </div>
+                     <div class="mt-4">
+                <h4>Period Total: {{ number_format($periodTotal, 2) }}</h4>
+              </div>
                 </div>
             </div>
 
