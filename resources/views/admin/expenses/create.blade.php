@@ -34,7 +34,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title text-success">Add Expenses </h4>
-                        <form action="{{ isset($expense) ? route('other-incomes.update', $expense) : route('other-incomes.store') }}" method="POST">
+                        <form action="{{ isset($expense) ? route('expenses.update', $expense) : route('expenses.store') }}" method="POST">
     @csrf
     @if(isset($expense)) @method('PUT') @endif
                             <div class="form-group">

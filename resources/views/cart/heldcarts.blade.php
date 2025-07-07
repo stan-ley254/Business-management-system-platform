@@ -54,7 +54,7 @@
             {{ $heldCart->links() }}
         </div>
     @else
-        <p>No held carts found.</p>
+        <p>No held carts yet.</p>
     @endif
     </div>
 </div>

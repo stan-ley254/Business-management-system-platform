@@ -29,7 +29,12 @@
                         <input type="number" name="quantity" id="quantity" value="1" min="1" class="form-control mt-2">
                     </div>
                 </form>
-
+<button id="start-scan-btn" class="btn btn-dark w-100 mt-2">
+    <i class="fas fa-barcode"></i> Scan Product
+</button>
+<div id="scanner-container" class="mt-2" style="display:none;">
+    <video id="barcode-scanner" width="100%" autoplay muted playsinline></video>
+</div>
                 <!-- Total Amount Display -->
                 <div class="mt-3">
                     <h4>Total: <span id="totalAmount">0.00</span></h4>
@@ -114,7 +119,7 @@
                         <div class="col-md-4">
                             <form action="{{ url('/clearAllItems') }}" method="POST" id="clear-cart-form">
                                 @csrf
-                                <button class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Clear Cart</button>
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to clear cart')" > <i class="fas fa-trash-alt"></i> Clear Cart</button>
                             </form>
                         </div>
                     </div>

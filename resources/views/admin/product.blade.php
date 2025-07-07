@@ -100,15 +100,15 @@
                       @csrf
                       <div class="form-group">
                         <label for="product_name" class="text-success">Product Name</label>
-                        <input type="text" class="input-group" name="product_name" id="exampleInputName1" placeholder="Product Name" required="">
+                        <input type="text" class="input-group" name="product_name" id="exampleInputName1" placeholder="Product Name" required />
                       </div>
                       <div class="form-group">
                         <label for="description" class="text-success">Description</label>
-                        <input type="text" class="input-group" name="description" id="exampleInputEmail3" placeholder="description" required="">
+                        <input type="text" class="input-group" name="description" id="exampleInputEmail3" placeholder="description" required />
                       </div>
                       <div class="form-group">
                         <label for="price" class="text-success">Price</label>
-                        <input type="number" class="input-group" min="0" name="price" id="exampleInputPassword4" placeholder="Price" required="">
+                        <input type="number" class="input-group" min="0" name="price" id="exampleInputPassword4" placeholder="Price" required />
                       </div>
                       <div class="form-group">
                         <label for="discount_price" class="text-success">Discount Price</label>

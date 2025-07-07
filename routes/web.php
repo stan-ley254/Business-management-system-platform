@@ -113,7 +113,7 @@ Route::middleware('weigher','auth')->group(function () {
  
         Route::get('income-statement', [IncomeStatementController::class, 'index'])->name('admin.income-statement');
     Route::post('income-statement/generate', [IncomeStatementController::class, 'generate'])->name('admin.income-statement.generate');
-
+Route::get('/documentation', [AdminController::class, 'documentation']);
     Route::resource('expenses', ExpenseController::class)->except(['show']);
     Route::resource('other-incomes', OtherIncomeController::class)->except(['show']);
  // Product Routes

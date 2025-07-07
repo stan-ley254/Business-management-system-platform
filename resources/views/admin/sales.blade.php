@@ -64,7 +64,7 @@
                   </div>
                 </div>
               </div>
-
+  @if(isset($sales) && ($sales))
               @if(session('success'))
               <div class="alert alert-success">{{ session('success') }}</div>
               @endif
@@ -124,7 +124,7 @@
         </div>
       </div>
     </div>
-
+@endif 
     @include('admin.script')
 
     

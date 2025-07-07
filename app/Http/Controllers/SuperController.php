@@ -162,12 +162,37 @@ public function filterSales(Request $request)
     }
 
     public function clearAllItems(Request $request)
-    {
-        // Delete all items from the cartItem table
-        DB::table('cart_items')->truncate();
+{
+    $cartId = session('cart_id');
 
-        return redirect()->back()->with('success', 'All items have been cleared from the cart');
+    if (!$cartId) {
+        return redirect()->back()->with('error', 'No active cart found.');
     }
+
+    $cartItems = CartItem::where('cart_id', $cartId)->get();
+
+    foreach ($cartItems as $item) {
+        // Restore stock
+        $product = Product::find($item->product_id);
+
+        if ($product) {
+            $product->quantity += $item->quantity;
+
+            // Optionally re-flag it as in stock
+            if (!$product->in_stock && $product->quantity > 0) {
+                $product->in_stock = true;
+            }
+
+            $product->save();
+        }
+
+        // Delete the item
+        $item->delete();
+    }
+
+    return redirect()->back()->with('success', 'All items have been cleared and stock restored.');
+}
+
 
     public function createCart(){
         $customer = Customer::all();

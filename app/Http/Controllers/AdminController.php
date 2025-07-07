@@ -135,6 +135,11 @@ return redirect()->back();
             return redirect()->back()->with('success', 'All items have been cleared from products');
         }
 
+
+        public function documentation(){
+            
+            return view('admin.documentation');
+        }
         public function filterSalesAdmin(Request $request)
         {
             $startDate = $request->input('from_date');

@@ -11642,6 +11642,71 @@ textarea.is-invalid.tt-hint {
     color: #212529;
     background-color: #e9ecef; }
 
+.doc-preview-section {
+  position: relative;
+  padding: 4rem 1rem;
+  background: linear-gradient(135deg, #fbe7d0, #f8b3e0);
+}
+
+.preview-wrapper {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Desktop Preview shown only on larger screens */
+.preview-desktop {
+  width: 100%;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+/* Mobile Preview inside desktop preview */
+.preview-mobile {
+  position: absolute;
+  right: 5%;
+  bottom: -30px;
+  width: 250px;
+  border: 10px solid white;
+  border-radius: 2rem;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+  background: #fff;
+  display: block;
+}
+
+/* Mobile image inside the frame */
+.preview-mobile img {
+  width: 100%;
+  border-radius: 1.5rem;
+}
+
+/* On smaller screens: hide desktop preview, show mobile only full width */
+@media (max-width: 768px) {
+  .preview-desktop {
+    display: none;
+  }
+
+  .preview-mobile {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    margin-top:10px;
+    bottom: unset;
+    right: unset;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .preview-mobile img {
+    border-radius: 0;
+  }
+}
+
+
 .list-group-item {
   position: relative;
   display: block;
@@ -13406,7 +13471,9 @@ textarea.is-invalid.tt-hint {
 
 .me-auto, .rtl .list-wrapper .remove {
   margin-right: auto !important; }
-
+.margin-top-custom{
+  margin-top: 300px;
+}
 .mb-0 {
   margin-bottom: 0 !important; }
 
