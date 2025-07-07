@@ -18,7 +18,14 @@
       <span class="menu-title">Products</span>
       <i class="menu-arrow"></i>
     </a>
-    
+     <div class="collapse" id="products-menu">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{{url('/view_product')}}">Add Product</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url('/show_product')}}">Show Product</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{route('admin.import.logs')}}">Products Import Logs</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{url('stockReports_admin')}}">Stock Reports</a></li>
+              </ul>
+            </div>
 </li>
 
 <li class="nav-item menu-items">
@@ -33,7 +40,7 @@
 <li class="nav-item menu-items">
     <a class="nav-link" href="{{ url('/business/settings/edit_mpesa') }}">
       <span class="menu-icon">
-        <i class="mdi mdi-settings"></i> <!-- More intuitive settings -->
+        <i class="mdi mdi-cog-outline"></i> <!-- More intuitive settings -->
       </span>
       <span class="menu-title">Settings</span>
     </a>
@@ -47,7 +54,12 @@
       <span class="menu-title">Users</span>
       <i class="menu-arrow"></i>
     </a>
-  
+      <div class="collapse" id="users-menu">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{{ route('admin.users.create') }}">Add User</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('admin.users.index') }}">Show Users</a></li>
+              </ul>
+            </div>
 </li>
 
 <li class="nav-item menu-items">
@@ -76,7 +88,15 @@
       <span class="menu-title">IncomeStatement</span>
       <i class="menu-arrow"></i>
     </a>
-  
+     <div class="collapse" id="auth">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{{route('admin.income-statement')}}"> Generate </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{route('expenses.index')}}"> Expenses </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{ route('expenses.create') }}"> Add Expenses </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{route('other-incomes.index')}}"> Other Incomes </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{{route('other-incomes.create')}}"> Add other incomes </a></li>
+              </ul>
+            </div>
 </li>
 
 <li class="nav-item menu-items">

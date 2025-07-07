@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 
-Schedule::command(SuspendOverdueBusinesses::class)->daily();
+Schedule::command(SuspendOverdueBusinesses::class)->everyMinute();
