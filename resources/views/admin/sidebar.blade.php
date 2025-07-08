@@ -1,6 +1,35 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
-       <!-- Updated Icon Classes -->
+       <li class="nav-item menu-items">
+            <a class="nav-link" data-bs-toggle="collapse" href="#dashboard-menu" aria-expanded="false" aria-controls="dashboard-menu">
+              <span class="menu-icon">
+                <i class="mdi mdi-view-dashboard"></i>
+              </span>
+              <span class="menu-title">Dashboard</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="dashboard-menu">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item">
+                    <div class="font-medium text-base">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-sm">{{ Auth::user()->email }}</div>
+                </li>
+                <li class="nav-item">
+                    <a class="dropdown-item" href="{{ route('profile.edit') }}"> {{ __('Profile') }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('logout') }}"
+                       onclick="event.preventDefault();
+                                     document.getElementById('logout-form').submit();">
+                        {{ __('Log Out') }}
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        @csrf
+                    </form>
+                </li>
+              </ul>
+            </div>
+        </li>
 <li class="nav-item menu-items">
     <a class="nav-link" href="{{url('/homeAdmin')}}">
       <span class="menu-icon">
@@ -40,7 +69,7 @@
 <li class="nav-item menu-items">
     <a class="nav-link" href="{{ url('/business/settings/edit_mpesa') }}">
       <span class="menu-icon">
-        <i class="mdi mdi-cog-outline"></i> <!-- More intuitive settings -->
+        <i class="mdi mdi-settings"></i> <!-- More intuitive settings -->
       </span>
       <span class="menu-title">Settings</span>
     </a>
