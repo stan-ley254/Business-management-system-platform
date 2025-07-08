@@ -64,6 +64,7 @@ return redirect()->back();
     'price'            => 'required|numeric|min:0',
     'discount_price'   => 'nullable|numeric|min:0|lte:price',
     'quantity'         => 'required|integer|min:0',
+    'barcode'            => 'nullable|numeric|min:0',
     'category'         => 'required|string|max:100'
    ]);
    
@@ -73,6 +74,7 @@ return redirect()->back();
     $product->price=$request->price;
     $product->discount_price=$request->discount_price;
     $product->quantity=$request->quantity;
+    $product->barcode=$request->barcode;
     $product->category=$request->category;
     $product->save();
 
@@ -229,7 +231,7 @@ $product->update($request->all());
         }
 
         $header = array_map('trim', array_shift($productsArray));
-        $requiredHeaders = ['product_name', 'description','cost_price', 'price', 'discount_price', 'quantity', 'in_stock', 'category'];
+        $requiredHeaders = ['product_name', 'description','cost_price', 'price', 'discount_price', 'quantity','barcode', 'in_stock', 'category'];
 
         if ($header !== $requiredHeaders) {
             return redirect()->back()->with('error', 'The uploaded file does not have the required headers.');
@@ -252,6 +254,7 @@ $product->update($request->all());
                 'discount_price' => 'nullable|numeric',
                 'in_stock' => 'required|numeric',
                 'quantity' => 'required|integer',
+                'barcode'=>'nullable|numeric',
                 'category' => 'required|string|max:255',
             ]);
 
@@ -283,6 +286,7 @@ $product->update($request->all());
                     'price' => $data['price'],
                     'discount_price' => $data['discount_price'],
                     'quantity' => $data['quantity'],
+                    'barcode' => $data['barcode'],
                     'in_stock' => $data['in_stock'],
                     'category' => $data['category'],
                     'business_id' => $businessId,

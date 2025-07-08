@@ -91,6 +91,18 @@ public function show(){
         return response()->json(['success' => 'Products added to cart successfully']);
     }
 
+    public function getProductByBarcode($barcode)
+{
+    $product = Product::where('barcode', $barcode)->first();
+
+    if ($product) {
+        return response()->json(['status' => 'success', 'product' => $product]);
+    } else {
+        return response()->json(['status' => 'error', 'message' => 'Product not found.'], 404);
+    }
+}
+
+
 
 public function filterSales(Request $request)
 {
@@ -756,6 +768,29 @@ public function filterSales(Request $request)
 
     return redirect()->back()->with('success', 'Product Sold!');
 }
+
+public function addByBarcode(Request $request)
+{
+    $barcode = $request->barcode;
+
+    $product = Product::where('barcode', $barcode)->first();
+
+    if (!$product) {
+        return response()->json(['message' => 'Product not found'], 404);
+    }
+
+    CartItem::create([
+        'cart_id' => session('cart_id') ?? Cart::create(['business_id' => auth()->user()->business_id])->id,
+        'product_id' => $product->id,
+        'product_name' => $product->product_name,
+        'description' => $product->description,
+        'price' => $product->price,
+        'quantity' => 1,
+    ]);
+
+    return response()->json(['message' => 'Product added to cart']);
+}
+
 
     public function deleteCartItem($id)
     {

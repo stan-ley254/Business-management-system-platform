@@ -33,6 +33,7 @@ protected $fillable = [
     'price',
     'discount_price',
     'quantity',
+    'barcode',
     'category',
     'business_id'
     

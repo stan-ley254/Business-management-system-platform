@@ -116,7 +116,11 @@
                       </div>
                       <div class="form-group">
                         <label for="quantity" class="text-success">Quantity</label>
-                        <input type="number" class="input-group" min="0" name="quantity" id="exampleInputPassword4" placeholder="Quantity">
+                        <input type="number" class="input-group" min="0" name="quantity" id="exampleInputPassword2" placeholder="Quantity">
+                      </div>
+                      <div class="form-group">
+                        <label for="barcode" class="text-success">Barcode</label>
+                        <input type="number" class="input-group" min="0" name="barcode" id="exampleInputPassword4" placeholder="Barcode">
                       </div>
                       <div class="form-group">
                         <label for="category" class="text-success">Category</label>

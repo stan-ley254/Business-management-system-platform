@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('price',10,2);
             $table->decimal('discount_price',10,2)->nullable();
             $table->integer('quantity');
+            $table->string('barcode')->unique()->nullable();
             $table->boolean('in_stock')->default(true);
             $table->string('category');
            
