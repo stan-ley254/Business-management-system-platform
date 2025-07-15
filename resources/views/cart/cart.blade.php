@@ -224,54 +224,7 @@
 <script src="{{ asset('/js/jquery-3.7.1.min.js') }}"></script>
 <script src="{{ asset('/js/scriptsfiles.js') }}"></script>
 <script>
-document.getElementById('start-scan-btn').addEventListener('click', function () {
-    const scannerContainer = document.getElementById('scanner-container');
-    scannerContainer.style.display = 'block';
 
-    Quagga.init({
-        inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: document.querySelector('#barcode-scanner'),
-            constraints: {
-                facingMode: "environment" // back camera
-            },
-        },
-        decoder: {
-            readers: ["ean_reader", "code_128_reader"] // Customize based on barcode type
-        },
-    }, function (err) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        Quagga.start();
-    });
 
-    Quagga.onDetected(function (result) {
-        const barcode = result.codeResult.code;
-        console.log("Scanned:", barcode);
-
-        // Send barcode to Laravel route via AJAX to find product and add to cart
-        $.ajax({
-            url: '/scan-product',
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                barcode: barcode
-            },
-            success: function (response) {
-                alert(response.message || 'Product added!');
-                window.location.reload(); // Refresh to show cart updates
-            },
-            error: function () {
-                alert('Product not found or error occurred.');
-            }
-        });
-
-        Quagga.stop();
-        scannerContainer.style.display = 'none';
-    });
-});
 </script>
 

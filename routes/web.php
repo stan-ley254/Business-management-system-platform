@@ -85,6 +85,8 @@ Route::middleware('weigher','auth')->group(function () {
      Route::post('/updateSupplier/{id}', [SuperController::class, 'updateSupplier']);
      Route::delete('/destroySupplier/{id}', [SuperController::class, 'destroySupplier']);
      Route::post('/scan-product', [SuperController::class, 'addByBarcode']);
+     Route::post('/add-cart-by-barcode', [SuperController::class, 'addCartByBarcode']);
+
 
  
 });

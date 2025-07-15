@@ -26,6 +26,75 @@ function handleResponseData(response) {
     // Handle JSON responses
     return response;
 }
+document.getElementById('start-scan-btn').addEventListener('click', function () {
+    const scannerContainer = document.getElementById('scanner-container');
+    scannerContainer.style.display = 'block';
+
+    Quagga.init({
+        inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: document.querySelector('#barcode-scanner'),
+            constraints: {
+                facingMode: "environment"
+            },
+        },
+        decoder: {
+            readers: ["ean_reader", "code_128_reader"]
+        },
+    }, function (err) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        Quagga.start();
+    });
+
+    Quagga.onDetected(function (result) {
+        const barcode = result.codeResult.code;
+        console.log("Scanned:", barcode);
+
+        // Prevent multiple detections
+        Quagga.offDetected();
+
+        // Optional: show loading or feedback
+        showResponseMessage('Processing scanned product...', 'info');
+
+        // Send to backend
+        $.ajax({
+            url: '/add-cart-by-barcode',
+            method: 'POST',
+            data: {
+                barcode: barcode,
+                quantity: 1
+            },
+            success: function (response) {
+                console.log('Scan Response:', response);
+
+                if (response.status === 'success') {
+                    if (response.cartItem) {
+                        updateCartDisplay(response.cartItem);
+                    } else {
+                        loadCartItems(); // fallback if cartItem is missing
+                    }
+
+                    updateTotalAmount();
+                    showResponseMessage(response.message || 'Product added successfully');
+                } else {
+                    showResponseMessage(response.message || 'Product not found', 'danger');
+                }
+
+                Quagga.stop();
+                scannerContainer.style.display = 'none';
+            },
+            error: function () {
+                showResponseMessage('Error occurred while adding product', 'danger');
+                Quagga.stop();
+                scannerContainer.style.display = 'none';
+            }
+        });
+    });
+});
 
 // Enhanced show response message function
 function showResponseMessage(response, type = 'success') {

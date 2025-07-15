@@ -101,6 +101,95 @@ public function show(){
         return response()->json(['status' => 'error', 'message' => 'Product not found.'], 404);
     }
 }
+public function addCartByBarcode(Request $request)
+{
+    try {
+        $barcode = $request->input('barcode');
+        $quantity = max(1, (int)$request->input('quantity', 1));
+
+        $product = Product::where('barcode', $barcode)->first();
+
+        if (!$product) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found with this barcode.'
+            ], 404);
+        }
+
+        if (!$product->in_stock || $product->quantity < $quantity) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Insufficient stock.'
+            ], 400);
+        }
+
+        // Add to cart
+        $cartId = session('cart_id');
+        $cart = Cart::find($cartId);
+
+        if (!$cart) {
+            $cart = Cart::create();
+            session(['cart_id' => $cart->id]);
+        }
+
+        $cartItem = CartItem::where('cart_id', $cart->id)
+                            ->where('product_id', $product->id)
+                            ->first();
+
+        if ($cartItem) {
+            $newQuantity = $cartItem->quantity + $quantity;
+
+            if ($newQuantity > $product->quantity) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Requested quantity exceeds available stock.'
+                ]);
+            }
+
+            $cartItem->quantity = $newQuantity;
+            $cartItem->save();
+        } else {
+            $cartItem = CartItem::create([
+                'cart_id' => $cart->id,
+                'product_id' => $product->id,
+                'quantity' => $quantity,
+                'product_name' => $product->product_name,
+                'description' => $product->description,
+                'price' => $product->price,
+                'discount_price' => $product->discount_price,
+            ]);
+        }
+
+        // Decrease stock
+        $product->quantity -= $quantity;
+        if ($product->quantity <= 0) {
+            $product->in_stock = false;
+        }
+        $product->save();
+
+        // Refresh cartItem with full data (in case we need to send it to frontend)
+        $cartItem->refresh();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product added successfully to cart.',
+            'cartItem' => [
+                'id' => $cartItem->id,
+                'product_id' => $cartItem->product_id,
+                'product_name' => $cartItem->product_name,
+                'description' => $cartItem->description,
+                'quantity' => $cartItem->quantity,
+                'price' => $cartItem->price,
+                'active_price' => $cartItem->discount_price, // assumed to be the active one
+            ]
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Something went wrong: ' . $e->getMessage()
+        ], 500);
+    }
+}
 
 
 
