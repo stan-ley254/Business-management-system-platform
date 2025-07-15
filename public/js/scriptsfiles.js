@@ -143,82 +143,77 @@ $(document).ready(function() {
     }
 
     // Function to update cart display
-    function updateCartDisplay(cartItem) {
-        const cartBody = $('#cart-items');
-        const existingRow = $(`tr[data-product-id="${cartItem.product_id}"]`);
-        
-        const originalPrice = formatPrice(cartItem.price);
-        const activePrice = cartItem.active_price ? formatPrice(cartItem.active_price) : 'N/A';
-        
-        const priceDisplay = cartItem.active_price 
-            ? `<span class="strikethrough">${originalPrice}</span>`
-            : originalPrice;
-        
-        const rowHtml = `
-            <tr data-product-id="${cartItem.product_id}">
-                <td>${cartItem.product_id}</td>
-                <td>${cartItem.product_name}</td>
-                <td>${cartItem.description}</td>
-                <td>${priceDisplay}</td>
-                <td>${activePrice}</td>
-                <td>${cartItem.quantity}</td>
-                <td>
-                    <form class="update-cart-form" data-item-id="${cartItem.id}">
-                        <div class="form-group">
-                            <input type="number" 
-                                   min="1" 
-                                   name="quantity" 
-                                   value="${cartItem.quantity}" 
-                                   class="form-control mb-2">
-                            <input type="number" 
-                                   name="active_price" 
-                                   step="0.01" 
-                                   placeholder="Enter active price" 
-                                   value="${cartItem.active_price || ''}" 
-                                   class="form-control">
-                        </div>
-                        <button class="btn btn-success mt-2 rounded update-cart-btn" type="submit">
-                            <i class="fas fa-sync-alt"></i> Update
-                        </button>
-                    </form>
-                </td>
-                <td>
-                    <button class="btn btn-danger btn-sm delete-item" data-item-id="${cartItem.id}">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </td>
-            </tr>
-        `;
-    
-        if (existingRow.length) {
-            existingRow.replaceWith(rowHtml);
-        } else {
-            if (cartBody.find('tr').length === 0) {
-                $('.custom-table-container').html(`
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Product ID</th>
-                                    <th>Product Name</th>
-                                    <th>Description</th>
-                                    <th>Original Price</th>
-                                    <th>Active Price</th>
-                                    <th>Quantity</th>
-                                    <th>Update Quantity & Active Price</th>
-                                    <th>Delete</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cart-items"></tbody>
-                        </table>
-                    </div>
-                `);
-            }
-            $('#cart-items').append(rowHtml);
-        }
-    
-        updateTotalAmount();
+   function updateCartDisplay(cartItem) {
+    // If cart table doesn’t exist yet, build it
+    if ($('#cart-items').length === 0) {
+        $('.custom-table-container').html(`
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            <th>Description</th>
+                            <th>Original Price</th>
+                            <th>Active Price</th>
+                            <th>Quantity</th>
+                            <th>Update Quantity & Active Price</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items"></tbody>
+                </table>
+            </div>
+        `);
     }
+
+    const cartBody = $('#cart-items');
+    const existingRow = $(`tr[data-product-id="${cartItem.product_id}"]`);
+
+    const originalPrice = formatPrice(cartItem.price);
+    const activePrice = cartItem.discount_price ? formatPrice(cartItem.discount_price) : 'N/A';
+
+    const priceDisplay = cartItem.discount_price
+        ? `<span class="strikethrough">${originalPrice}</span>`
+        : originalPrice;
+
+    const rowHtml = `
+        <tr data-product-id="${cartItem.product_id}">
+            <td>${cartItem.product_id}</td>
+            <td>${cartItem.product_name}</td>
+            <td>${cartItem.description}</td>
+            <td>${priceDisplay}</td>
+            <td>${activePrice}</td>
+            <td>${cartItem.quantity}</td>
+            <td>
+                <form class="update-cart-form" data-item-id="${cartItem.id}">
+                    <div class="form-group">
+                        <input type="number" min="1" name="quantity" value="${cartItem.quantity}" class="form-control mb-2">
+                        <input type="number" name="active_price" step="0.01" placeholder="Enter active price" value="${cartItem.discount_price || ''}" class="form-control">
+                    </div>
+                    <button class="btn btn-success mt-2 rounded update-cart-btn" type="submit">
+                        <i class="fas fa-sync-alt"></i> Update
+                    </button>
+                </form>
+            </td>
+            <td>
+                <button class="btn btn-danger btn-sm delete-item" data-item-id="${cartItem.id}">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </td>
+        </tr>
+    `;
+
+    if (existingRow.length) {
+        existingRow.replaceWith(rowHtml);
+    } else {
+        cartBody.append(rowHtml);
+    }
+
+    updateTotalAmount();
+}
+
+  
 
     // Helper function to update total amount
     function updateTotalAmount() {
