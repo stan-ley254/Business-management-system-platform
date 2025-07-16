@@ -30,37 +30,43 @@ document.getElementById('start-scan-btn').addEventListener('click', function () 
     const scannerContainer = document.getElementById('scanner-container');
     scannerContainer.style.display = 'block';
 
-    Quagga.init({
-        inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: document.querySelector('#barcode-scanner'),
-            constraints: {
-                facingMode: "environment"
-            },
-        },
-        decoder: {
-            readers: ["ean_reader", "code_128_reader"]
-        },
-    }, function (err) {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        Quagga.start();
-    });
+    const beep = new Audio('/sounds/short-beep-tone.mp3'); // You must provide this file
 
-    Quagga.onDetected(function (result) {
+    function startScanner() {
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector('#barcode-scanner'),
+                constraints: {
+                    facingMode: "environment"
+                },
+            },
+            decoder: {
+                readers: ["ean_reader", "code_128_reader"]
+            },
+        }, function (err) {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            Quagga.start();
+        });
+
+        Quagga.onDetected(processScan);
+    }
+
+    function processScan(result) {
         const barcode = result.codeResult.code;
         console.log("Scanned:", barcode);
 
         // Prevent multiple detections
         Quagga.offDetected();
+        Quagga.stop();
 
-        // Optional: show loading or feedback
+        beep.play();
         showResponseMessage('Processing scanned product...', 'info');
 
-        // Send to backend
         $.ajax({
             url: '/add-cart-by-barcode',
             method: 'POST',
@@ -75,26 +81,34 @@ document.getElementById('start-scan-btn').addEventListener('click', function () 
                     if (response.cartItem) {
                         updateCartDisplay(response.cartItem);
                     } else {
-                        loadCartItems(); // fallback if cartItem is missing
+                        loadCartItems(); // Fallback
                     }
 
                     updateTotalAmount();
                     showResponseMessage(response.message || 'Product added successfully');
+
                 } else {
                     showResponseMessage(response.message || 'Product not found', 'danger');
                 }
 
-                Quagga.stop();
-                scannerContainer.style.display = 'none';
+                // Restart scanner after short delay
+                setTimeout(() => {
+                    startScanner();
+                }, 1500);
             },
             error: function () {
                 showResponseMessage('Error occurred while adding product', 'danger');
-                Quagga.stop();
-                scannerContainer.style.display = 'none';
+
+                setTimeout(() => {
+                    startScanner();
+                }, 1500);
             }
         });
-    });
+    }
+
+    startScanner();
 });
+
 
 // Enhanced show response message function
 function showResponseMessage(response, type = 'success') {
