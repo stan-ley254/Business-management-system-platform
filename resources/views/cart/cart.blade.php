@@ -87,7 +87,7 @@
                     </div>
                 @endif
             </div>
-                    <div id="alert-container" class="message rounded">
+            
     <!-- Messages will be dynamically inserted here -->
 </div>
             <div class="custom-form-container ">

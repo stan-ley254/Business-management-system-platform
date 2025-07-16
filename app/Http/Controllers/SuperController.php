@@ -180,7 +180,7 @@ public function addCartByBarcode(Request $request)
                 'description' => $cartItem->description,
                 'quantity' => $cartItem->quantity,
                 'price' => $cartItem->price,
-                'active_price' => $cartItem->discount_price, // assumed to be the active one
+                'discount_price' => $cartItem->discount_price, // assumed to be the active one
             ]
         ]);
     } catch (\Exception $e) {

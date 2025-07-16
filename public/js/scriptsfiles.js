@@ -26,11 +26,13 @@ function handleResponseData(response) {
     // Handle JSON responses
     return response;
 }
+
+
 document.getElementById('start-scan-btn').addEventListener('click', function () {
     const scannerContainer = document.getElementById('scanner-container');
     scannerContainer.style.display = 'block';
 
-    const beep = new Audio('/sounds/short-beep-tone.mp3'); // You must provide this file
+    const beep = new Audio('/sounds/short-beep-tone.mp3');
 
     function startScanner() {
         Quagga.init({
@@ -58,13 +60,14 @@ document.getElementById('start-scan-btn').addEventListener('click', function () 
 
     function processScan(result) {
         const barcode = result.codeResult.code;
-        console.log("Scanned:", barcode);
 
-        // Prevent multiple detections
+        // Prevent double-detection
         Quagga.offDetected();
         Quagga.stop();
 
+        // Play beep ONLY after a scan
         beep.play();
+
         showResponseMessage('Processing scanned product...', 'info');
 
         $.ajax({
@@ -79,36 +82,33 @@ document.getElementById('start-scan-btn').addEventListener('click', function () 
 
                 if (response.status === 'success') {
                     if (response.cartItem) {
-                        updateCartDisplay(response.cartItem);
+                        // Adjust discount_price aliasing
+                        const item = response.cartItem;
+                        item.discount_price = item.discount_price ?? item.active_price ?? null;
+
+                        updateCartDisplay(item); // Show the scanned item instantly
+                        updateTotalAmount();
                     } else {
                         loadCartItems(); // Fallback
                     }
 
-                    updateTotalAmount();
                     showResponseMessage(response.message || 'Product added successfully');
-
                 } else {
                     showResponseMessage(response.message || 'Product not found', 'danger');
                 }
 
                 // Restart scanner after short delay
-                setTimeout(() => {
-                    startScanner();
-                }, 1500);
+                setTimeout(() => startScanner(), 1500);
             },
             error: function () {
                 showResponseMessage('Error occurred while adding product', 'danger');
-
-                setTimeout(() => {
-                    startScanner();
-                }, 1500);
+                setTimeout(() => startScanner(), 1500);
             }
         });
     }
 
     startScanner();
 });
-
 
 // Enhanced show response message function
 function showResponseMessage(response, type = 'success') {
@@ -185,9 +185,9 @@ $(document).ready(function() {
     const existingRow = $(`tr[data-product-id="${cartItem.product_id}"]`);
 
     const originalPrice = formatPrice(cartItem.price);
-    const activePrice = cartItem.discount_price ? formatPrice(cartItem.discount_price) : 'N/A';
+    const activePrice = cartItem.active_price ? formatPrice(cartItem.active_price) : 'N/A';
 
-    const priceDisplay = cartItem.discount_price
+    const priceDisplay = cartItem.active_price
         ? `<span class="strikethrough">${originalPrice}</span>`
         : originalPrice;
 
