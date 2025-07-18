@@ -87,9 +87,7 @@
                     </div>
                 @endif
             </div>
-            
-    <!-- Messages will be dynamically inserted here -->
-</div>
+
             <div class="custom-form-container ">
  
                 <div class="custom-header">
@@ -124,7 +122,6 @@
                         </div>
                     </div>
                 </div>
-   
                 <div class="custom-table-container">
                     
                     @if(isset($cartItems) && !$cartItems->isEmpty())
@@ -205,14 +202,21 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="mpesaPaymentForm">
-          @csrf
-          <div class="mb-3">
-            <label for="phoneNumber" class="form-label">Customer Phone Number</label>
-            <input type="text" class="form-control" id="phoneNumber" name="phone" placeholder="e.g. 07XXXXXXXX" required>
-          </div>
-          <button type="submit" class="btn btn-success w-100">Pay with M-Pesa</button>
-        </form>
+       <form id="mpesaPaymentForm">
+  @csrf
+  <div class="mb-3">
+    <label for="phoneNumber" class="form-label">Customer Phone Number</label>
+    <input type="text" class="form-control" id="phoneNumber" name="phone" placeholder="e.g. 07XXXXXXXX" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="mpesaAmount" class="form-label">Amount to Pay via M-Pesa</label>
+    <input type="number" class="form-control" id="mpesaAmount" name="amount" min="1" required>
+  </div>
+
+  <button type="submit" class="btn btn-success w-100">Pay with M-Pesa</button>
+</form>
+
         <div id="paymentStatus" class="mt-3 text-center"></div>
       </div>
     </div>

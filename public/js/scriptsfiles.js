@@ -92,7 +92,7 @@ document.getElementById('start-scan-btn').addEventListener('click', function () 
                         loadCartItems(); // Fallback
                     }
 
-                    showResponseMessage(response.message || 'Product added successfully');
+                    showResponseMessage(response.message || 'Product added successfully','success');
                 } else {
                     showResponseMessage(response.message || 'Product not found', 'danger');
                 }
@@ -296,33 +296,35 @@ $(document).ready(function() {
     });
 
     document.getElementById('mpesaPaymentForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-    
-        const phone = document.getElementById('phoneNumber').value;
-        const statusDiv = document.getElementById('paymentStatus');
-        statusDiv.innerText = 'Processing payment...';
-    
-        try {
-            const res = await fetch("{{ route('mpesa.stkpush') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: JSON.stringify({ phone })
-            });
-    
-            const data = await res.json();
-    
-            if (res.ok && data.ResponseCode === "0") {
-                statusDiv.innerHTML = '<span class="text-success">STK push sent. Complete the payment on your phone.</span>';
-            } else {
-                statusDiv.innerHTML = '<span class="text-danger">Payment failed: ' + (data.errorMessage || 'Unknown error') + '</span>';
-            }
-        } catch (err) {
-            statusDiv.innerHTML = '<span class="text-danger">Error contacting payment server.</span>';
+    e.preventDefault();
+
+    const phone = document.getElementById('phoneNumber').value;
+    const amount = document.getElementById('mpesaAmount').value;
+    const statusDiv = document.getElementById('paymentStatus');
+    statusDiv.innerText = 'Processing payment...';
+
+    try {
+        const res = await fetch("{{ route('mpesa.stkpush') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: JSON.stringify({ phone, amount })
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.ResponseCode === "0") {
+            statusDiv.innerHTML = '<span class="text-success">STK push sent. Complete the payment by Receipient entering their Mpesa Pin.</span>';
+        } else {
+            statusDiv.innerHTML = '<span class="text-danger">Payment failed: ' + (data.errorMessage || 'Unknown error') + '</span>';
         }
-    });
+    } catch (err) {
+        statusDiv.innerHTML = '<span class="text-danger">Error contacting payment server.</span>';
+    }
+});
+
 
     // Handle cart item updates - single implementation
     $(document).on('submit', '.update-cart-form', function(e) {

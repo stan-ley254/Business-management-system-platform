@@ -154,7 +154,11 @@ Route::get('/documentation', [AdminController::class, 'documentation']);
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/business/settings/edit_mpesa', [BusinessSettingsController::class, 'editMpesa'])->name('business.mpesa.edit');
         Route::post('/business/settings/edit_mpesa', [BusinessSettingsController::class, 'updateMpesa'])->name('business.mpesa.update');
-      
+      // M-Pesa Payment Trigger (POST)
+Route::post('/mpesa/stkpush', [BusinessSettingsController::class, 'stkPush'])->name('mpesa.stkpush');
+
+// Callback URL for STK Push Response
+Route::post('/mpesa/callback/{business}', [BusinessSettingsController::class, 'handleCallback'])->name('mpesa.callback');
     });
     Route::get('/business/settings/mpesa', [BusinessSettingsController::class, 'createMpesa'])->name('business.mpesa.create');
     Route::post('/business/settings/mpesa', [BusinessSettingsController::class, 'storeMpesa'])->name('business.mpesa.store');
@@ -174,8 +178,8 @@ Route::middleware(['auth', 'only.superadmin'])->post('/superadmin/set-due-date',
 
      
    
-    Route::post('/stkpush', [MpesaController::class, 'stkPush']);
-Route::post('/mpesa/callback', [MpesaController::class, 'callback'])->name('mpesa.callback');
+    Route::post('/stkpush', [BusinessSettingsController::class, 'stkPush']);
+Route::post('/mpesa/callback', [BusinessSettingsController::class, 'callback'])->name('mpesa.callback');
 });
 Route::middleware(['auth', 'only.superadmin'])->patch('/toggleBusiness/{business}', [BusinessController::class, 'toggleBusiness']);
 
