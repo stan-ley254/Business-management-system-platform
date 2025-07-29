@@ -15,6 +15,7 @@ class Business extends Model
 
     protected $fillable = [
         'name',
+        'type',
         'next_payment_due',
         'is_active',
         'mpesa_short_code',

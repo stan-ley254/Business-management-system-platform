@@ -17,9 +17,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(RoleSeeder::class); // 1. Create roles first
-        $this->call(SuperAdminSeeder::class);
-        // 2. Create a business (you can create more as needed)
+        $this->call(RoleSeeder::class); 
+      
 
         User::firstOrCreate([
             'email' => 'superadmin@gmail.com',

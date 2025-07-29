@@ -37,6 +37,8 @@ public function store(Request $request)
 
 public function edit(Other_Income $otherIncome)
 {
+
+    
     return view('admin.other_incomes.create', compact('otherIncome'));
 }
 

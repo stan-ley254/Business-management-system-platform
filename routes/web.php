@@ -9,6 +9,8 @@ use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusinessSettingsController;
 use App\Http\Controllers\IncomeStatementController;
 use App\Http\Controllers\OtherIncomeController;
+use App\Http\Controllers\ServiceAdminController;
+use App\Http\Controllers\ServiceUserController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
@@ -104,6 +106,9 @@ Route::middleware('weigher','auth')->group(function () {
         Route::get('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
   
     });
+Route::middleware(['auth', 'role:admin'])->get('/serviceAdmin', [ServiceAdminController::class, 'serviceAdmin']);
+
+Route::middleware(['auth', 'role:user'])->get('/serviceUser', [ServiceUserController::class, 'serviceUser']);
 
     Route::middleware(['auth','weigher','role:admin'])->group(function () {
  // Category Routes

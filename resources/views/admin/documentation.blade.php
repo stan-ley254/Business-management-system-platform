@@ -122,17 +122,17 @@
   <section class="margin-top-custom">
   <div class="preview-wrapper">
     <!-- Fullscreen Desktop Image -->
-    <img src="./img/newsale_desktop.png" alt="Full View" class="preview-desktop" />
+    <img src="./img/desktop_cart.png" alt="Full View" class="preview-desktop" />
 
     <!-- Mobile Mockup Overlap -->
     <div class="preview-mobile">
-      <img src="./img/newsale_phone.png" alt="Mobile View" />
+      <img src="./img/phone_cart.png" alt="Mobile View" />
     </div>
   </div>
  
     </section>
      <ul class="section-list text-black mt-4">
-      <li>Select a product and enter quantity to add to the cart.</li>
+      <li>Select a product or scan to add to the cart.</li>
       <li>Update the quantity or set a temporary active price for a product in the cart.</li>
       <li>Remove an item using the <strong>Delete</strong> button.</li>
       <li>Use the <strong>Checkout</strong> dropdown to complete the sale with either Cash, M-Pesa, or Card.</li>

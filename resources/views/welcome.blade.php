@@ -108,7 +108,7 @@
                         <a class="nav-link dropdown-toggle" href="#services" id="navbarDropdown" role="button" data-bs-toggle="dropdown">Our Services</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{{route('login')}}">Business Management System</a></li>
-                            <li><a class="dropdown-item" href="#">Future Solution Placeholder</a></li>
+                            <li><a class="dropdown-item" href="{{route('login')}}">Point of Service</a></li>
                         </ul>
                     </li>
                     <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>

@@ -13,6 +13,8 @@ use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use App\Models\Business;
 use App\Models\Role;
+use Illuminate\Validation\Rule;
+
 
 
 class RegisteredUserController extends Controller
@@ -35,15 +37,17 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'business_name' => ['required', 'string', 'max:255'],
+            'business_type' => ['required', Rule::in(['pos', 'service'])],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+
         // Create the Business first
         $business = Business::create([
             'name' => $request->business_name,
+            'type' => $request->business_type,
         ]);
-
         // Find the 'admin' Role
         $adminRole = Role::where('name', 'admin')->first();
 
@@ -61,6 +65,14 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect('/homeAdmin')->with('success','User registered sucessfully');
+// Load the business relationship just in case
+$user->load('business');
+
+if ($user->business->type === 'pos') {
+    return redirect('/homeAdmin')->with('success', 'User registered successfully');
+} elseif ($user->business->type === 'service') {
+    return redirect('/serviceAdmin')->with('success', 'User registered successfully');
+}
+
     }
 }

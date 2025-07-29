@@ -25,30 +25,42 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
         $user = Auth::user();
 
- // ✅ Check for Super Admin flag directly
- if ($user->is_superadmin) {
-    return redirect('/homeSuperAdmin');
-}
-
-$user->load('role');
-
-// 🔥 Redirect based on role
-if ($user->role?->name === 'admin') {
-    return redirect('/homeAdmin');
-} elseif ($user->role?->name === 'user') {
-    return redirect('/homeUser');
-} else {
-            Auth::logout();
-            return redirect('/login')->withErrors([
-                'email' => 'Unauthorized role access.',
-            ]);
+        // ✅ Super Admin check
+        if ($user->is_superadmin) {
+            return redirect('/homeSuperAdmin');
         }
+
+        $user->load(['role', 'business']);
+
+        $role = $user->role?->name;
+        $businessType = $user->business?->type; // expects 'pos' or 'service'
+
+        // 🔥 Redirect based on role + business type
+        if ($role === 'admin') {
+            if ($businessType === 'pos') {
+                return redirect('/homeAdmin');
+            } elseif ($businessType === 'service') {
+                return redirect('/serviceAdmin');
+            }
+        } elseif ($role === 'user') {
+            if ($businessType === 'pos') {
+                return redirect('/homeUser');
+            } elseif ($businessType === 'service') {
+                return redirect('/serviceUser');
+            }
+        }
+
+        // ❌ Unauthorized fallback
+        Auth::logout();
+        return redirect('/login')->withErrors([
+            'email' => 'Unauthorized role access.',
+        ]);
     }
+
     /**
      * Destroy an authenticated session.
      */
@@ -57,7 +69,6 @@ if ($user->role?->name === 'admin') {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');
