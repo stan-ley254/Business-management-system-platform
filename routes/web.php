@@ -13,6 +13,8 @@ use App\Http\Controllers\ServiceAdminController;
 use App\Http\Controllers\ServiceUserController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\ChatWithBusinessController;
+use App\Http\Controllers\HuggingFaceController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -93,6 +95,15 @@ Route::middleware('weigher','auth')->group(function () {
  
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/smart-analyst', [ChatWithBusinessController::class, 'showChat'])->name('sales.chat');
+    Route::post('/upload-sales', [ChatWithBusinessController::class, 'uploadSales'])->name('sales.upload');
+    Route::post('/ask-question', [ChatWithBusinessController::class, 'askBusinessQuestion'])->name('sales.ask');
+});
+
+Route::post('/huggingface/query', [HuggingFaceController::class, 'query']);
+
+
     Route::middleware(['auth','weigher', 'role:admin'])->get('/homeAdmin', [AdminController::class, 'homeAdmin']);
 
     Route::middleware(['auth','weigher' ,'role:user'])->get('/homeUser', [SuperController::class, 'homeUser']);
@@ -115,7 +126,7 @@ Route::middleware(['auth', 'role:user'])->get('/serviceUser', [ServiceUserContro
  Route::get('/view_category', [AdminController::class, 'view_category']);
  Route::post('/add_category', [AdminController::class, 'add_category']);
  Route::get('/delete_category/{id}', [AdminController::class, 'delete_category']);
-
+ Route::get('/serviceAdmin/chat', [HuggingFaceController::class, 'index'])->name('serviceadmin.chat');
  Route::get('/download-sales-csv/{filename}', [AdminController::class, 'downloadCsv'])
      ->name('download.sales.csv');
 

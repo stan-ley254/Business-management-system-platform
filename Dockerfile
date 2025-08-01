@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm && \
     docker-php-ext-install gd pdo pdo_pgsql mbstring bcmath exif pcntl zip
 
+    
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

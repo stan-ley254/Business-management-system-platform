@@ -136,6 +136,24 @@
       <span class="menu-title">Documentation</span>
     </a>
 </li>
+
+<li class="nav-item menu-items">
+    <a class="nav-link" href="{{ route('sales.chat') }}">
+        <span class="menu-icon">
+            <i class="mdi mdi-robot-outline"></i> <!-- Suitable icon for an AI assistant -->
+        </span>
+        <span class="menu-title">Smart Analyst</span>
+    </a>
+</li>
+<li class="nav-item menu-items">
+    <a class="nav-link" href="{{ route('serviceadmin.chat') }}">
+      <span class="menu-icon">
+        <i class="mdi mdi-chat-processing"></i>
+      </span>
+      <span class="menu-title">Smart Analyst Chat</span>
+    </a>
+</li>
+
       <!-- <li class="nav-item menu-items">
             <a class="nav-link" href="pages/icons/mdi.html">
               <span class="menu-icon">
