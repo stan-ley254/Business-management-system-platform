@@ -45,7 +45,7 @@
             color: #d4d4d4;
         }
         .hero {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('./img/justartback.png');
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('./img/saas1.png');
             background-size: cover;
             background-position: center;
             height: 90vh;
