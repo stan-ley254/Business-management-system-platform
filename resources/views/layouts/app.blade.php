@@ -10,6 +10,7 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        
                  <!-- Favicons -->
 <link rel="icon" href="/favicon_io/favicon.ico" type="image/x-icon">
 <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
@@ -18,7 +19,6 @@
 
 <!-- Manifest -->
 <link rel="manifest" href="/favicon_io/site.webmanifest">
-
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -40,5 +40,24 @@
                 {{ $slot }}
             </main>
         </div>
+       
+
+        <script>
+           
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('SW registered', reg))
+      .catch(err => console.warn('SW failed:', err));
+  });
+}
+</script>
+@if(session('api_token'))
+<script>
+    localStorage.setItem('api_token', @json(session('api_token')));
+</script>
+@endif
+
     </body>
 </html>

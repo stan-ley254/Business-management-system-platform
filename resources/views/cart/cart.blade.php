@@ -224,11 +224,13 @@
 </div>
 
 <script src="https://unpkg.com/@ericblade/quagga2@1.2.6/dist/quagga.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 <script src="{{ asset('/js/jquery-3.7.1.min.js') }}"></script>
 <script src="{{ asset('/js/scriptsfiles.js') }}"></script>
+@if(session('api_token'))
 <script>
-
-
+    localStorage.setItem('api_token', @json(session('api_token')));
 </script>
+@endif
+
 

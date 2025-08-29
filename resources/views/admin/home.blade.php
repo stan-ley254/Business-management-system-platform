@@ -4,9 +4,7 @@
     <!-- Required meta tags -->
     @include('admin.css')
     <style>
-      .sidebar{
-        position: fixed;
-      }
+  
       .custom-container {
           padding: 20px;
           background-color: #f8f9fa;

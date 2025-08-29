@@ -71,8 +71,9 @@
                 });
             });
     </script>
+
       <script>
-  document.getElementById('importForm').addEventListener('submit', function (e) {
+  .document.getElementById('importForm').addEventListener('submit', function (e) {
     const button = document.getElementById('importButton');
     const progressBar = document.getElementById('progressBar');
     const progressContainer = document.getElementById('importProgress');

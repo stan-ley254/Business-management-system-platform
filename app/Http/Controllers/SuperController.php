@@ -467,7 +467,7 @@ public function filterSales(Request $request)
                     'product_name' => $product->product_name,
                     'description' => $product->description,
                     'price' => $product->price,
-                    'discount_price' => $product->discount_price
+                 
                 ]);
                 
                 $cartItem->save();
@@ -1052,19 +1052,29 @@ public function createSupplier(){
     public function addToDebt(Request $request)
 {
     $cartId = session('cart_id');
-    $totalAmount = 0;
-    $cartItems = collect(); // Initialize an empty collection
-
+   
+$cart = Cart::find($cartId);
+    if (!$cart) {
+        return redirect()->back()->with('error', 'Cart not found.');
+    }
     if ($cartId) {
         $cartItems = CartItem::where('cart_id', $cartId)->get();
         if ($cartItems->isEmpty()) {
             return redirect()->back()->with('success', 'Cart is empty. Cannot add to debt.');
         }
+$productIds = $cartItems->pluck('product_id')->unique();
+    $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
+     $salesToInsert = [];
+    $debtAmount = 0;
+   
         foreach ($cartItems as $cartItem) {
-            $product = Product::find($cartItem->product_id);
+              $product = $products[$cartItem->product_id] ?? null;
+        if (!$product) continue;
             $price = $cartItem->active_price ?? $product->price;
-            $totalAmount += $price * $cartItem->quantity;
+             $LineTotal = $price * $cartItem->quantity;
+        $debtAmount += $LineTotal;
+
         }
     } else {
         return redirect()->back()->with('success', 'Cart is not found. Cannot add to debt.');
@@ -1078,7 +1088,7 @@ public function createSupplier(){
 
     $debt = new Debt();
     $debt->customer_id = $customer->id;
-    $debt->amount = $totalAmount;
+    $debt->amount = $debtAmount;
     $debt->status = 0;
     $debt->save();
 
@@ -1092,22 +1102,33 @@ public function createSupplier(){
             'quantity' => $cartItem->quantity,
         ]);
 
-        // Reduce the quantity in stock
-        $product = Product::find($cartItem->product_id);
-        if ($product) {
+         // Update product inventory
+        if ($product->quantity >= $cartItem->quantity) {
             $product->quantity -= $cartItem->quantity;
-            $product->save();
+        } else {
+            $product->quantity = 0;
+            $product->in_stock = false;
         }
+        $product->save();
 
-        // Save to Sales table
-        $sale = new Sales();
-        $sale->cart_id = $cartItem->cart_id;
-        $sale->product_name = $cartItem->product_name;
-        $sale->description = $cartItem->description;
-        $sale->price = $cartItem->price;
-        $sale->quantity = $cartItem->quantity;
-        $sale->total = $totalAmount;
-        $sale->save();
+        $salesToInsert[] = [
+            'cart_id'        => $cartItem->cart_id,
+            'product_name'   => $cartItem->product_name,
+            'description'    => $cartItem->description,
+            'price'          => $cartItem->price,
+            'active_price'   => $cartItem->active_price,
+            'discount_price' => $cartItem->discount_price,
+            'quantity'       => $cartItem->quantity,
+            'total'          => $LineTotal, // Correct: per-product total
+            'business_id'    => $cart->business_id,
+            'updated_at'     => now(),
+            'created_at'     => now(),
+        ];
+    }
+
+    // Bulk insert sales
+    if (!empty($salesToInsert)) {
+        Sales::insert($salesToInsert);
     }
 
     CartItem::where('cart_id', $cartId)->delete();

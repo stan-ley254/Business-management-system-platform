@@ -17,6 +17,7 @@ use App\Http\Controllers\ChatWithBusinessController;
 use App\Http\Controllers\HuggingFaceController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\SyncController;
 
 
 Route::get('/', function () {
@@ -94,6 +95,24 @@ Route::middleware('weigher','auth')->group(function () {
 
  
 });
+Route::get('/service-worker.js', function () {
+    return response()->file(public_path('service-worker.js'), [
+        'Content-Type' => 'application/javascript',
+    ]);
+});
+
+
+Route::middleware('auth:sanctum')->post('/sync/receive', [SyncController::class, 'receive'])->name('sync.receive');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/sync/push', [SyncController::class, 'push'])->name('sync.push');
+    Route::get('/sync/pull', [SyncController::class, 'pull'])->name('sync.pull'); // optional: server -> client updates
+});
+
+Route::post('/sync/sales', [SyncController::class, 'sales'])->middleware('auth');
+Route::post('/sync/updates', [SyncController::class, 'updates'])->middleware('auth');
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/smart-analyst', [ChatWithBusinessController::class, 'showChat'])->name('sales.chat');

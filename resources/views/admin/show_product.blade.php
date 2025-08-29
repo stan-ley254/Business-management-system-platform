@@ -53,6 +53,7 @@
                     <th>Quantity</th>
                     <th>Cost Price</th>
                     <th>Price</th>
+                    <th>Discount price</th>
                     <th>Category</th>
                     <th>Delete</th>
                     <th>Edit</th>
@@ -69,6 +70,7 @@
                 <td>{{$show->quantity}}</td>
                  <td>{{$show->cost_price}}</td>
                 <td>{{$show->price}}</td>
+                 <td>{{$show->discount_price}}</td>
                 <td>{{$show->category}}</td>
                <td>
                  <a onclick="return confirm('Are you sure you want to Delete this')" class="btn btn-danger" href="{{url('/delete_product',$show->id)}}">Delete</a>

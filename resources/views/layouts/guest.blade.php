@@ -33,5 +33,21 @@
                 {{ $slot }}
             </div>
         </div>
+        <script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('SW registered', reg))
+            .catch(err => console.error('SW registration failed', err));
+    });
+}
+
+</script>
+@if(session('api_token'))
+<script>
+    localStorage.setItem('api_token', @json(session('api_token')));
+</script>
+@endif
+
     </body>
 </html>

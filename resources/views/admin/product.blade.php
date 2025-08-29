@@ -50,19 +50,8 @@
         <div class="main-panel">
        
           <div class="content-wrapper">
-            @if(session()->has('message'))
-<div class="alert alert-success alter-dismissible fade show">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close" aria-hidden="true">
-        <span aria-hidden="true">&times;</span>
-    </button>
-    {{session()->get('message')}}
-</div>
-            @endif
-            <div>
-    
-   </div>
-   <div class="container">
-   @if(session('success'))
+          
+     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
@@ -72,14 +61,26 @@
             {{ session('error') }}
         </div>
     @endif
+      @if(session()->has('message'))
+<div class="alert alert-success alter-dismissible fade show">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close" aria-hidden="true">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    {{session()->get('message')}}
+</div>
+            @endif
+   <div class="container">
+  
 
     <form id="importForm" action="{{ url('/importProducts') }}" class="forms-sample mb-2" method="POST" enctype="multipart/form-data">
   @csrf
-  <div class="form-group">
+  <div class="input-group p-2">
     <label for="file">Choose CSV File</label>
-    <input type="file" name="file" id="file" class="input-group" required>
-  </div>
+    <input type="file" name="file" id="file" class="form-control text-white" required>
+ 
   <button type="submit" id="importButton" class="btn btn-primary">Import products</button>
+</div>
+</form>
 
   <div id="importProgress">
     <div id="importMessage">Importing products, please wait...</div>
@@ -87,9 +88,6 @@
       <div class="progress-bar-custom" id="progressBar">0%</div>
     </div>
   </div>
-</form>
-
-  
    <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">

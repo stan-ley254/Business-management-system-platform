@@ -29,6 +29,10 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
+           // 🔹 Create Sanctum token for offline sync
+    $token = $user->createToken('pos-browser')->plainTextToken;
+    session(['api_token' => $token]);
+
         // ✅ Super Admin check
         if ($user->is_superadmin) {
             return redirect('/homeSuperAdmin');
@@ -70,6 +74,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        session()->forget('api_token');
 
         return redirect('/');
     }

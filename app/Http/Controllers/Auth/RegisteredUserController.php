@@ -65,6 +65,11 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        // Create Sanctum token for POS offline sync
+$token = $user->createToken('pos-browser')->plainTextToken;
+session(['api_token' => $token]);
+
+
 // Load the business relationship just in case
 $user->load('business');
 
