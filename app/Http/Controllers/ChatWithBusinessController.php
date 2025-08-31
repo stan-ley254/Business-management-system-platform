@@ -7,10 +7,6 @@ use App\Models\UploadedSale;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use App\Models\Product;
-use App\Models\Sales;
-use App\Models\Dedt;
-use App\Models\Customer;
 
 class ChatWithBusinessController extends Controller
 {
@@ -35,43 +31,27 @@ class ChatWithBusinessController extends Controller
         return back()->with('success', 'Sales data uploaded!');
     }
 
-  public function askBusinessQuestion(Request $request)
+   public function askBusinessQuestion(Request $request)
 {
     $request->validate(['question' => 'required|string']);
-    $businessId = Auth::user()->business_id;
 
-    // ✅ Check if a file was uploaded (latest)
+    $businessId = Auth::user()->business_id;
     $upload = UploadedSale::where('business_id', $businessId)->latest()->first();
 
-    if ($upload && Storage::exists($upload->file_path)) {
-        // Read uploaded CSV
-        $csvContent = Storage::get($upload->file_path);
-
-        $context = "SALES DATA (CSV format):\n" . $csvContent;
-    } else {
-        // No file uploaded → fallback to DB data
-        $products = Product::where('business_id', $businessId)->get()->toArray();
-        $sales = Sales::where('business_id', $businessId)->get()->toArray();
-        $customers = Customer::where('business_id', $businessId)->get()->toArray();
-        $debts = Debt::where('business_id', $businessId)->get()->toArray();
-
-        $context = "BUSINESS DATA (JSON):\n" . json_encode([
-            'products' => $products,
-            'sales' => $sales,
-            'customers' => $customers,
-            'debts' => $debts,
-        ]);
+    if (!$upload || !Storage::exists($upload->file_path)) {
+        return response()->json(['error' => 'No sales data available.'], 400);
     }
 
-    $prompt = <<<EOT
-You are a smart business analyst. Analyze the provided context and answer the user's question.
+    $csvContent = Storage::get($upload->file_path);
 
-CONTEXT:
-$context
+    $prompt = <<<EOT
+You are a smart business analyst. The user will ask you questions about sales data.
+
+SALES DATA (CSV format):
+$csvContent
 
 QUESTION: {$request->question}
-
-Answer with clear insights (not raw data). Be concise and helpful.
+Answer in plain language. Be concise and helpful.
 EOT;
 
     try {
@@ -91,9 +71,8 @@ EOT;
         return response()->json(['answer' => $reply]);
 
     } catch (\Exception $e) {
-        return response()->json(['error' => 'AI request failed: ' . $e->getMessage()], 500);
+        return response()->json(['error' => 'Failed to contact AI service: ' . $e->getMessage()], 500);
     }
 }
-
 
 }
