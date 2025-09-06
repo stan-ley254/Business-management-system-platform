@@ -7,6 +7,15 @@ use App\Models\UploadedSale;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use \Illuminate\Validation\ValidationException;
+use App\Models\Sales;
+use App\Models\Product;
+use App\Models\Debt;
+use App\Models\Customer;
+use App\Models\ProductImportLog;
+use App\Models\Category;
+use App\Models\Expense;
+use App\Models\DebtItem;
 
 class ChatWithBusinessController extends Controller
 {
@@ -31,30 +40,45 @@ class ChatWithBusinessController extends Controller
         return back()->with('success', 'Sales data uploaded!');
     }
 
-   public function askBusinessQuestion(Request $request)
+  public function askBusinessQuestion(Request $request)
 {
-    $request->validate(['question' => 'required|string']);
+    try {
+        $request->validate(['question' => 'required|string']);
 
-    $businessId = Auth::user()->business_id;
-    $upload = UploadedSale::where('business_id', $businessId)->latest()->first();
+        $businessId = Auth::user()->business_id;
 
-    if (!$upload || !Storage::exists($upload->file_path)) {
-        return response()->json(['error' => 'No sales data available.'], 400);
-    }
+        $products = Product::where('business_id', $businessId)->get()->toArray();
+        $sales = Sales::where('business_id', $businessId)->get()->toArray();
+        $customers = Customer::where('business_id', $businessId)->get()->toArray();
+        $debts = Debt::where('business_id', $businessId)->get()->toArray();
+        $category = Category::where('business_id',$businessId)->get()->toArray();
+        $expense = Expense::where('business_id',$businessId)->get()->toArray();
+        $debtitem = DebtItem::where('business_id',$businessId)->get()->toArray();
 
-    $csvContent = Storage::get($upload->file_path);
+        $businessData = [
+            'products' => $products,
+            'sales' => $sales,
+            'customers' => $customers,
+            'debts' => $debts,
+            'product_import_logs' => $imported_by,
+            'categories' => $category,
+            'expenses' => $expense,
+            'debt_items' => $debtitem
+        ];
 
-    $prompt = <<<EOT
-You are a smart business analyst. The user will ask you questions about sales data.
+        $context = json_encode($businessData);
 
-SALES DATA (CSV format):
-$csvContent
+        $prompt = <<<EOT
+You are a smart business analyst. You have access to the business database in JSON format.
+
+BUSINESS DATA:
+$context
 
 QUESTION: {$request->question}
-Answer in plain language. Be concise and helpful.
+
+Answer with clear business insights (not raw JSON). Be concise but useful. Add financial or operational reasoning if possible.
 EOT;
 
-    try {
         $response = \Http::withHeaders([
             'Authorization' => 'Bearer ' . env('OPENROUTER_API_KEY'),
             'Content-Type' => 'application/json',
@@ -64,15 +88,23 @@ EOT;
                 ['role' => 'system', 'content' => 'You are a helpful business analyst.'],
                 ['role' => 'user', 'content' => $prompt],
             ],
-        ])->json();
+        ]);
 
-        $reply = $response['choices'][0]['message']['content'] ?? 'No response.';
+        if ($response->failed()) {
+            return response()->json(['error' => 'AI API failed', 'details' => $response->body()], 500);
+        }
+
+        $data = $response->json();
+        $reply = $data['choices'][0]['message']['content'] ?? 'No response.';
 
         return response()->json(['answer' => $reply]);
 
+    } catch (ValidationException $e) {
+        return response()->json(['error' => 'Validation failed', 'details' => $e->errors()], 422);
     } catch (\Exception $e) {
-        return response()->json(['error' => 'Failed to contact AI service: ' . $e->getMessage()], 500);
+        return response()->json(['error' => 'Unexpected error', 'details' => $e->getMessage()], 500);
     }
 }
+
 
 }
