@@ -51,6 +51,7 @@ class ChatWithBusinessController extends Controller
         $sales = Sales::where('business_id', $businessId)->get()->toArray();
         $customers = Customer::where('business_id', $businessId)->get()->toArray();
         $debts = Debt::where('business_id', $businessId)->get()->toArray();
+        $imported_by = ProductImportLog::where('business_id', $businessId)->get()->toArray();
         $category = Category::where('business_id',$businessId)->get()->toArray();
         $expense = Expense::where('business_id',$businessId)->get()->toArray();
         $debtitem = DebtItem::where('business_id',$businessId)->get()->toArray();
