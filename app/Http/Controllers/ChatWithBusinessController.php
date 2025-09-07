@@ -69,15 +69,17 @@ class ChatWithBusinessController extends Controller
 
         $context = json_encode($businessData);
 
-        $prompt = <<<EOT
-You are a smart business analyst. You have access to the business database in JSON format.
-
+        $$prompt = <<<EOT
+'You are a helpful business analyst for a Kenyan business. Always express monetary values in Kenyan Shillings (KSh), not dollars. Do accurate calculations based on provided data.
 BUSINESS DATA:
 $context
 
 QUESTION: {$request->question}
 
-Answer with clear business insights (not raw JSON). Be concise but useful. Add financial or operational reasoning if possible.
+Answer with clear business insights (not raw JSON).
+Be concise but useful.
+Be accurate with numbers.
+Add financial or operational reasoning if possible.
 EOT;
 
         $response = \Http::withHeaders([

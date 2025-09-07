@@ -12,7 +12,7 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         .chat-box {
-            height: 400px;
+            height: 600px;
             overflow-y: auto;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -50,7 +50,7 @@
 <div class="main-panel">
     <div class="content-wrapper">
       <div class="container card">
-          <h2 class="mb-3">Smart Business Analyst</h2>
+          <h2 class="mb-3">Business Analyst</h2>
         <div class="chat-container">
           
 
@@ -72,7 +72,7 @@
             <form id="chatForm">
                 @csrf
                 <div class="input-group">
-                    <input type="text" id="question" name="question" class="form-control" placeholder="Ask about your sales..." required>
+                    <input type="text" id="question" name="question" class="form-control text-white" placeholder="Ask about your Business..." required>
                     <button class="btn btn-success" type="submit">Send</button>
                 </div>
             </form>
