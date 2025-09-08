@@ -87,37 +87,7 @@ class BusinessSettingsController extends Controller
 
         return response()->json(['status' => 'ok']);
     }
-      // Existing methods: editMpesa and updateMpesa
-      public function editMpesa()
-      {
-          $business = Auth::user()->business;
-          return view('business.settings.edit_mpesa', compact('business'));
-      }
-  
-      public function updateMpesa(Request $request)
-      {
-          $request->validate([
-              'mpesa_short_code' => 'required|string',
-              'mpesa_consumer_key' => 'required|string',
-              'mpesa_consumer_secret' => 'required|string',
-              'mpesa_passkey' => 'required|string',
-              'mpesa_initiator_name' => 'nullable|string',
-              'mpesa_security_credential' => 'nullable|string',
-          ]);
-  
-          $business = Auth::user()->business;
-  
-          $business->update([
-              'mpesa_short_code' => $request->mpesa_short_code,
-              'mpesa_consumer_key' => encrypt($request->mpesa_consumer_key),
-              'mpesa_consumer_secret' => encrypt($request->mpesa_consumer_secret),
-              'mpesa_passkey' => encrypt($request->mpesa_passkey),
-              'mpesa_initiator_name' => $request->mpesa_initiator_name,
-              'mpesa_security_credential' => $request->mpesa_security_credential ? encrypt($request->mpesa_security_credential) : null,
-          ]);
-  
-          return back()->with('success', 'M-Pesa settings updated successfully.');
-      }
+
   
       // New method: createMpesa
       public function createMpesa()

@@ -232,5 +232,3 @@
     localStorage.setItem('api_token', @json(session('api_token')));
 </script>
 @endif
-
-

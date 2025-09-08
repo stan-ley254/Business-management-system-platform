@@ -555,7 +555,7 @@ $(document).ready(function () {
         if (!navigator.onLine) {
             // queue the STK push
             OfflineSync.sendOrQueueAjax({
-                url: "{{ route('mpesa.stkpush') }}".replace(/^{|}$/g,''), // ensure string literal works
+                url: "/stkPush".replace(/^{|}$/g,''), // ensure string literal works
                 type: 'POST',
                 method: 'POST',
                 data: { phone, amount },
@@ -573,7 +573,7 @@ $(document).ready(function () {
         // online: call server directly (existing behavior via fetch)
         try {
             statusDiv.innerText = 'Processing payment...';
-            const res = await fetch("{{ route('mpesa.stkpush') }}", {
+            const res = await fetch("/stkPush", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -35,7 +35,7 @@ Route::middleware('weigher','auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::middleware(['auth','weigher', 'role:user'])->group(function () {
+    Route::middleware(['weigher', 'role:user'])->group(function () {
     Route::get('/viewSales', [SuperController::class, 'viewSales']);
     Route::get('/deleteSale{id}', [SuperController::class, 'deleteSale']);
     Route::post('/filterSales', [SuperController::class, 'filterSales']);
@@ -114,33 +114,33 @@ Route::post('/sync/sales', [SyncController::class, 'sales'])->middleware('auth')
 Route::post('/sync/updates', [SyncController::class, 'updates'])->middleware('auth');
 
 
-Route::middleware(['auth'])->group(function () {
+
     Route::get('/smart-analyst', [ChatWithBusinessController::class, 'showChat'])->name('sales.chat');
     Route::post('/upload-sales', [ChatWithBusinessController::class, 'uploadSales'])->name('sales.upload');
     Route::post('/ask-question', [ChatWithBusinessController::class, 'askBusinessQuestion'])->name('sales.ask');
-});
+
 
 Route::post('/huggingface/query', [HuggingFaceController::class, 'query']);
 
 
-    Route::middleware(['auth','weigher', 'role:admin'])->get('/homeAdmin', [AdminController::class, 'homeAdmin']);
+    Route::middleware(['weigher', 'role:admin'])->get('/homeAdmin', [AdminController::class, 'homeAdmin']);
 
-    Route::middleware(['auth','weigher' ,'role:user'])->get('/homeUser', [SuperController::class, 'homeUser']);
+    Route::middleware(['weigher' ,'role:user'])->get('/homeUser', [SuperController::class, 'homeUser']);
 
-    Route::middleware(['auth', 'only.superadmin'])->get('/homeSuperAdmin', [BusinessController::class, 'homeSuperAdmin']);
+    Route::middleware([ 'only.superadmin'])->get('/homeSuperAdmin', [BusinessController::class, 'homeSuperAdmin']);
     
-    Route::middleware(['auth','weigher','role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(['weigher','role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
         Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
         Route::get('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
   
     });
-Route::middleware(['auth', 'role:admin'])->get('/serviceAdmin', [ServiceAdminController::class, 'serviceAdmin']);
+Route::middleware(['role:admin'])->get('/serviceAdmin', [ServiceAdminController::class, 'serviceAdmin']);
 
-Route::middleware(['auth', 'role:user'])->get('/serviceUser', [ServiceUserController::class, 'serviceUser']);
+Route::middleware(['role:user'])->get('/serviceUser', [ServiceUserController::class, 'serviceUser']);
 
-    Route::middleware(['auth','weigher','role:admin'])->group(function () {
+    Route::middleware(['weigher','role:admin'])->group(function () {
  // Category Routes
  Route::get('/view_category', [AdminController::class, 'view_category']);
  Route::post('/add_category', [AdminController::class, 'add_category']);
@@ -186,36 +186,32 @@ Route::get('/documentation', [AdminController::class, 'documentation']);
 
     });
 
-    Route::middleware(['auth', 'verified'])->group(function () {
-        Route::get('/business/settings/edit_mpesa', [BusinessSettingsController::class, 'editMpesa'])->name('business.mpesa.edit');
-        Route::post('/business/settings/edit_mpesa', [BusinessSettingsController::class, 'updateMpesa'])->name('business.mpesa.update');
+   
+       
       // M-Pesa Payment Trigger (POST)
-Route::post('/mpesa/stkpush', [BusinessSettingsController::class, 'stkPush'])->name('mpesa.stkpush');
+Route::post('/stkPush', [BusinessSettingsController::class, 'stkPush']);
 
 // Callback URL for STK Push Response
 Route::post('/mpesa/callback/{business}', [BusinessSettingsController::class, 'handleCallback'])->name('mpesa.callback');
-    });
     Route::get('/business/settings/mpesa', [BusinessSettingsController::class, 'createMpesa'])->name('business.mpesa.create');
     Route::post('/business/settings/mpesa', [BusinessSettingsController::class, 'storeMpesa'])->name('business.mpesa.store');
     
-    Route::middleware(['auth', 'only.superadmin'])->prefix('s#uperadmin')->name('superadmin.')->group(function () {
+    Route::middleware(['only.superadmin'])->prefix('s#uperadmin')->name('superadmin.')->group(function () {
         Route::resource('businesses', BusinessController::class);
        // routes/web.php
 
     });
-    Route::middleware(['auth', 'only.superadmin'])->get('/homeSuperAdmin', [BusinessController::class, 'homeSuperAdmin']);
-    Route::middleware(['auth', 'only.superadmin'])->get('register', [RegisteredUserController::class, 'create'])
+    Route::middleware([ 'only.superadmin'])->get('/homeSuperAdmin', [BusinessController::class, 'homeSuperAdmin']);
+    Route::middleware([ 'only.superadmin'])->get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
-        Route::middleware(['auth', 'only.superadmin'])->post('register', [RegisteredUserController::class, 'store']);
-Route::middleware(['auth', 'only.superadmin'])->get('/superadmin/set-due-date', [BusinessController::class, 'showSetDueDateForm'])->name('superadmin.businesses.set_due_date_form');
-Route::middleware(['auth', 'only.superadmin'])->post('/superadmin/set-due-date', [BusinessController::class, 'updateDueDate'])->name('superadmin.businesses.set_due_date');
+        Route::middleware(['only.superadmin'])->post('register', [RegisteredUserController::class, 'store']);
+Route::middleware(['only.superadmin'])->get('/superadmin/set-due-date', [BusinessController::class, 'showSetDueDateForm'])->name('superadmin.businesses.set_due_date_form');
+Route::middleware(['only.superadmin'])->post('/superadmin/set-due-date', [BusinessController::class, 'updateDueDate'])->name('superadmin.businesses.set_due_date');
 
-     
-   
-    Route::post('/stkpush', [BusinessSettingsController::class, 'stkPush']);
-Route::post('/mpesa/callback', [BusinessSettingsController::class, 'callback'])->name('mpesa.callback');
 });
-Route::middleware(['auth', 'only.superadmin'])->patch('/toggleBusiness/{business}', [BusinessController::class, 'toggleBusiness']);
+Route::middleware(['only.superadmin'])->patch('/toggleBusiness/{business}', [BusinessController::class, 'toggleBusiness']);
+
+
 
 require __DIR__.'/auth.php';
