@@ -592,6 +592,45 @@ $(document).ready(function () {
         }
     });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const chatForm = document.getElementById("chatForm");
+    const chatBox = document.getElementById("chatBox");
+    const chatAlert = document.getElementById("chatAlert");
+
+    chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        let question = document.getElementById("question").value;
+
+        // Add user message
+        chatBox.innerHTML += `<div class="message user-message">${question}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+        document.getElementById("question").value = "";
+
+        try {
+            let response = await fetch("{{ route('sales.ask') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ question })
+            });
+
+            let data = await response.json();
+
+            if (data.answer) {
+                chatBox.innerHTML += `<div class="message bot-message">${data.answer}</div>`;
+            } else if (data.error) {
+                chatAlert.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+            }
+        } catch (err) {
+            chatAlert.innerHTML = `<div class="alert alert-danger">Error: ${err.message}</div>`;
+        }
+
+        chatBox.scrollTop = chatBox.scrollHeight;
+    });
+});
+
     // Update cart item via delegated event (works for online/offline)
     $(document).on('submit', '.update-cart-form', function (e) {
         e.preventDefault();

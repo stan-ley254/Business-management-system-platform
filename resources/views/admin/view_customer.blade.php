@@ -21,7 +21,8 @@
           <div class="content-wrapper">
             <div class="container-md mt-2">
   <div class="card ">
-    <form  class="form-group"method="get" action="{{url('/searchCustomeradmin')}}">
+    <form  class="form-group"method="post" action="{{url('/searchCustomeradmin')}}">
+      @csrf
       <div class="card-body">
 <input class="input-group mb-2 " name="searchCustomeradmin" placeholder="search customer by ..name...or phone number" value="{{isset($searchCustomeradmin) ? $searchCustomeradmin : ''}}">
 <button type="submit" class="btn btn-success">Search</button>

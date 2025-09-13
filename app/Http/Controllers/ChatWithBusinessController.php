@@ -24,6 +24,11 @@ class ChatWithBusinessController extends Controller
         return view('admin.chat.business');
     }
 
+public function userChat(){
+    
+    return view('chat');
+}
+
     public function uploadSales(Request $request)
     {
         $request->validate([

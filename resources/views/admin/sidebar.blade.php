@@ -67,7 +67,7 @@
 </li>
 
 <li class="nav-item menu-items">
-    <a class="nav-link" href="{{ url('/business/settings/edit_mpesa') }}">
+    <a class="nav-link" href="{{ url('/business/settings/mpesa') }}">
       <span class="menu-icon">
         <i class="mdi mdi-settings"></i> <!-- More intuitive settings -->
       </span>

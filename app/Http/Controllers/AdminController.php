@@ -39,7 +39,7 @@ class AdminController extends Controller
     public function add_category(Request $request)
     {
 $request->validate([
-'category'=>'required|string'
+'category'=>'required|string|max:255'
 ]);
 Category::create($request->all());
 

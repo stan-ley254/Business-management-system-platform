@@ -18,10 +18,10 @@
 </div>
     <!-- Form Section -->
     <div class="custom-form-container">
-        <form  method="get" action="{{url('/searchDebt')}}" class="mt-1">
+        <form  method="post" action="{{url('/searchDebt')}}" class="mt-1">
             @csrf
         <div class="form-group">
-<input type="text" class="form-control" name="searchDebt" placeholder="search customer by status..paid..unpaid" value="{{isset($searchDebt) ? $searchDebt : ''}}">
+<input type="text" class="form-control" name="searchDebt" placeholder="search debt by customer name or status..paid..unpaid" value="{{isset($searchDebt) ? $searchDebt : ''}}">
 <button type="submit" class="btn btn-custom mt-2"><i class="fas fa-search"></i> Search</button>
 </form>
 </div>

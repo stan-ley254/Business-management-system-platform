@@ -44,7 +44,7 @@ Route::middleware('weigher','auth')->group(function () {
     Route::post('/addToCartAll', [SuperController::class, 'addToCartAll']);
     Route::post('/addToCart/{productId}', [SuperController::class, 'addToCart']);
     Route::post('/deleteCartItem/{id}', [SuperController::class, 'deleteCartItem']);
-    Route::get('/searchProductCart', [SuperController::class, 'searchProductCart']);
+    Route::post('/searchProductCart', [SuperController::class, 'searchProductCart']);
     Route::get('/related-products', [ProductController::class, 'relatedProducts']);
     Route::post('/addCart', [SuperController::class, 'addCart']);
     Route::get('/getCartItems', [SuperController::class, 'getCartItems']);
@@ -65,9 +65,9 @@ Route::middleware('weigher','auth')->group(function () {
     Route::get('/viewDebts', [SuperController::class, 'viewDebts']);
     Route::get('debtItems/{debtId}', [SuperController::class, 'viewDebtItems']);
     Route::post('/settleDebt', [SuperController::class, 'settleDebt']);
-    Route::get('/searchSalesCart', [SuperController::class, 'searchSalesCart']);
-    Route::get('/searchProduct', [SuperController::class, 'searchProduct']);
-    Route::get('/searchDebt', [SuperController::class, 'searchDebt']);
+    Route::post('/searchSalesCart', [SuperController::class, 'searchSalesCart']);
+    Route::post('/searchProduct', [SuperController::class, 'searchProduct']);
+    Route::post('/searchDebt', [SuperController::class, 'searchDebt']);
     Route::get('/processPayment', [SuperController::class, 'processPayment']);
     Route::get('/stockReports', [SuperController::class, 'stockReports']);
      // Customers Routes
@@ -78,8 +78,8 @@ Route::middleware('weigher','auth')->group(function () {
      Route::get('/editCustomer/{id}', [SuperController::class, 'editCustomer']);
      Route::put('/updateCustomer/{id}', [SuperController::class, 'updateCustomer']);
      Route::get('/destroyCustomer/{id}', [SuperController::class, 'destroyCustomer']);
-     Route::get('/searchCustomer', [SuperController::class, 'searchCustomer']);
-     Route::get('/searchSupplier', [SuperController::class, 'searchSupplier']);
+     Route::post('/searchCustomer', [SuperController::class, 'searchCustomer']);
+     Route::post('/searchSupplier', [SuperController::class, 'searchSupplier']);
  
      // Suppliers Routes
      Route::get('/viewSupplier', [SuperController::class, 'viewSupplier']);
@@ -116,6 +116,7 @@ Route::post('/sync/updates', [SyncController::class, 'updates'])->middleware('au
 
 
     Route::get('/smart-analyst', [ChatWithBusinessController::class, 'showChat'])->name('sales.chat');
+     Route::get('/userChat', [ChatWithBusinessController::class, 'userChat']);
     Route::post('/upload-sales', [ChatWithBusinessController::class, 'uploadSales'])->name('sales.upload');
     Route::post('/ask-question', [ChatWithBusinessController::class, 'askBusinessQuestion'])->name('sales.ask');
 
@@ -164,8 +165,8 @@ Route::get('/documentation', [AdminController::class, 'documentation']);
  Route::post('/update_product/{id}', [AdminController::class, 'update_product']);
  Route::post('/importProducts', [AdminController::class, 'importProducts']);
  Route::get('/exportSales', [AdminController::class, 'exportSales']);
- Route::get('/search', [AdminController::class, 'search']);
- Route::get('/searchSales', [AdminController::class, 'searchSales']);
+ Route::post('/search', [AdminController::class, 'search']);
+ Route::post('/searchSales', [AdminController::class, 'searchSales']);
  Route::post('/filterSalesAdmin', [AdminController::class, 'filterSalesAdmin']);
  Route::post('/clearAllproducts', [AdminController::class, 'clearAllproducts']);
   Route::get('/stockReports_admin', [AdminController::class, 'stockReports_admin']);
@@ -176,7 +177,7 @@ Route::get('/documentation', [AdminController::class, 'documentation']);
  // Orders Routes
  Route::get('/show_orders', [AdminController::class, 'show_orders']);
  Route::get('/viewCustomeradmin', [AdminController::class, 'viewCustomeradmin']);
- Route::get('/searchCustomeradmin', [AdminController::class, 'searchCustomeradmin']);
+ Route::post('/searchCustomeradmin', [AdminController::class, 'searchCustomeradmin']);
  Route::get('/editCustomeradmin/{id}', [AdminController::class, 'editCustomeradmin']);
  Route::get('/destroyCustomeradmin/{id}', [AdminController::class, 'destroyCustomeradmin']);
  Route::put('/updateCustomeradmin/{id}', [AdminController::class, 'updateCustomeradmin']);

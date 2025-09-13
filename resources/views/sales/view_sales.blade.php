@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="custom-section">
-                    <form method="get" action="{{ url('/searchSalesCart') }}">
+                    <form method="post" action="{{ url('/searchSalesCart') }}">
                         @csrf
                         <div class="form-group">
                             <input type="text" class="form-control" name="searchSalesCart" placeholder="search sales..by product name" value="{{ isset($searchSalesCart) ? $searchSalesCart : '' }}">

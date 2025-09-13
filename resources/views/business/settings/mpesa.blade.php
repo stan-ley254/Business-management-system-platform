@@ -34,7 +34,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title text-success">M-Pesa Configuration (Create)</h4>
-                        <form action="{{ route('business.mpesa.store') }}" method="POST">
+                        <form action="{{ route('business.mpesa.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <label for="mpesa_short_code" class="text-success">Short Code (Till/Paybill)</label>

@@ -121,9 +121,8 @@
     <i class="fas fa-chart-pie custom-icon"></i> Analysis
   </a>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLinkReports">
-    <li><a class="dropdown-item" href="#"><i class="fas fa-boxes"></i> Tracking Inventory</a></li>
-    <li><a class="dropdown-item" href="#"><i class="fas fa-chart-line"></i> Predictions</a></li>
-    <li><a class="dropdown-item" href="#"><i class="fas fa-search"></i> Clustering</a></li>
+    <li><a class="dropdown-item" href="{{url('/userChat')}}"><i class="fas fa-message"></i> Smart Analyst</a></li>
+   
   </ul>
 </li>
 

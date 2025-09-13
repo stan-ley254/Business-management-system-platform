@@ -38,7 +38,7 @@
                     </div>
                     <div class="form-group">
                         <label for="amount">Amount:</label>
-                        <input type="number" name="amount" id="amount" class="form-control  " >
+                        <input type="number" name="amount" id="amount" class="form-control  "  required/>
                     </div>
                     <div class="form-group">
                         <label for="location">Location:</label>

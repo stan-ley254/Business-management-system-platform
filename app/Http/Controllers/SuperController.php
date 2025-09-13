@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Database\Eloquent\Collection;
 use Carbon\Carbon;
 
 class SuperController extends Controller
@@ -1092,6 +1093,7 @@ $productIds = $cartItems->pluck('product_id')->unique();
     $debt->status = 0;
     $debt->save();
 
+
     // Save each cart item to the debts table
     foreach ($cartItems as $cartItem) {
         $debt->items()->create([
@@ -1167,17 +1169,28 @@ public function searchProduct(Request $request){
     return view('products.view_product',compact('product'))->with('success','Product search successful');
         }
 
-        public function searchDebt(Request $request){
-            $searchDebt = $request->searchDebt;
-            $debts= Debt::where(function($query) use ($searchDebt){
-                $query->where('status','like',"%$searchDebt%");
-            })->get();
-            return view('cart.view_debts',compact('debts'));
-                }
+       public function searchDebt(Request $request)
+{
+    $searchDebt = $request->searchDebt;
+
+    $debts = Debt::where(function($query) use ($searchDebt) {
+                    $query->where('status', 'like', "%$searchDebt%");
+                })
+                ->orWhereHas('customer', function($q) use ($searchDebt) {
+                    $q->where('customer_name', 'like', "%$searchDebt%");
+                })
+                ->paginate(10);
+
+    $debts->appends(['searchDebt' => $searchDebt]);
+
+    return view('cart.view_debts', compact('debts'));
+}
+
+
             
     public function viewDebts()
     {
-        $debts = Debt::paginate(5);
+        $debts = Debt::paginate(10);
         return view('cart.view_debts', compact('debts'));
     }
 

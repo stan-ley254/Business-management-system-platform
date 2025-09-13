@@ -70,4 +70,10 @@ class User extends Authenticatable
 public function business(){
     return $this->belongsTo(Business::class);
 }
+
+ // Mutators for sanitization
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = strip_tags($value);
+    }
 }

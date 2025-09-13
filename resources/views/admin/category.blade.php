@@ -22,7 +22,7 @@
 </div>
                <div class="card">
                <div class="card-body">
-               <form action="{{url('/add_category')}}" method="post" class="form-group">
+               <form action="{{url('/add_category')}}" method="POST" class="form-group" enctype="multipart/form-data">
                 @csrf
                 <input class="input-group mb-2" type="text" name="category" placeholder="Write category name" required />
                <input type="submit" class="btn btn-primary " name="submit" value="Add Category">
@@ -42,7 +42,7 @@
                 @foreach($data as $data)
 <tbody>
      <tr>
-                <td>{{$data->category}}</td>
+                <td>{{$data->category }}</td>
                <td>
                  <a onclick="return confirm('Are you sure you want to Delete this')" class="btn btn-danger" href="{{url('delete_category',$data->id)}}">Delete</a>
                 </td>

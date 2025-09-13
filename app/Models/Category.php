@@ -13,6 +13,12 @@ class Category extends Model
 'category',
 'business_id'
     ];
+
+        public function setCategoryAttribute($value)
+    {
+        $this->attributes['category'] = strip_tags($value);
+    }
+
     protected static function booted()
 {
     static::addGlobalScope('business', function (Builder $builder) {
@@ -27,5 +33,7 @@ class Category extends Model
         }
     });
 }
+
+ // Mutators for sanitization
 
 }

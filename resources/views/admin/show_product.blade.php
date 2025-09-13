@@ -33,7 +33,7 @@
     <button id="clearAll" onclick="return confirm('Are you sure you want to Delete all PRODUCT?!')"  class="button rounded-pill btn-danger mt-1">Clearproducts</button>
     </form>
   <div class="card mb-2">
-    <form  class="form-group"method="get" action="{{url('/search')}}">
+    <form  class="form-group"method="POST" action="{{url('/search')}}">
     @csrf
       <div class="card-body">
 <input class="input-group mb-2 " name="search" placeholder="search product..." value="{{isset($search) ? $search : ''}}">

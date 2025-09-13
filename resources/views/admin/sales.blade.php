@@ -33,7 +33,7 @@
             <div class="card-body">
               <div class="row g-3 mb-4">
                 <div class="col-12 col-md-4">
-                  <form method="GET" action="{{url('searchSales')}}">
+                  <form method="POST" action="{{url('searchSales')}}">
                     @csrf
                     <div class="input-group">
                       <input type="text" class="input-group" name="searchSales" placeholder="search sales..." value="{{isset($searchSales) ? $searchSales : ''}}">

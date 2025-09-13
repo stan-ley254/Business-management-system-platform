@@ -18,7 +18,7 @@
 </div>
     <!-- Form Section -->
     <div class="custom-form-container">
-        <form  method="get" action="{{url('/searchProduct')}}" class="mt-1">
+        <form  method="post" action="{{url('/searchProduct')}}" class="mt-1">
             @csrf
         <div class="form-group">
 <input type="text" class="form-control" name="searchProduct" placeholder="search product by name...category ..or description" value="{{isset($searchProduct) ? $searchProduct : ''}}">

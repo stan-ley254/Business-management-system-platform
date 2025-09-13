@@ -48,4 +48,21 @@ protected $fillable = [
         public function business(){
             return $this->belongsTo(Business::class);
         }
+
+         // Mutators for sanitization
+    public function setProductNameAttribute($value)
+    {
+        $this->attributes['product_name'] = strip_tags($value);
+    }
+
+    public function setDescriptionAttribute($value)
+    {
+        $this->attributes['description'] = strip_tags($value);
+    }
+
+    public function setCategoryAttribute($value)
+    {
+        $this->attributes['category'] = strip_tags($value);
+    }
+    
 }

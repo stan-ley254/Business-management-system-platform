@@ -330,6 +330,45 @@ border-radius: 0.25rem;
           box-sizing: border-box;
       }
 
+  .chat-container {
+            max-width: 700px;
+            margin: 20px auto;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .chat-box {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+            margin-bottom: 15px;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            clear: both;
+        }
+        .user-message {
+            background: #007bff;
+            color: white;
+            float: right;
+            text-align: right;
+        }
+        .bot-message {
+            background: #e9ecef;
+            color: #333;
+            float: left;
+        }
+        .upload-box {
+            margin-bottom: 15px;
+        }
+
   .quick-links-card {
     height: 100%;
   }

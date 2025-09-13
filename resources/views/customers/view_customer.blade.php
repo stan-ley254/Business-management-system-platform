@@ -7,7 +7,8 @@
 
     <!-- Form Section -->
     <div class="custom-form-container">
-        <form  method="get" action="{{url('/searchCustomer')}}" class="mt-1">
+        <form  method="post
+        " action="{{url('/searchCustomer')}}" class="mt-1">
             @csrf
         <div class="form-group">
 <input type="text" class="form-control" name="searchCustomer" placeholder="search customer by..name..or phone" value="{{isset($searchCustomer) ? $searchCustomer : ''}}">
