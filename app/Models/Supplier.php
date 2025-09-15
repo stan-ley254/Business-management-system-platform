@@ -35,4 +35,20 @@ protected $fillable = [
 'business_id'
 
 ];
+public function setSupplierNameAttribute($value)
+    {
+        $this->attributes['supplier_name'] = strip_tags($value);
+    }
+    public function setPhoneNumberAttribute($value)
+    {
+        $this->attributes['phone_number'] = strip_tags($value);
+    }
+    public function setDescriptionAttribute($value)
+    {
+        $this->attributes['description'] = strip_tags($value);
+    }
+    public function setLocationAttribute($value)
+    {
+        $this->attributes['location'] = strip_tags($value);
+    }
 }

@@ -6,18 +6,27 @@
         <div class="custom-header">
      Manage All Sales
     </div>
-    @if(session('success'))
-            <div class="message rounded">
-                <div id="success" class="alert alert-success">
-                    {{ session('success') }}
-                </div>
+
+  <div id="alert-container" class="message rounded">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
             </div>
-        @endif
-        @if(session('error'))
-            <div class="alert alert-danger" id="error">
-                {{ session('error') }}
-            </div>
-        @endif
+    @if(isset($message))
+    <div class="alert alert-info">
+        {{ $message }}
+    </div>
+@endif
+
         <div class="row">
             <!-- Main content: table and form -->
             <div class="col-lg-9 col-md-12">
@@ -97,8 +106,26 @@
             </div>
         </div>
     @endif
-</div>z
+</div>
 
-<script src="{{asset('/js/scriptsfiles.js')}}" ></script>
+@include('jquery')
+<script>
+      $(document).ready(function() {
+        // Show the success message when the page loads
+        $('#success').show();
+
+        // Set a timer to hide the success message after 5 seconds
+        setTimeout(function() {
+            $('#success').fadeOut('slow'); // Fade out slowly
+        }, 1000); // 1000 milliseconds = 1 seconds
+
+        $('#error').show();
+
+        // Set a timer to hide the success message after 5 seconds
+        setTimeout(function() {
+            $('#error').fadeOut('slow'); // Fade out slowly
+        }, 1000);
+    });
+   </script>
 </body>
 </html>

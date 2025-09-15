@@ -4,7 +4,20 @@
     <div class="custom-header">
      Manage Suppliers
     </div>
-
+<div class="message d-print-inline-flex rounded">
+    @if(session('success'))
+        <div class="alert alert-success" id="success">
+            {{ session('success') }}
+ <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+</div>
     <!-- Form Section -->
     <div class="custom-form-container">
         <form  method="post" action="{{url('/searchSupplier')}}" class="mt-1">

@@ -13,16 +13,25 @@
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <!-- Password -->
+<div class="mt-4">
+    <x-input-label for="password" :value="__('Password')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+    <div class="input-group">
+        <x-text-input id="password" class="form-control"
+                      type="password"
+                      name="password"
+                      required autocomplete="current-password" />
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+        <button type="button" class="btn btn-outline-secondary" 
+                onclick="togglePassword('password', this)">
+            <i class="fa fa-eye"></i>
+        </button>
+    </div>
+
+    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+</div>
+
 
         <!-- Remember Me -->
         <div class="block mt-4">
@@ -44,4 +53,5 @@
             </x-primary-button>
         </div>
     </form>
+    <script> function togglePassword(inputId, el) { const input = document.getElementById(inputId); const icon = el.querySelector('i'); if (input.type === "password") { input.type = "text"; icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash"); } else { input.type = "password"; icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye"); } } </script>
 </x-guest-layout>

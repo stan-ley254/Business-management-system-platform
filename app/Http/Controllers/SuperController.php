@@ -984,6 +984,12 @@ public function addByBarcode(Request $request)
             ->orWhere('phone_number','like',"$searchCustomer");
             
         })->get();
+         session()->forget(['success', 'error']); 
+    if ($customers->count() > 0) {
+        session()->flash('success', 'Search successful-found ');
+    } else {
+        session()->flash('error', 'No customers found matching your search.');
+    }
         return view('customers.view_customer',compact('customers'));
     }
     // Supplier Methods
@@ -999,10 +1005,10 @@ public function createSupplier(){
     {
         $request->validate([
             'supplier_name' => 'required|string|max:255',
-            'amount' => 'required|numeric',
             'phone_number' => 'nullable|string|max:15',
             'description' => 'nullable|string',
             'status' => 'nullable|string',
+             'amount' => 'required|numeric',
             'location' => 'nullable|string|max:255',
         ]);
 
@@ -1053,58 +1059,68 @@ public function createSupplier(){
     public function addToDebt(Request $request)
 {
     $cartId = session('cart_id');
-   
-$cart = Cart::find($cartId);
+    $cart = Cart::find($cartId);
+
     if (!$cart) {
         return redirect()->back()->with('error', 'Cart not found.');
     }
-    if ($cartId) {
-        $cartItems = CartItem::where('cart_id', $cartId)->get();
-        if ($cartItems->isEmpty()) {
-            return redirect()->back()->with('success', 'Cart is empty. Cannot add to debt.');
-        }
-$productIds = $cartItems->pluck('product_id')->unique();
+
+    $cartItems = CartItem::where('cart_id', $cartId)->get();
+    if ($cartItems->isEmpty()) {
+        return redirect()->back()->with('error', 'Cart is empty. Cannot add to debt.');
+    }
+
+    $productIds = $cartItems->pluck('product_id')->unique();
     $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
-     $salesToInsert = [];
+    $salesToInsert = [];
     $debtAmount = 0;
-   
-        foreach ($cartItems as $cartItem) {
-              $product = $products[$cartItem->product_id] ?? null;
-        if (!$product) continue;
-            $price = $cartItem->active_price ?? $product->price;
-             $LineTotal = $price * $cartItem->quantity;
-        $debtAmount += $LineTotal;
 
+    // compute debt total first
+    foreach ($cartItems as $cartItem) {
+        $product = $products[$cartItem->product_id] ?? null;
+        if (!$product) {
+            continue;
         }
-    } else {
-        return redirect()->back()->with('success', 'Cart is not found. Cannot add to debt.');
+        $price = $cartItem->active_price ?? $product->price;
+        $lineTotal = $price * $cartItem->quantity;
+        $debtAmount += $lineTotal;
     }
 
-    $customerId = $request->input('customer_id'); // Ensure we're using the correct input name
+    $customerId = $request->input('customer_id');
     $customer = Customer::find($customerId);
+
     if (!$customer) {
-        return redirect()->back()->with('success', 'Customer not found');
+        return redirect()->back()->with('error', 'Customer not found.');
     }
 
+    // Save debt
     $debt = new Debt();
     $debt->customer_id = $customer->id;
     $debt->amount = $debtAmount;
     $debt->status = 0;
     $debt->save();
 
-
-    // Save each cart item to the debts table
+    // Save debt items + prepare sales
     foreach ($cartItems as $cartItem) {
+        $product = $products[$cartItem->product_id] ?? null;
+        if (!$product) {
+            continue;
+        }
+
+        $price = $cartItem->active_price ?? $product->price;
+        $lineTotal = $price * $cartItem->quantity;
+
+        // attach debt items
         $debt->items()->create([
             'product_name' => $cartItem->product_name,
-            'description' => $cartItem->description,
-            'price' => $cartItem->price,
+            'description'  => $cartItem->description,
+            'price'        => $cartItem->price,
             'active_price' => $cartItem->active_price,
-            'quantity' => $cartItem->quantity,
+            'quantity'     => $cartItem->quantity,
         ]);
 
-         // Update product inventory
+        // update inventory
         if ($product->quantity >= $cartItem->quantity) {
             $product->quantity -= $cartItem->quantity;
         } else {
@@ -1113,18 +1129,19 @@ $productIds = $cartItems->pluck('product_id')->unique();
         }
         $product->save();
 
+        // prepare sales row
         $salesToInsert[] = [
-            'cart_id'        => $cartItem->cart_id,
-            'product_name'   => $cartItem->product_name,
-            'description'    => $cartItem->description,
-            'price'          => $cartItem->price,
-            'active_price'   => $cartItem->active_price,
-            'discount_price' => $cartItem->discount_price,
-            'quantity'       => $cartItem->quantity,
-            'total'          => $LineTotal, // Correct: per-product total
-            'business_id'    => $cart->business_id,
-            'updated_at'     => now(),
-            'created_at'     => now(),
+            'cart_id'       => $cartItem->cart_id,
+            'product_name'  => $cartItem->product_name,
+            'description'   => $cartItem->description,
+            'price'         => $cartItem->price,
+            'active_price'  => $cartItem->active_price,
+            'discount_price'=> $cartItem->discount_price,
+            'quantity'      => $cartItem->quantity,
+            'total'         => $lineTotal, // per-item total, fixed
+            'business_id'   => $cart->business_id,
+            'created_at'    => now(),
+            'updated_at'    => now(),
         ];
     }
 
@@ -1133,11 +1150,13 @@ $productIds = $cartItems->pluck('product_id')->unique();
         Sales::insert($salesToInsert);
     }
 
+    // clear cart
     CartItem::where('cart_id', $cartId)->delete();
     session()->forget('cart_id');
 
-    return redirect()->back()->with('success', 'Items added to debt');
+    return redirect()->back()->with('success', 'Items added to debt.');
 }
+
 
 public function searchSupplier(Request $request){
     $searchSupplier = $request->searchSupplier;
@@ -1146,6 +1165,12 @@ public function searchSupplier(Request $request){
         ->orWhere('phone_number','like',"$searchSupplier");
         
     })->get();
+    session()->forget(['success', 'error']); 
+     if ($suppliers->count() > 0) {
+        session()->flash('success', 'Search successful-found ');
+    } else {
+        session()->flash('error', 'No suppliers found matching your search.');
+    }
     return view('suppliers.view_supplier',compact('suppliers'));
 }
 
@@ -1156,6 +1181,12 @@ public function searchSalesCart(Request $request){
         ->orWhere('updated_at','like',"$searchSalesCart");
         
     })->get();
+    session()->forget(['success', 'error']); 
+    if ($sales->count() > 0) {
+        session()->flash('success', 'Search successful-found ');
+    } else {
+        session()->flash('error', 'No sales found matching your search.');
+    }
     return view('sales.view_sales',compact('sales'));
 }
 public function searchProduct(Request $request){
@@ -1166,7 +1197,13 @@ public function searchProduct(Request $request){
         ->orWhere('category','like',"$searchProduct%");
         
     })->get();
-    return view('products.view_product',compact('product'))->with('success','Product search successful');
+    session()->forget(['success', 'error']); 
+    if ($product->count() > 0) {
+        session()->flash('success', 'Search successful-found ');
+    } else {
+        session()->flash('error', 'No products found matching your search.');
+    }
+    return view('products.view_product',compact('product'));
         }
 
        public function searchDebt(Request $request)
@@ -1179,12 +1216,18 @@ public function searchProduct(Request $request){
                 ->orWhereHas('customer', function($q) use ($searchDebt) {
                     $q->where('customer_name', 'like', "%$searchDebt%");
                 })
-                ->paginate(10);
+                ->paginate(5);
 
     $debts->appends(['searchDebt' => $searchDebt]);
+session()->forget(['success', 'error']); 
+    // message depending on results
+    $message = $debts->count() > 0
+        ? 'Search successful — found '.$debts->total().' record(s).'
+        : 'No debts found matching your search.';
 
-    return view('cart.view_debts', compact('debts'));
+    return view('cart.view_debts', compact('debts', 'message'));
 }
+
 
 
             

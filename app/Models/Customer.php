@@ -33,4 +33,16 @@ public function debts()
 {
     return $this->hasMany(Debt::class);
 }
+public function setCustomerNameAttribute($value)
+    {
+        $this->attributes['customer_name'] = strip_tags($value);
+    }
+    public function setPhoneNumberAttribute($value)
+    {
+        $this->attributes['phone_number'] = strip_tags($value);
+    }
+    public function setLocationAttribute($value)
+    {
+        $this->attributes['location'] = strip_tags($value);
+    }
 }

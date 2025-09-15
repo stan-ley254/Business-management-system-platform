@@ -8,11 +8,13 @@
         @if(session('success'))
             <div id="success" class="alert alert-success ">
                 {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
         @if(session('error'))
         <div class="alert alert-danger" id="error">
             {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 </div>
@@ -66,6 +68,24 @@
     </div>
 </div>
 
+@include('jquery')
+<script>
+      $(document).ready(function() {
+        // Show the success message when the page loads
+        $('#success').show();
 
+        // Set a timer to hide the success message after 5 seconds
+        setTimeout(function() {
+            $('#success').fadeOut('slow'); // Fade out slowly
+        }, 1000); // 1000 milliseconds = 1 seconds
+
+        $('#error').show();
+
+        // Set a timer to hide the success message after 5 seconds
+        setTimeout(function() {
+            $('#error').fadeOut('slow'); // Fade out slowly
+        }, 1000);
+    });
+   </script>
 </body>
 </html>

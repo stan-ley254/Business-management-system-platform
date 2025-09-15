@@ -14,6 +14,9 @@ use Illuminate\View\View;
 use App\Models\Business;
 use App\Models\Role;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
+
 
 
 
@@ -39,7 +42,13 @@ class RegisteredUserController extends Controller
             'business_name' => ['required', 'string', 'max:255'],
             'business_type' => ['required', Rule::in(['pos', 'service'])],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', Password::min(8)              // at least 8 characters
+                ->letters()              // must contain letters
+                ->mixedCase()            // must contain upper & lower
+                ->numbers()              // must contain numbers
+                ->symbols()              // must contain symbols
+                ->uncompromised(),       // not in data breaches
+                ],
         ]);
 
 

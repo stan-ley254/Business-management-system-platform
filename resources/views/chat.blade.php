@@ -2,7 +2,7 @@
  
  <div class="custom-container">
     <div class="custom-header">
-                Chat with your Business
+                Chat with the Business
             </div>
             <!-- Chat Window -->
             <div class="chat-box" id="chatBox">

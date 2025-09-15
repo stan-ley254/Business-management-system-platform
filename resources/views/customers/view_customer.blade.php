@@ -4,11 +4,23 @@
     <div class="custom-header">
      Manage Customers
     </div>
-
+<div class="message d-print-inline-flex rounded">
+    @if(session('success'))
+        <div class="alert alert-success" id="success">
+            {{ session('success') }}
+ <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+</div>
     <!-- Form Section -->
     <div class="custom-form-container">
-        <form  method="post
-        " action="{{url('/searchCustomer')}}" class="mt-1">
+        <form  method="post" action="{{url('/searchCustomer')}}" class="mt-1">
             @csrf
         <div class="form-group">
 <input type="text" class="form-control" name="searchCustomer" placeholder="search customer by..name..or phone" value="{{isset($searchCustomer) ? $searchCustomer : ''}}">
@@ -59,6 +71,17 @@
         </div>
     </div>
 </div>
+@include('jquery')
+<script>
+      $(document).ready(function() {
+        // Show the success message when the page loads
+        $('#success').show();
 
+        // Set a timer to hide the success message after 5 seconds
+        setTimeout(function() {
+            $('#success').fadeOut('slow'); // Fade out slowly
+        }, 1000); // 1000 milliseconds = 1 seconds
+    });
+   </script>
 </body>
 </html>

@@ -403,6 +403,9 @@ $show = Product::where(function($query) use ($search){
     ->orWhere('category','like',"$search%");
     
 })->get();
+ $message = $show->count() > 0
+        ? 'Search successful — found '
+        : 'No products found matching your search.';
 return view('admin.show_product',compact('show'));
     }
    

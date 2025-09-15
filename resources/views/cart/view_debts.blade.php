@@ -16,6 +16,13 @@
         </div>
     @endif
 </div>
+@if(isset($message))
+    <div class="alert alert-info d-print-inline-flex">
+        {{ $message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
+
     <!-- Form Section -->
     <div class="custom-form-container">
         <form  method="post" action="{{url('/searchDebt')}}" class="mt-1">

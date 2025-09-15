@@ -50,17 +50,6 @@
         <div class="main-panel">
        
           <div class="content-wrapper">
-          
-     @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
       @if(session()->has('message'))
 <div class="alert alert-success alter-dismissible fade show">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close" aria-hidden="true">
@@ -70,8 +59,21 @@
 </div>
             @endif
    <div class="container">
-  
-
+  <div id="alert-container" class="message rounded">
+                @if(session('success'))
+                    <div class="alert alert-success alert-dismissible fade show">
+                        {{ session('success') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+                @if(session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        {{ session('error') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+            </div>
+ 
     <form id="importForm" action="{{ url('/importProducts') }}" class="forms-sample mb-2" method="POST" enctype="multipart/form-data">
   @csrf
   <div class="input-group p-2">
