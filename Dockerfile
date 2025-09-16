@@ -3,17 +3,16 @@ FROM php:8.2-fpm
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system packages
+# Install system packages + Supervisor
 RUN apt-get update && apt-get install -y \
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev libwebp-dev libxpm-dev \
     libzip-dev zip unzip git curl libonig-dev libxml2-dev \
-    libpq-dev cron nginx nodejs npm postgresql-client
+    libpq-dev cron nginx nodejs npm postgresql-client supervisor
 
 # Configure GD and install PHP extensions including PostgreSQL
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm && \
     docker-php-ext-install gd pdo pdo_pgsql mbstring bcmath exif pcntl zip
 
-    
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -34,37 +33,15 @@ RUN npm install && npm run build
 COPY docker/laravel_scheduler /etc/cron.d/laravel_scheduler
 RUN chmod 0644 /etc/cron.d/laravel_scheduler && crontab /etc/cron.d/laravel_scheduler
 
-# Write custom nginx config directly
-RUN rm -f /etc/nginx/sites-enabled/default && \
-    printf "%s\n" \
-    "server {" \
-    "    listen 80;" \
-    "    index index.php index.html;" \
-    "    root /var/www/html/public;" \
-    "" \
-    "    location / {" \
-    "        try_files \$uri \$uri/ /index.php?\$query_string;" \
-    "    }" \
-    "" \
-    "    location ~ \.php$ {" \
-    "        try_files \$uri =404;" \
-    "        fastcgi_pass 127.0.0.1:9000;" \
-    "        fastcgi_index index.php;" \
-    "        include fastcgi_params;" \
-    "        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;" \
-    "    }" \
-    "" \
-    "    location ~ /\.ht {" \
-    "        deny all;" \
-    "    }" \
-    "}" > /etc/nginx/conf.d/default.conf
+# Copy Supervisor config
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Copy start script
+COPY docker/start.sh /start.sh
+RUN chmod +x /start.sh
 
 # Expose port
 EXPOSE 80
 
-# Add start script
-COPY docker/start.sh /start.sh
-RUN chmod +x /start.sh
-
-# Run everything
+# Start everything with Supervisor
 CMD ["/start.sh"]
