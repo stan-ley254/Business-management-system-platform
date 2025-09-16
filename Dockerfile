@@ -33,6 +33,30 @@ RUN npm install && npm run build
 COPY docker/laravel_scheduler /etc/cron.d/laravel_scheduler
 RUN chmod 0644 /etc/cron.d/laravel_scheduler && crontab /etc/cron.d/laravel_scheduler
 
+# Write custom nginx config directly
+RUN rm -f /etc/nginx/sites-enabled/default && \
+    printf "%s\n" \
+    "server {" \
+    "    listen 80;" \
+    "    index index.php index.html;" \
+    "    root /var/www/html/public;" \
+    "" \
+    "    location / {" \
+    "        try_files \$uri \$uri/ /index.php?\$query_string;" \
+    "    }" \
+    "" \
+    "    location ~ \.php$ {" \
+    "        try_files \$uri =404;" \
+    "        fastcgi_pass 127.0.0.1:9000;" \
+    "        fastcgi_index index.php;" \
+    "        include fastcgi_params;" \
+    "        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;" \
+    "    }" \
+    "" \
+    "    location ~ /\.ht {" \
+    "        deny all;" \
+    "    }" \
+    "}" > /etc/nginx/conf.d/default.conf
 # Copy Supervisor config
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
