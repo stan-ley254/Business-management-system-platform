@@ -23,6 +23,11 @@ return new class extends Migration
             $table->decimal('discount_price', 10, 2)->nullable();
             $table->integer('quantity');
             $table->decimal('total');
+             $table->enum('payment_status', ['cash', 'debt', 'mpesa'])
+                  ->default('cash')
+                  ->after('total');
+                  $table->enum('status', ['active', 'restored'])->default('active')->after('payment_status');
+            $table->timestamp('restored_at')->nullable()->after('status');
             $table->timestamps();
         });
     }

@@ -54,15 +54,7 @@
         <div class="chat-container">
           
 
-            <!-- Upload Sales -->
-            <form method="POST" action="{{ route('sales.upload') }}" enctype="multipart/form-data" class="upload-box">
-                @csrf
-                <div class="input-group">
-                    <input type="file" name="sales_file" class="form-control" required>
-                    <button class="btn btn-primary">Upload Sales CSV</button>
-                </div>
-            </form>
-
+           
             <!-- Chat Window -->
             <div class="chat-box" id="chatBox">
                 <!-- Messages will be added dynamically -->

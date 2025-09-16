@@ -88,10 +88,10 @@ return redirect()->back();
     $totalCustomers = Customer::count();
 
     // Sum today's sales
-    $todaySalesTotal = Sales::whereDate('created_at', Carbon::today())->sum('total');
+    $todaySalesTotal = Sales::whereDate('created_at', Carbon::today())->where('status', 'active')->sum('total');
 
     // Sum all-time total sales
-    $totalSales = Sales::sum('total');
+    $totalSales = Sales::where('status', 'active')->sum('total');
 
     // Sales data for last 7 days
     $salesData = Sales::selectRaw('DATE(created_at) as date, SUM(total) as total')
@@ -419,6 +419,30 @@ return view('admin.show_product',compact('show'));
         })->get();
         return view('admin.sales',compact('sales'));
             }
+            public function restoreSale($id)
+{
+    $sale = Sales::findOrFail($id);
+
+    if ($sale->status === 'restored') {
+        return redirect()->back()->with('error', 'This sale has already been restored.');
+    }
+
+    // Restore product stock
+    $product = Product::where('product_name', $sale->product_name)->first();
+    if ($product) {
+        $product->quantity += $sale->quantity;
+        $product->in_stock = true;
+        $product->save();
+    }
+
+    // Mark sale as restored
+    $sale->status = 'restored';
+    $sale->restored_at = now();
+    $sale->save();
+
+    return redirect()->back()->with('success', 'Sale restored successfully and stock updated.');
+}
+
 
     public function view_sales(){
         $sales=Sales::all();

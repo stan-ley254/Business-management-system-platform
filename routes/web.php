@@ -183,6 +183,7 @@ Route::get('/documentation', [AdminController::class, 'documentation']);
  Route::put('/updateCustomeradmin/{id}', [AdminController::class, 'updateCustomeradmin']);
  Route::get('/admin/import-logs', [AdminController::class, 'viewImportLogs'])->name('admin.import.logs');
  Route::get('/admin/import-logs/export', [AdminController::class, 'exportProductImportLogs'])->name('admin.import.logs.export');
+Route::patch('/restoreSale/{id}', [AdminController::class, 'restoreSale'])->name('restoreSale');
 
 
     });

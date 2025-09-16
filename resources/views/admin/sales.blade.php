@@ -7,6 +7,9 @@
         text-decoration: line-through;
         color: red;
       }
+      .restored-row {
+        background-color: #f8d7da;
+      }
       body {
         margin: 0px;
         border: 0px;
@@ -64,69 +67,96 @@
                   </div>
                 </div>
               </div>
-  @if(isset($sales) && ($sales))
-              @if(session('success'))
-              <div class="alert alert-success">{{ session('success') }}</div>
-              @endif
-              @if(session('error'))
-              <div class="alert alert-danger">{{ session('error') }}</div>
-              @endif
 
-              <h2 class="mb-3 text-success">All Business Sales</h2>
+              @if(isset($sales) && ($sales))
+                @if(session('success'))
+                  <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+                @if(session('error'))
+                  <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
 
-              <div class="table-responsive">
-                <table class="table table-bordered jsgrid jsgrid-table dataTables_wrapper table-primary">
-                  <thead>
-                    <tr>
-                      <th>Sale ID</th>
-                      <th>Product Name</th>
-                      <th>Description</th>
-                      <th>Price</th>
-                      <th>Active Price</th>
-                      <th>Quantity</th>
-                      <th>Total (per item)</th>
-                      <th>Date</th>
-                      <th>Delete</th>
-                    </tr>
-                  </thead>
-                  <tbody id="sales-data">
-                    @php $periodTotal = 0; @endphp
-                    @foreach($sales as $sale)
-                    @php $lineTotal = ($sale->active_price ?? $sale->price) * $sale->quantity; $periodTotal += $lineTotal; @endphp
-                    <tr>
-                      <td>{{ $sale->cart_id }}</td>
-                      <td>{{ $sale->product_name }}</td>
-                      <td>{{ $sale->description }}</td>
-                      <td>
-                        @if($sale->active_price)
-                        <span class="strikethrough">{{ $sale->price }}</span>
-                        @else
-                        {{ $sale->price }}
-                        @endif
-                      </td>
-                      <td>{{ $sale->active_price ?? 'N/A' }}</td>
-                      <td>{{ $sale->quantity }}</td>
-                      <td>{{ number_format($lineTotal, 2) }}</td>
-                      <td>{{ $sale->updated_at }}</td>
-                      <td>
-                        <a onclick="return confirm('Are you sure you want to Delete this')" class="btn btn-danger" href="{{url('/deleteSale',$sale->id)}}">Delete</a>
-                      </td>
-                    </tr>
-                    @endforeach
-                  </tbody>
-                </table>
-              </div>
-              <div class="mt-4">
-                <h4>Period Total: {{ number_format($periodTotal, 2) }}</h4>
-              </div>
+                <h2 class="mb-3 text-success">All Business Sales</h2>
+
+                <div class="table-responsive">
+                  <table class="table table-bordered jsgrid jsgrid-table dataTables_wrapper table-primary">
+                    <thead>
+                      <tr>
+                        <th>Sale ID</th>
+                        <th>Product Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Active Price</th>
+                        <th>Quantity</th>
+                        <th>Total (per item)</th>
+                        <th>Payment Status</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="sales-data">
+                      @php 
+                        $periodTotal = 0; 
+                      @endphp
+                      @foreach($sales as $sale)
+                        @php 
+                          $lineTotal = ($sale->active_price ?? $sale->price) * $sale->quantity; 
+                          if($sale->status !== 'restored') {
+                            $periodTotal += $lineTotal;
+                          }
+                        @endphp
+                        <tr class="{{ $sale->status === 'restored' ? 'restored-row' : '' }}">
+                          <td>{{ $sale->cart_id }}</td>
+                          <td>{{ $sale->product_name }}</td>
+                          <td>{{ $sale->description }}</td>
+                          <td>
+                            @if($sale->active_price)
+                              <span class="strikethrough">{{ $sale->price }}</span>
+                            @else
+                              {{ $sale->price }}
+                            @endif
+                          </td>
+                          <td>{{ $sale->active_price ?? 'N/A' }}</td>
+                          <td>{{ $sale->quantity }}</td>
+                          <td>{{ number_format($lineTotal, 2) }}</td>
+                          <td>{{ $sale->payment_status }}</td>
+                          <td>
+                            @if($sale->status === 'restored')
+                              <span class="badge bg-danger">Restored</span>
+                            @else
+                              <span class="badge bg-success">Active</span>
+                            @endif
+                          </td>
+                          <td>{{ $sale->updated_at }}</td>
+                          <td>
+                            @if($sale->status === 'active')
+                              <form action="{{ url('/restoreSale', $sale->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Restore this sale?')">Restore</button>
+                              </form>
+                              <a onclick="return confirm('Are you sure you want to Delete this')" class="btn btn-danger btn-sm" href="{{url('/deleteSale',$sale->id)}}">Delete</a>
+                            @else
+                              <em class="text-muted">Already Restored</em>
+                            @endif
+                          </td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="mt-4">
+                  <h4>Period Total (Active Sales Only): {{ number_format($periodTotal, 2) }}</h4>
+                </div>
+              @endif 
             </div>
           </div>
         </div>
       </div>
     </div>
-@endif 
-    @include('admin.script')
 
-    
+    @include('admin.script')
   </body>
 </html>

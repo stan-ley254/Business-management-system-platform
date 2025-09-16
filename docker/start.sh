@@ -12,5 +12,5 @@ su -s /bin/bash www-data -c "php artisan config:cache"
 su -s /bin/bash www-data -c "php artisan route:cache"
 su -s /bin/bash www-data -c "php artisan view:cache"
 
-# Start Supervisor (manages php-fpm, nginx, cron)
+# Start Supervisor (manages php-fpm, nginx, schedule:work)
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

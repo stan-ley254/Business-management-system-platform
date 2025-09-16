@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Collection;
+ use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 
 class SuperController extends Controller
@@ -930,34 +931,47 @@ public function addByBarcode(Request $request)
         return view('customers.create_customer');
     }
 
-    public function storeCustomer(Request $request)
-    {
-        $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'phone_number' => 'nullable|string|max:15',
-            'location' => 'nullable|string|max:255',
-            'total_debt' => 'nullable|numeric'
+   
 
-        ]);
+public function storeCustomer(Request $request)
+{
+    $request->validate([
+        'customer_name' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('customers', 'customer_name')
+    ->where(fn ($query) => $query->where('business_id', auth()->user()->business_id))
 
-        Customer::create($request->all());
+        ],
+        'phone_number' => 'nullable|string|max:15',
+        'location' => 'nullable|string|max:255',
+        'total_debt' => 'nullable|numeric'
+    ]);
 
-        return redirect()->back()->with('success', 'Customer Created Successfully');
-    }
+    Customer::create([
+        'customer_name' => $request->customer_name,
+        'phone_number' => $request->phone_number,
+        'location' => $request->location,
+        'total_debt' => $request->total_debt ?? 0,
+        'business_id' => auth()->user()->business_id, // keep business scope safe
+    ]);
 
-    public function editCustomer($id)
-    {
-        $customer = Customer::findOrFail($id);
-        
-        return view('customers.edit_customer', compact('customer'));
-    }
+    return redirect()->back()->with('success', 'Customer Created Successfully');
+}
 
     public function updateCustomer(Request $request, $id)
     {
         $customer = Customer::findOrFail($id);
         $request->validate([
 
-            'customer_name' => 'required|string|max:255',
+            'customer_name' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('customers', 'customer_name')
+    ->where(fn ($query) => $query->where('business_id', auth()->user()->business_id))
+            ],
             'phone_number' => 'nullable|string|max:15',
             'location' => 'nullable|string|max:255',
             'total_debt' => 'nullable|numeric'
@@ -1140,6 +1154,7 @@ public function createSupplier(){
             'quantity'      => $cartItem->quantity,
             'total'         => $lineTotal, // per-item total, fixed
             'business_id'   => $cart->business_id,
+             'payment_status'=> 'debt', 
             'created_at'    => now(),
             'updated_at'    => now(),
         ];

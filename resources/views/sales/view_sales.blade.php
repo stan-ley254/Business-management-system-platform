@@ -42,31 +42,57 @@
                                     <th>ActivePrice</th>
                                     <th>Quantity</th>
                                     <th>Total (per item)</th>
+                                    <th>Payment Status</th>
+                                    <th>Status</th>
                                     <th>Date</th>
                                 </tr>
                             </thead>
-                            <tbody id="sales-data">
-                                @php $periodTotal = 0; @endphp
-                                @foreach($sales as $sale)
-                                    @php $lineTotal = ($sale->active_price ?? $sale->price) * $sale->quantity; $periodTotal += $lineTotal; @endphp
-                                    <tr>
-                                       <td>{{ $sale->cart_id }}</td>
-                      <td>{{ $sale->product_name }}</td>
-                      <td>{{ $sale->description }}</td>
-                                        <td>
-                                            @if($sale->active_price)
-                                                <span class="strikethrough">{{ $sale->price }}</span>
-                                            @else
-                                                {{ $sale->price }}
-                                            @endif
-                                        </td>
-                                        <td>{{ $sale->active_price ?? 'N/A' }}</td>
-                                        <td>{{ $sale->quantity }}</td>
-                                        <td>{{ number_format($lineTotal, 2) }}</td>
-                                        <td>{{ $sale->updated_at }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
+ <tbody id="sales-data">
+    @php $periodTotal = 0; @endphp
+    @foreach($sales as $sale)
+        @php 
+            $lineTotal = ($sale->active_price ?? $sale->price) * $sale->quantity; 
+            if($sale->status !== 'restored') {
+                $periodTotal += $lineTotal;
+            }
+        @endphp
+        <tr class="{{ $sale->status === 'restored' ? 'restored-row' : '' }}">
+            <td>{{ $sale->cart_id }}</td>
+            <td>{{ $sale->product_name }}</td>
+            <td>{{ $sale->description }}</td>
+            <td>
+                @if($sale->active_price)
+                    <span class="strikethrough">{{ $sale->price }}</span>
+                @else
+                    {{ $sale->price }}
+                @endif
+            </td>
+            <td>{{ $sale->active_price ?? 'N/A' }}</td>
+            <td>{{ $sale->quantity }}</td>
+
+            {{-- Total column --}}
+            <td>
+                @if($sale->status === 'restored')
+                    <span class="text-muted strikethrough">{{ number_format($lineTotal, 2) }}</span>
+                @else
+                    {{ number_format($lineTotal, 2) }}
+                @endif
+            </td>
+
+            <td>{{ $sale->payment_status }}</td>
+            <td>
+                @if($sale->status === 'restored')
+                    <span class="badge bg-danger">Restored</span>
+                @else
+                    <span class="badge bg-success">Active</span>
+                @endif
+            </td>
+            <td>{{ $sale->updated_at }}</td>
+        </tr>
+    @endforeach
+</tbody>
+
+
                         </table>
                     </div>
                      <div class="mt-4">

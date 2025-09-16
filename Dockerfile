@@ -3,11 +3,11 @@ FROM php:8.2-fpm
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system packages + Supervisor
+# Install system packages + Supervisor (no cron needed anymore)
 RUN apt-get update && apt-get install -y \
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev libwebp-dev libxpm-dev \
     libzip-dev zip unzip git curl libonig-dev libxml2-dev \
-    libpq-dev cron nginx nodejs npm postgresql-client supervisor
+    libpq-dev nginx nodejs npm postgresql-client supervisor
 
 # Configure GD and install PHP extensions including PostgreSQL
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm && \
@@ -28,10 +28,6 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Install JS dependencies & build assets
 RUN npm install && npm run build
-
-# Laravel Scheduler cron setup
-COPY docker/laravel_scheduler /etc/cron.d/laravel_scheduler
-RUN chmod 0644 /etc/cron.d/laravel_scheduler && crontab /etc/cron.d/laravel_scheduler
 
 # Write custom nginx config directly
 RUN rm -f /etc/nginx/sites-enabled/default && \
@@ -57,6 +53,7 @@ RUN rm -f /etc/nginx/sites-enabled/default && \
     "        deny all;" \
     "    }" \
     "}" > /etc/nginx/conf.d/default.conf
+    
 # Copy Supervisor config
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
