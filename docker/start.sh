@@ -5,6 +5,7 @@ chown -R www-data:www-data /var/www/html/storage
 chmod -R 775 /var/www/html/storage
 
 # Run artisan commands as www-data
+ su -s /bin/bash www-data -c "php artisan migrate:rollback"
  su -s /bin/bash www-data -c "php artisan migrate:fresh --seed" 
  su -s /bin/bash www-data -c "php artisan config:clear" 
  su -s /bin/bash www-data -c "php artisan config:cache" 
