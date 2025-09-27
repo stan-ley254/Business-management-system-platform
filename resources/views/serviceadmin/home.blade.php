@@ -14,6 +14,8 @@
   <!-- Nucleo Icons -->
   <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+   <!-- font awesome style -->
+      <link href="{{asset('/font-awesome/css/all.min.css')}}" rel="stylesheet" />
   <!-- Font Awesome Icons -->
   <script src="/font-awesome/js/fontawesome.js" crossorigin="anonymous"></script>
   <!-- CSS Files -->

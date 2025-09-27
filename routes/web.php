@@ -138,7 +138,7 @@ Route::post('/huggingface/query', [HuggingFaceController::class, 'query']);
   
     });
 Route::middleware(['role:admin'])->get('/serviceAdmin', [ServiceAdminController::class, 'serviceAdmin']);
-
+Route::middleware(['role:admin'])->get('/serviceAdminClients', [ServiceAdminController::class, 'serviceAdminClients']);
 Route::middleware(['role:user'])->get('/serviceUser', [ServiceUserController::class, 'serviceUser']);
 
     Route::middleware(['weigher','role:admin'])->group(function () {

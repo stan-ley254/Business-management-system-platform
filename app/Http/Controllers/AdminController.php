@@ -61,16 +61,18 @@ return redirect()->back();
    $request->validate([
 'product_name'     => 'required|string|max:255',
     'description'      => 'required|string',
+    'cost_price'            => 'required|numeric|min:0',
     'price'            => 'required|numeric|min:0',
     'discount_price'   => 'nullable|numeric|min:0|lte:price',
     'quantity'         => 'required|integer|min:0',
-    'barcode'            => 'nullable|numeric|min:0',
+    'barcode'            => 'nullable|string|max:100',
     'category'         => 'required|string|max:100'
    ]);
    
     $product= new product;
     $product->product_name=$request->product_name;
     $product->description=$request->description;
+     $product->cost_price=$request->cost_price;
     $product->price=$request->price;
     $product->discount_price=$request->discount_price;
     $product->quantity=$request->quantity;
@@ -168,11 +170,12 @@ return redirect()->back();
     public function edit_product($id)
     {
         // Retrieve the product from the database
-        $category=Category::all();
         $product = Product::findOrFail($id);
+        $category=Category::all();
+        
 
         // Pass the product to the view
-        return view('admin.edit_product',compact('category','product'));
+        return view('admin.edit_product',compact('product','category'));
     }
 
      public function stockReports_admin()
@@ -184,34 +187,40 @@ return redirect()->back();
     
 
     // Method to handle form submission and update the product
-    public function update_product(Request $request, $id)
-    {
-        // Validate the submitted form data
-        $request->validate([
-            'product_name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'discount_price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer',
-                    'category' => 'required|string|max:255',
 
-            
-            // Add validation rules for other fields as needed
-        ]);
+public function update_product(Request $request, $id)
+{
+    // Validate the submitted form data
+    $request->validate([
+        'product_name'    => 'required|string|max:255',
+        'description'     => 'nullable|string',
+        'cost_price'      => 'required|numeric|min:0',
+        'price'           => 'required|numeric|min:0',
+        'discount_price'  => 'nullable|numeric|min:0|lte:price',
+        'quantity'        => 'required|integer|min:0',
+        'barcode'         => 'nullable|string|max:100',
+        'category'        => 'required|string|max:100',
+        // Add validation rules for other fields as needed
+    ]);
 
-        // Retrieve the product from the database
+    // Retrieve the product from the database
+    $product = Product::findOrFail($id);
 
-        $product = Product::findOrFail($id);
+    // Update the product with the new information
+    $product->product_name   = $request->product_name;
+    $product->description    = $request->description;
+    $product->cost_price     = $request->cost_price;
+    $product->price          = $request->price;
+    $product->discount_price = $request->discount_price;
+    $product->quantity       = $request->quantity;
+    $product->barcode        = $request->barcode;
+    $product->category       = $request->category;
 
-        // Update the product with the new information
-        // Update other fields as needed
-$product->update($request->all());
-        // Save the changes to the database
-      
-        // Redirect the user to a relevant page
-      return redirect()->back();
-    }
+    $product->save();
 
+    // Redirect the user to a relevant page
+    return redirect()->back()->with('message', 'Product updated successfully.');
+}
     public function importProducts(Request $request)
 {
     $validator = Validator::make($request->all(), [

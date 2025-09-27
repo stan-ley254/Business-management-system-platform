@@ -51,7 +51,7 @@
        
           <div class="content-wrapper">
       @if(session()->has('message'))
-<div class="alert alert-success alter-dismissible fade show">
+<div class="alert alert-success alert-dismissible fade show">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close" aria-hidden="true">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -107,12 +107,16 @@
                         <input type="text" class="input-group" name="description" id="exampleInputEmail3" placeholder="description" required />
                       </div>
                       <div class="form-group">
+                        <label for="cost_price" class="text-success">Cost Price</label>
+                        <input type="number" class="input-group" min="0" name="cost_price" id="exampleInputPassword4" placeholder="Cost Price" required />
+                      </div>
+                      <div class="form-group">
                         <label for="price" class="text-success">Price</label>
                         <input type="number" class="input-group" min="0" name="price" id="exampleInputPassword4" placeholder="Price" required />
                       </div>
                       <div class="form-group">
                         <label for="discount_price" class="text-success">Discount Price</label>
-                        <input type="number" class="input-group" min="0" id="exampleInputPassword4" placeholder="Discount_price">
+                        <input type="number" class="input-group" name="discount_price" min="0" id="exampleInputPassword7" placeholder="Discount_price">
                       </div>
                       <div class="form-group">
                         <label for="quantity" class="text-success">Quantity</label>
@@ -125,11 +129,11 @@
                       <div class="form-group">
                         <label for="category" class="text-success">Category</label>
                         <select class="input-group " name="category" id="exampleSelectGender">
-                        @if(isset($category) && count($category)>0)
-    @foreach($category as $category)
-    <option>{{$category->category}}</option>
-    @endforeach
-    @endif
+    @if(isset($category) && count($category)>0)
+        @foreach($category as $cat)
+        <option>{{$cat->category}}</option>
+        @endforeach
+        @endif
                         </select>
                       </div>
                      

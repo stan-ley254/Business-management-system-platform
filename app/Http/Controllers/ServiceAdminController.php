@@ -12,4 +12,10 @@ class ServiceAdminController extends Controller
         
     return view('serviceadmin.home');
     }
+
+    public function serviceAdminClients(){
+    
+        
+        return view('serviceadmin.clients');
+        }
 }

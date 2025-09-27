@@ -53,7 +53,7 @@
                 <div class="card">
                   <div class="card-body">
 
-                  <form action="{{url('/update_product',$product->id) }}" method="post" enctype="multipart/form-data">
+                  <form action="{{url('/update_product',$product->id) }}" method="post" >
                   @csrf
                       <div class="form-group">
                         <label for="product_name">Product Name</label>
@@ -64,24 +64,33 @@
                         <input type="text" class="input-group" name="description" id="exampleInputEmail3" placeholder="description" value="{{ $product->description }}" required="">
                       </div>
                       <div class="form-group">
+  <label for="cost_price">Cost Price</label>
+  <input type="number" class="input-group" min="0" name="cost_price" id="cost_price" placeholder="Cost Price" value="{{ $product->cost_price }}" required>
+</div>
+
+                      <div class="form-group">
                         <label for="exampleInputPassword4">Price</label>
-                        <input type="number" class="input-group" min="0" name="price" id="exampleInputPassword4" placeholder="Price" value="{{ $product->price }}" required="">
+                        <input type="number" class="input-group" min="0" name="price" id="price" placeholder="Price" value="{{ $product->price }}" required="">
                       </div>
                       
                       <div class="form-group">
                         <label for="discount_price">Discount Price</label>
-                        <input type="number" class="input-group" min="0" id="exampleInputPassword4" placeholder="Discount_price" value="{{ $product->discount_price }}">
+                        <input type="number" name="discount_price" class="input-group" min="0" id="discount_price" placeholder="Discount_price" value="{{ $product->discount_price }}">
                       </div>
                       <div class="form-group">
                         <label for="quantity">Quantity</label>
-                        <input type="number" class="input-group" min="0" name="quantity" id="exampleInputPassword4" value="{{ $product->quantity }}" placeholder="Quantity">
+                        <input type="number" class="input-group" min="0" name="quantity" id="quantity" value="{{ $product->quantity }}" placeholder="Quantity">
+                      </div>
+                       <div class="form-group">
+                        <label for="barcode">Barcode</label>
+                        <input type="text" class="input-group" name="barcode" id="barcode" value="{{ $product->barcode }}" placeholder="Barcode">
                       </div>
                       <div class="form-group">
                         <label for="exampleSelectGender">Category</label>
                         <select class="input-group " name="category" id="exampleSelectGender">
                         @if(isset($category) && count($category)>0)
-    @foreach($category as $category)
-    <option>{{$category->category}}</option>
+    @foreach($category as $cat)
+    <option value="{{ $cat->category }}" {{ $product->category == $cat->category ? 'selected' : '' }}>{{ $cat->category }}</option>
     @endforeach
     @endif
                         </select>

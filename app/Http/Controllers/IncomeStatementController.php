@@ -7,6 +7,7 @@ use App\Models\Sales;
 use App\Models\Expense;
 use App\Models\Other_Income;
 use App\Models\ProductImportLog;
+use App\Models\Product;
 use App\Models\ReturnInward;
 use App\Models\ReturnOutward;
 use App\Models\Stock_Snapshot;
