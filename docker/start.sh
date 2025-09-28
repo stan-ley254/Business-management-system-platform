@@ -26,13 +26,24 @@ else
     chmod 664 "$DB_FILE"
 fi
 
-# Run artisan commands as www-data
-su -s /bin/bash www-data -c "php artisan migrate --force"
-su -s /bin/bash www-data -c "php artisan db:seed --force"
-su -s /bin/bash www-data -c "php artisan config:clear"
-su -s /bin/bash www-data -c "php artisan config:cache"
-su -s /bin/bash www-data -c "php artisan route:cache"
-su -s /bin/bash www-data -c "php artisan view:cache"
+# Run artisan commands as www-data, step by step
+echo "Running migrations..."
+su -s /bin/bash www-data -c "php artisan migrate --force" || exit 1
 
-# Start Supervisor (manages php-fpm, nginx, scheduler)
+echo "Running seeders..."
+su -s /bin/bash www-data -c "php artisan db:seed --force" || exit 1
+
+echo "Clearing config..."
+su -s /bin/bash www-data -c "php artisan config:clear" || exit 1
+
+echo "Caching config..."
+su -s /bin/bash www-data -c "php artisan config:cache" || exit 1
+
+echo "Caching routes..."
+su -s /bin/bash www-data -c "php artisan route:cache" || exit 1
+
+echo "Caching views..."
+su -s /bin/bash www-data -c "php artisan view:cache" || exit 1
+
+echo "Starting Supervisor..."
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
