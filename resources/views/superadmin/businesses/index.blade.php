@@ -141,9 +141,9 @@
                 </form>
              </div>
                    <div class="mt-2 mb-2">
-                   <a href="{{ route('superadmin.businesses.edit', $business) }}" class="btn btn-sm btn-secondary">Edit</a>
+                   <a href="{{ route('businesses.edit', $business) }}" class="btn btn-sm btn-secondary">Edit</a>
                    </div>
-                    <form action="{{ route('superadmin.businesses.destroy', $business) }}" method="POST" class="inline">
+                    <form action="{{ route('businesses.destroy', $business) }}" method="POST" class="inline">
                         @csrf 
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete?')">Delete</button>

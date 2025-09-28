@@ -198,7 +198,7 @@ Route::post('/mpesa/callback/{business}', [BusinessSettingsController::class, 'h
     Route::get('/business/settings/mpesa', [BusinessSettingsController::class, 'createMpesa'])->name('business.mpesa.create');
     Route::post('/business/settings/mpesa', [BusinessSettingsController::class, 'storeMpesa'])->name('business.mpesa.store');
     
-    Route::middleware(['only.superadmin'])->prefix('s#uperadmin')->name('superadmin.')->group(function () {
+    Route::middleware(['only.superadmin'])->group(function () {
         Route::resource('businesses', BusinessController::class);
        // routes/web.php
 
@@ -210,7 +210,7 @@ Route::post('/mpesa/callback/{business}', [BusinessSettingsController::class, 'h
         Route::middleware(['only.superadmin'])->post('register', [RegisteredUserController::class, 'store']);
 Route::get('/superadmin/set-due-date', [BusinessController::class, 'showSetDueDateForm'])->name('superadmin.businesses.set_due_date_form');
 Route::post('/superadmin/set-due-date', [BusinessController::class, 'updateDueDate'])->name('superadmin.businesses.set_due_date');
-Route::delete('/superadmin/destroy/{business}', [BusinessController::class, 'destroy'])->name('superadmin.businesses.destroy');
+
 
 });
 Route::middleware(['only.superadmin'])->patch('/toggleBusiness/{business}', [BusinessController::class, 'toggleBusiness']);
