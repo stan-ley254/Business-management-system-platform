@@ -15,8 +15,7 @@ if [ ! -f "$DB_FILE" ]; then
 fi
 
 # Run artisan commands safely as www-data
-su -s /bin/bash www-data -c "php artisan migrate --force"
-su -s /bin/bash www-data -c "php artisan db:seed --force"
+su -s /bin/bash www-data -c "php artisan migrate:fresh --seed --force"
 su -s /bin/bash www-data -c "php artisan config:clear"
 su -s /bin/bash www-data -c "php artisan config:cache"
 su -s /bin/bash www-data -c "php artisan route:cache"
