@@ -3,16 +3,15 @@ FROM php:8.2-fpm
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system packages + Supervisor (sqlite added)
+# Install system packages + Supervisor (no cron needed anymore)
 RUN apt-get update && apt-get install -y \
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev libwebp-dev libxpm-dev \
     libzip-dev zip unzip git curl libonig-dev libxml2-dev \
-    libpq-dev sqlite3 libsqlite3-dev \
-    nginx nodejs npm supervisor
+    libpq-dev nginx nodejs npm postgresql-client supervisor
 
-# Configure GD and install PHP extensions including PostgreSQL + SQLite
+# Configure GD and install PHP extensions including PostgreSQL
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm && \
-    docker-php-ext-install gd pdo pdo_pgsql pdo_sqlite mbstring bcmath exif pcntl zip
+    docker-php-ext-install gd pdo pdo_pgsql mbstring bcmath exif pcntl zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
