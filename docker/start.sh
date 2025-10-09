@@ -1,5 +1,3 @@
-
-start.sh
 #!/bin/bash
 
 # Fix permissions
