@@ -44,6 +44,13 @@
             </main>
         </div>
        
+        <header>
+            <div class="bg-white shadow">
+
+                {{$header}}
+
+            </div>
+        </header>
 
         <script>
            
