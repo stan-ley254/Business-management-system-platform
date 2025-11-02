@@ -58,6 +58,24 @@
 </li>
 
 <li class="nav-item menu-items">
+  <a class="nav-link" data-bs-toggle="collapse" href="#procurement-menu" aria-expanded="false" aria-controls="procurement-menu">
+    <span class="menu-icon">
+      <i class="mdi mdi-truck"></i>
+    </span>
+    <span class="menu-title">Procurement</span>
+    <i class="menu-arrow"></i>
+  </a>
+  <div class="collapse" id="procurement-menu">
+    <ul class="nav flex-column sub-menu">
+      <li class="nav-item"><a class="nav-link" href="{{ route('suppliers.view') }}">Suppliers</a></li>
+      <li class="nav-item"><a class="nav-link" href="">Purchase Orders</a></li>
+      <li class="nav-item"><a class="nav-link" href="">Goods Received</a></li>
+      <li class="nav-item"><a class="nav-link" href="">Restock Approvals</a></li>
+    </ul>
+  </div>
+</li>
+
+<li class="nav-item menu-items">
     <a class="nav-link" href="{{url('view_category')}}">
       <span class="menu-icon">
         <i class="mdi mdi-tag-multiple"></i> <!-- Better for category -->

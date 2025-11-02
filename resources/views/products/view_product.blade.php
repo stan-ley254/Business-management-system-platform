@@ -43,6 +43,7 @@
             <th>Quantity</th>
             <th>Price</th>
             <th>Discount</th>
+            <th>Barcode</th>
             <th>Category</th>
            
             </tr>
@@ -58,6 +59,7 @@
                     <td>{{ $product->quantity }}</td>
                     <td>{{ $product->price }}</td>
                     <td>{{ $product->discount_price }}</td>
+                    <td>{{ $product->barcode }}</td>
                     <td>{{ $product->category }}</td>
                    
             @endforeach

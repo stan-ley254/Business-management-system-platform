@@ -185,6 +185,32 @@ Route::get('/documentation', [AdminController::class, 'documentation']);
  Route::get('/admin/import-logs/export', [AdminController::class, 'exportProductImportLogs'])->name('admin.import.logs.export');
 Route::patch('/restoreSale/{id}', [AdminController::class, 'restoreSale'])->name('restoreSale');
 
+// Supplier Product Routes
+Route::get('/suppliers/{supplier}/products', [AdminController::class, 'showSupplierProducts'])->name('suppliers.products');
+Route::get('/suppliers/{supplier}/products/create', [AdminController::class, 'createSupplierProduct'])->name('suppliers.products.create');
+Route::post('/suppliers/{supplier}/products/store', [AdminController::class, 'storeSupplierProduct'])->name('suppliers.products.store');
+Route::get('/suppliers/products/{id}/edit', [AdminController::class, 'editSupplierProduct'])->name('suppliers.products.edit');
+Route::post('/suppliers/products/{id}/update', [AdminController::class, 'updateSupplierProduct'])->name('suppliers.products.update');
+Route::delete('/suppliers/products/{id}', [AdminController::class, 'destroySupplierProduct'])->name('suppliers.products.destroy');
+Route::get('/suppliers', [AdminController::class, 'viewSupplier'])->name('suppliers.view');
+
+// Supplier Invoicing
+Route::get('/suppliers/{supplier}/invoice/create', [AdminController::class, 'createSupplierInvoice'])
+    ->name('suppliers.invoice.create');
+
+Route::post('/invoice/draft/add/{supplierProduct}', [AdminController::class, 'addToDraftInvoice'])
+    ->name('invoice.draft.add');
+
+Route::get('/suppliers/{supplier}/invoices/draft', [AdminController::class, 'viewDraftInvoice'])
+    ->name('suppliers.invoices.draft');
+
+
+Route::post('/invoice/draft/confirm/{invoice}', [AdminController::class, 'confirmDraftInvoice'])
+    ->name('invoice.draft.confirm');
+
+// Restock
+Route::post('/supplier/invoices/{invoice}/restock', [AdminController::class, 'restockFromInvoice'])->name('supplier.invoice.restock');
+
 
     });
 

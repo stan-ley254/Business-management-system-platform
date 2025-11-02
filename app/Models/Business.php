@@ -8,10 +8,12 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Sales;
 use App\Models\Expense;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Business extends Model
 {
     //
+    use HasFactory;
 
     protected $fillable = [
         'name',

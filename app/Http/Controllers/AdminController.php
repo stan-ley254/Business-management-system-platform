@@ -10,6 +10,10 @@ use App\Models\Customer;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Sales;
+use App\Models\Supplier;
+use App\Models\SupplierInvoice;
+use App\Models\SupplierInvoiceItem;
+use App\Models\SupplierProduct;
 use App\Models\ProductImportLog;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -452,7 +456,98 @@ return view('admin.show_product',compact('show'));
     return redirect()->back()->with('success', 'Sale restored successfully and stock updated.');
 }
 
+ // 🔹 View all products for a specific supplier
+    public function showSupplierProducts($supplierId)
+    {
+        $supplier = Supplier::findOrFail($supplierId);
+        $products = SupplierProduct::where('supplier_id', $supplierId)->get();
 
+        return view('admin.supplier.products.index', compact('supplier', 'products'));
+    }
+
+    // 🔹 Show create form for supplier product
+    public function createSupplierProduct($supplierId)
+    {
+        $supplier = Supplier::findOrFail($supplierId);
+        $systemProducts = Product::where('business_id', auth()->user()->business_id)->get();
+
+        return view('admin.supplier.products.create', compact('supplier', 'systemProducts'));
+    }
+
+    // 🔹 Store new supplier product
+    public function storeSupplierProduct(Request $request, $supplierId)
+    {
+        $request->validate([
+            'supplier_product_name' => 'required|string|max:255',
+            'barcode' => 'nullable|string|max:255',
+            'default_cost_price' => 'nullable|numeric|min:0',
+            'description' => 'nullable|string',
+            'linked_product_id' => 'nullable|exists:products,id',
+        ]);
+
+        $supplier = Supplier::findOrFail($supplierId);
+
+        SupplierProduct::create([
+            
+            'supplier_id' => $supplier->id,
+            'business_id' => $supplier->business_id,
+            'supplier_product_name' => $request->supplier_product_name,
+            'barcode' => $request->barcode,
+            'default_cost_price' => $request->default_cost_price,
+            'description' => $request->description,
+            'linked_product_id' => $request->linked_product_id,
+        ]);
+
+        return redirect()->route('suppliers.products', $supplier->id)->with('success', 'Supplier product added successfully.');
+    }
+
+    // 🔹 Edit supplier product
+    public function editSupplierProduct($id)
+    {
+        $product = SupplierProduct::findOrFail($id);
+        $supplier = Supplier::findOrFail($product->supplier_id);
+        $systemProducts = Product::where('business_id', auth()->user()->business_id)->get();
+
+        return view('admin.supplier.products.edit', compact('product', 'supplier', 'systemProducts'));
+    }
+
+    // 🔹 Update supplier product
+    public function updateSupplierProduct(Request $request, $id)
+    {
+        $product = SupplierProduct::findOrFail($id);
+
+        $request->validate([
+            'supplier_product_name' => 'required|string|max:255',
+            'barcode' => 'nullable|string|max:255',
+            'default_cost_price' => 'nullable|numeric|min:0',
+            'description' => 'nullable|string',
+            'linked_product_id' => 'nullable|exists:products,id',
+        ]);
+
+        $product->update([
+            'supplier_product_name' => $request->supplier_product_name,
+            'barcode' => $request->barcode,
+            'default_cost_price' => $request->default_cost_price,
+            'description' => $request->description,
+            'linked_product_id' => $request->linked_product_id,
+        ]);
+
+        return redirect()->route('suppliers.products', $product->supplier_id)->with('success', 'Supplier product updated successfully.');
+    }
+
+    // 🔹 Delete supplier product
+    public function destroySupplierProduct($id)
+    {
+        $product = SupplierProduct::findOrFail($id);
+        $supplierId = $product->supplier_id;
+        $product->delete();
+
+        return redirect()->route('suppliers.products', $supplierId)->with('success', 'Supplier product deleted successfully.');
+    }
+public function viewSupplier(){
+    $suppliers=Supplier::all();
+    return view('admin.supplier.view-supplier',compact('suppliers')); 
+}
     public function view_sales(){
         $sales=Sales::all();
         return view('admin.sales',compact('sales'));
@@ -461,6 +556,154 @@ return view('admin.show_product',compact('show'));
         $orders=Order::all();
         return view('admin.show_orders',compact('orders'));
     }
+
+
+    public function createSupplierInvoice($supplierId)
+{
+    $businessId = auth()->user()->business_id;
+ $admin = auth()->user();
+    // Create a new draft invoice if not already existing
+    $invoice = SupplierInvoice::firstOrCreate([
+        'supplier_id' => $supplierId,
+        'business_id' => $businessId,
+        'status' => 'draft',
+    ], [
+        'invoice_number' => 'INV-' . strtoupper(uniqid()),
+        'date' => now(),
+        'created_by' => $admin->name,
+    ]);
+
+    return redirect()->route('suppliers.products', $supplierId)
+        ->with('success', 'Draft invoice created. You can now add products to it.');
+}
+
+public function addToDraftInvoice(Request $request, $supplierProductId)
+{
+    $businessId = auth()->user()->business_id;
+    $supplierProduct = \App\Models\SupplierProduct::findOrFail($supplierProductId);
+    $supplierId = $supplierProduct->supplier_id;
+
+    // Find or create draft invoice for this supplier
+    $invoice = SupplierInvoice::firstOrCreate([
+        'supplier_id' => $supplierId,
+        'business_id' => $businessId,
+        'status' => 'draft',
+    ], [
+        'invoice_number' => 'INV-' . strtoupper(uniqid()),
+        'date' => now(),
+    ]);
+
+    // Check if product already added
+    $existingItem = SupplierInvoiceItem::where('supplier_invoice_id', $invoice->id)
+        ->where('supplier_product_id', $supplierProductId)
+        ->first();
+
+    if ($existingItem) {
+        $existingItem->quantity += 1; // Increment if re-added
+        $existingItem->save();
+    } else {
+        SupplierInvoiceItem::create([
+            'supplier_invoice_id' => $invoice->id,
+            'supplier_product_id' => $supplierProductId,
+            'product_name' => $request->name ?? $supplierProduct->supplier_product_name,
+            'cost_price' => $request->price ?? $supplierProduct->default_cost_price,
+            'quantity' => 1,
+        ]);
+    }
+
+    return redirect()->route('suppliers.invoices.draft', $invoice->id)
+        ->with('success', 'Product added to draft invoice.');
+}
+
+public function viewDraftInvoice($supplierId)
+{
+    // Find the latest (or only) draft invoice for this supplier
+    $invoice = SupplierInvoice::with(['items.supplierProduct', 'supplier'])
+        ->where('supplier_id', $supplierId)
+        ->where('status', 'draft')
+        ->latest()
+        ->first();
+
+    if (!$invoice) {
+        return redirect()->back()->with('error', 'No draft invoice found for this supplier.');
+    }
+
+    return view('admin.supplier_invoice_draft', compact('invoice'));
+}
+
+
+public function confirmDraftInvoice($invoiceId)
+{
+    $invoice = SupplierInvoice::with('items')->findOrFail($invoiceId);
+
+    if ($invoice->items->isEmpty()) {
+        return redirect()->back()->with('error', 'Cannot confirm an empty invoice.');
+    }
+
+    $invoice->status = 'confirmed';
+    $invoice->confirmed_at = now();
+    $invoice->save();
+
+    return redirect()->route('admin.restockFromInvoice', $invoice->id)
+        ->with('success', 'Invoice confirmed successfully. Proceed to restocking.');
+}
+
+public function restockFromInvoice($invoiceId)
+{
+    $businessId = auth()->user()->business_id;
+    $invoice = SupplierInvoice::with('items')->findOrFail($invoiceId);
+    $newProducts = [];
+
+    foreach ($invoice->items as $item) {
+        $product = Product::where('business_id', $businessId)
+            ->where('product_name', $item->product_name)
+            ->first();
+
+        if ($product) {
+            // ✅ Existing product: update stock & weighted average cost
+            $oldQty = $product->quantity;
+            $oldCost = $product->cost_price ?? 0;
+            $newQty = $item->quantity;
+            $newCost = $item->cost_price;
+
+            $weightedCost = (($oldCost * $oldQty) + ($newCost * $newQty)) / max(($oldQty + $newQty), 1);
+            $product->cost_price = round($weightedCost, 2);
+            $product->quantity = $oldQty + $newQty;
+            $product->in_stock = true;
+            $product->save();
+
+            // Record inventory movement
+            InventoryMovement::create([
+                'product_id' => $product->id,
+                'type' => 'restock',
+                'quantity' => $newQty,
+                'reference' => $invoice->invoice_number,
+                'cost_price' => $newCost,
+                'business_id' => $businessId,
+            ]);
+        } else {
+            // 🆕 New product — queue for setup
+            $newProducts[] = [
+                'supplier_invoice_item_id' => $item->id,
+                'product_name' => $item->product_name,
+                'description' => $item->description,
+                'category' => $item->category,
+                'cost_price' => $item->cost_price,
+                'suggested_price' => round($item->cost_price * 1.2, 2),
+                'quantity' => $item->quantity,
+            ];
+        }
+    }
+
+    if (!empty($newProducts)) {
+        // Store pending new products in session
+        session(['pending_new_products' => $newProducts]);
+        return redirect()->route('admin.showNewProductSetup');
+    }
+
+    return redirect()->back()->with('success', 'Stock successfully updated from invoice.');
+}
+
 
     public function viewCustomeradmin()
     {
