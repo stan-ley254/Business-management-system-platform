@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('inventory_movements', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+    $table->string('movement_type',['restock']); // purchase, sale, adjustment, etc.
+    $table->integer('quantity');
+    $table->integer('previous_stock')->default(0);
+    $table->integer('new_stock')->default(0);
+    $table->unsignedBigInteger('source_id')->nullable();
+    $table->string('source_type')->nullable();
+    $table->text('notes')->nullable();
+    $table->foreignId('business_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('inventory_movements');
+    }
+};

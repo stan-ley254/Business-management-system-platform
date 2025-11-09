@@ -15,6 +15,10 @@ use App\Models\SupplierInvoice;
 use App\Models\SupplierInvoiceItem;
 use App\Models\SupplierProduct;
 use App\Models\ProductImportLog;
+use App\Models\InventoryMovement;
+use App\Models\User;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -580,6 +584,7 @@ public function viewSupplier(){
 public function addToDraftInvoice(Request $request, $supplierProductId)
 {
     $businessId = auth()->user()->business_id;
+     $admin = auth()->user();
     $supplierProduct = \App\Models\SupplierProduct::findOrFail($supplierProductId);
     $supplierId = $supplierProduct->supplier_id;
 
@@ -591,6 +596,8 @@ public function addToDraftInvoice(Request $request, $supplierProductId)
     ], [
         'invoice_number' => 'INV-' . strtoupper(uniqid()),
         'date' => now(),
+         'created_by' => $admin->name,
+        
     ]);
 
     // Check if product already added
@@ -644,9 +651,42 @@ public function confirmDraftInvoice($invoiceId)
     $invoice->confirmed_at = now();
     $invoice->save();
 
-    return redirect()->route('admin.restockFromInvoice', $invoice->id)
+    return redirect()->route('supplier.invoice.restock.view', $invoice->id)
         ->with('success', 'Invoice confirmed successfully. Proceed to restocking.');
 }
+
+public function showRestockView($invoiceId)
+{
+    $invoice = SupplierInvoice::with(['supplier', 'items'])->findOrFail($invoiceId);
+
+    if ($invoice->status !== 'confirmed') {
+        return redirect()->back()->with('error', 'Only confirmed invoices can be restocked.');
+    }
+
+    return view('admin.digital_invoice', compact('invoice'));
+}
+
+public function updateDraftInvoice(Request $request, $invoiceId)
+{
+    $invoice = SupplierInvoice::with('items')->findOrFail($invoiceId);
+
+    foreach ($request->items as $itemId => $data) {
+        $item = $invoice->items->find($itemId);
+        if ($item) {
+            $item->update([
+                'quantity' => $data['quantity'],
+                'cost_price' => $data['cost_price'],
+                'subtotal' => $data['quantity'] * $data['cost_price'],
+            ]);
+        }
+    }
+
+    $invoice->total_cost = $invoice->items->sum('subtotal');
+    $invoice->save();
+
+    return redirect()->back()->with('success', 'Draft invoice updated successfully.');
+}
+
 
 public function restockFromInvoice($invoiceId)
 {
@@ -675,7 +715,7 @@ public function restockFromInvoice($invoiceId)
             // Record inventory movement
             InventoryMovement::create([
                 'product_id' => $product->id,
-                'type' => 'restock',
+                'movement_type' => 'restock',
                 'quantity' => $newQty,
                 'reference' => $invoice->invoice_number,
                 'cost_price' => $newCost,
@@ -702,6 +742,49 @@ public function restockFromInvoice($invoiceId)
     }
 
     return redirect()->back()->with('success', 'Stock successfully updated from invoice.');
+}
+
+public function showNewProductSetup()
+{
+    $newProducts = session('pending_new_products', []);
+    if (empty($newProducts)) {
+        return redirect()->back()->with('info', 'No new products to set up.');
+    }
+
+    return view('admin.new_products_setup', compact('newProducts'));
+}
+
+public function storeNewProducts(Request $request)
+{
+    $businessId = auth()->user()->business_id;
+
+    foreach ($request->products as $productData) {
+        Product::create([
+            'business_id' => $businessId,
+            'product_name' => $productData['product_name'],
+            'description' => $productData['description'],
+            'category' => $productData['category'],
+            'cost_price' => $productData['cost_price'],
+            'price' => $productData['price'],
+            'discount_price' => $productData['discount_price'] ?? null,
+            'quantity' => $productData['quantity'],
+            'opening_stock' => $productData['quantity'],
+            'in_stock' => true,
+        ]);
+
+        InventoryMovement::create([
+            'product_id' => Product::latest()->first()->id,
+            'movement_type' => 'restock',
+            'quantity' => $productData['quantity'],
+            'reference' => 'Initial Stock from Supplier Invoice',
+            'cost_price' => $productData['cost_price'],
+            'business_id' => $businessId,
+        ]);
+    }
+
+    session()->forget('pending_new_products');
+
+    return redirect()->route('admin.products')->with('success', 'New products added successfully.');
 }
 
 

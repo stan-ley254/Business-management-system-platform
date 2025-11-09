@@ -726,6 +726,34 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    document.addEventListener('DOMContentLoaded', function () {
+    const rows = document.querySelectorAll('#invoice-items tr');
+    const grandTotalEl = document.getElementById('grandTotal');
+
+    rows.forEach(row => {
+        const qtyInput = row.querySelector('.quantity');
+        const costInput = row.querySelector('.cost-price');
+        const subtotalEl = row.querySelector('.subtotal');
+
+        function recalc() {
+            const qty = parseFloat(qtyInput.value) || 0;
+            const cost = parseFloat(costInput.value) || 0;
+            const subtotal = qty * cost;
+            subtotalEl.textContent = subtotal.toFixed(2);
+
+            // Recalc grand total
+            let total = 0;
+            document.querySelectorAll('#invoice-items .subtotal').forEach(td => {
+                total += parseFloat(td.textContent) || 0;
+            });
+            grandTotalEl.textContent = total.toFixed(2);
+        }
+
+        qtyInput.addEventListener('input', recalc);
+        costInput.addEventListener('input', recalc);
+    });
+});
+
     // Checkout dropdown actions: for POS we recommend routing through /checkout or sync if offline
     $(document).on('click', '.checkout-option', function (e) {
         e.preventDefault();

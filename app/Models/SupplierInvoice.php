@@ -18,6 +18,10 @@ class SupplierInvoice extends Model
         'created_by'
     ];
 
+    protected $casts = [
+    'confirmed_at' => 'datetime',
+];
+
     protected static function booted()
     {
         static::addGlobalScope('business', function (Builder $builder) {
@@ -48,7 +52,7 @@ class SupplierInvoice extends Model
     {
         return $this->belongsTo(Business::class);
     }
-    
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

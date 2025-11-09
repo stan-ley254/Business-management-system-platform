@@ -159,7 +159,7 @@ Route::get('/documentation', [AdminController::class, 'documentation']);
  // Product Routes
  Route::get('/view_product', [AdminController::class, 'view_product']);
  Route::post('/add_product', [AdminController::class, 'add_product']);
- Route::get('/show_product', [AdminController::class, 'show_product']);
+ Route::get('/show_product', [AdminController::class, 'show_product'])->name('admin.products');
  Route::get('/delete_product/{id}', [AdminController::class, 'delete_product']);
  Route::get('/edit_product/{id}', [AdminController::class, 'edit_product']);
  Route::post('/update_product/{id}', [AdminController::class, 'update_product']);
@@ -204,13 +204,23 @@ Route::post('/invoice/draft/add/{supplierProduct}', [AdminController::class, 'ad
 Route::get('/suppliers/{supplier}/invoices/draft', [AdminController::class, 'viewDraftInvoice'])
     ->name('suppliers.invoices.draft');
 
-
+// Update quantities or cost prices in draft
+Route::post('/supplier/invoices/{invoice}/update-draft', [AdminController::class, 'updateDraftInvoice'])
+    ->name('supplier.invoice.updateDraft');
 Route::post('/invoice/draft/confirm/{invoice}', [AdminController::class, 'confirmDraftInvoice'])
     ->name('invoice.draft.confirm');
 
 // Restock
 Route::post('/supplier/invoices/{invoice}/restock', [AdminController::class, 'restockFromInvoice'])->name('supplier.invoice.restock');
 
+// Show confirmed invoice & "Restock Now" button
+Route::get('/supplier/invoices/{invoice}/restock', [AdminController::class, 'showRestockView'])
+    ->name('supplier.invoice.restock.view');
+
+Route::get('/admin/new-products/setup', [AdminController::class, 'showNewProductSetup'])
+    ->name('admin.showNewProductSetup');
+Route::post('/admin/new-products/store', [AdminController::class, 'storeNewProducts'])
+    ->name('admin.storeNewProducts');
 
     });
 

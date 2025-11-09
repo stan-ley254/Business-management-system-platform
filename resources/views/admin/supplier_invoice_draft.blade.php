@@ -50,14 +50,7 @@
         <div class="main-panel">
        
           <div class="content-wrapper">
-      @if(session()->has('message'))
-<div class="alert alert-success alert-dismissible fade show">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close" aria-hidden="true">
-        <span aria-hidden="true">&times;</span>
-    </button>
-    {{session()->get('message')}}
-</div>
-            @endif
+
    <div class="container">
   <div id="alert-container" class="message rounded">
                 @if(session('success'))
@@ -74,55 +67,72 @@
                 @endif
             </div>
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4>Draft Invoice - {{ $invoice->invoice_number }}</h4>
-    <a href="{{ route('suppliers.products', $invoice->supplier->id) }}" class="btn btn-secondary btn-sm">
-      Add More Products
-    </a>
-  </div>
+    <h3>Draft Invoice - {{ $invoice->supplier->name }}</h3>
+    <p><strong>Status:</strong> <span class="badge bg-warning">{{ ucfirst($invoice->status) }}</span></p>
 
-  <div class="card">
-    <div class="card-body">
-      @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-      @endif
+    @if (session('success'))
+        <div class="alert alert-success mt-2">{{ session('success') }}</div>
+    @endif
 
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Cost Price</th>
-            <th>Quantity</th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          @foreach($invoice->items as $item)
-          <tr>
-            <td>{{ $item->product_name }}</td>
-            <td>{{ number_format($item->cost_price, 2) }}</td>
-            <td>{{ $item->quantity }}</td>
-            <td>{{ number_format($item->cost_price * $item->quantity, 2) }}</td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
+    <form action="{{ route('supplier.invoice.updateDraft', $invoice->id) }}" method="POST" id="draftInvoiceForm">
+        @csrf
 
-      <div class="mt-3 text-end">
-        <h5>
-          Total: KES {{ number_format($invoice->items->sum(fn($i) => $i->cost_price * $i->quantity), 2) }}
-        </h5>
-      </div>
+        <table class="table table-bordered mt-4 align-middle">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th width="150">Cost Price (Ksh)</th>
+                    <th width="120">Quantity</th>
+                    <th width="150">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody id="invoice-items">
+                @foreach($invoice->items as $item)
+                    <tr>
+                        <td>
+  {{ $item->product_name 
+      ?? ($item->supplierProduct->supplier_product_name ?? '—') 
+  }}
+</td>
+                        <td>
+                            <input type="number" step="0.01" name="items[{{ $item->id }}][cost_price]" 
+                                   value="{{ $item->cost_price }}" 
+                                   class="form-control form-control-sm cost-price">
+                        </td>
+                        <td>
+                            <input type="number" min="1" name="items[{{ $item->id }}][quantity]" 
+                                   value="{{ $item->quantity }}" 
+                                   class="form-control form-control-sm quantity">
+                        </td>
+                        <td class="subtotal">{{ number_format($item->cost_price * $item->quantity, 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-      <form action="{{ route('invoice.draft.confirm', $invoice->id) }}" method="POST" class="mt-3 text-end">
+        <div class="d-flex justify-content-between mt-3">
+            <h5>Total: Ksh <span id="grandTotal">{{ number_format($invoice->items->sum(fn($i) => $i->cost_price * $i->quantity), 2) }}</span></h5>
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="fas fa-save"></i> Update Draft
+            </button>
+        </div>
+    </form>
+
+    <form action="{{ route('invoice.draft.confirm', $invoice->id) }}" method="POST" class="mt-3 text-end">
         @csrf
         <button type="submit" class="btn btn-success">
-          <i class="fas fa-check-circle"></i> Confirm Invoice
+            <i class="fas fa-check-circle"></i> Confirm Invoice
         </button>
-      </form>
-    </div>
-  </div>
+    </form>
+
+    <a href="{{ route('suppliers.view') }}" class="btn btn-outline-secondary mt-3">← Back to Suppliers</a>
 </div>
+
+
+            </div>
+            </div>
+            <!-- main-panel ends -->
+        </div>
 <!-- container-scroller -->
     @include('admin.script')
   </body>
