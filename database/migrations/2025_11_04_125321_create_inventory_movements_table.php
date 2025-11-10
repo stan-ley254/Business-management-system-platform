@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('inventory_movements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-    $table->string('movement_type',['restock']); // purchase, sale, adjustment, etc.
+   $table->enum('movement_type', ['restock', 'sale', 'adjustment']);
     $table->integer('quantity');
     $table->integer('previous_stock')->default(0);
     $table->integer('new_stock')->default(0);

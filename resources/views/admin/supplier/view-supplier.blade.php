@@ -55,7 +55,7 @@
                         <td>{{ ucfirst($supplier->status ?? '—') }}</td>
                         <td class="d-flex gap-2">
                           <a href="{{ route('suppliers.invoices.draft', $supplier->id) }}" class="btn btn-sm btn-outline-dark">
-  <i class="fas fa-file-invoice"></i> View Draft Invoice
+  <i class="mdi mdi-file-invoice"></i> View Draft Invoice
 </a>
 
 
