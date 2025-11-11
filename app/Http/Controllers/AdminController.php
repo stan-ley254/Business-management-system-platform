@@ -612,9 +612,11 @@ public function addToDraftInvoice(Request $request, $supplierProductId)
         SupplierInvoiceItem::create([
             'supplier_invoice_id' => $invoice->id,
             'supplier_product_id' => $supplierProductId,
-            'product_name' => $request->name ?? $supplierProduct->supplier_product_name,
-            'cost_price' => $request->price ?? $supplierProduct->default_cost_price,
-            'quantity' => 1,
+            'product_name'        => $request->name ?? $supplierProduct->supplier_product_name ?? '',
+            'cost_price'          => $request->price ?? $supplierProduct->default_cost_price,
+            'quantity'            => 1,
+            'description'         => $supplierProduct->description ?? null,
+            'barcode'             => $supplierProduct->barcode ?? null,
         ]);
     }
 
@@ -722,15 +724,17 @@ public function restockFromInvoice($invoiceId)
                 'business_id' => $businessId,
             ]);
         } else {
-            // 🆕 New product — queue for setup
+            // 🆕 New product — queue for setup (use supplierProduct fallback)
             $newProducts[] = [
                 'supplier_invoice_item_id' => $item->id,
-                'product_name' => $item->product_name,
-                'description' => $item->description,
-                'category' => $item->category,
-                'cost_price' => $item->cost_price,
-                'suggested_price' => round($item->cost_price * 1.2, 2),
-                'quantity' => $item->quantity,
+                'product_name'             => trim((string) ($item->product_name ?? $item->supplierProduct->supplier_product_name ?? '')),
+                'description'              => $item->description ?? $item->supplierProduct->description ?? null,
+                'category'                 => $item->category ?? null,
+                'cost_price'               => $item->cost_price ?? 0,
+                'suggested_price'          => round(($item->cost_price ?? 0) * 1.2, 2),
+                'price'                    => $item->price ?? ($item->cost_price ?? 0),
+                'quantity'                 => $item->quantity ?? 0,
+                'barcode'                  => $item->barcode ?? $item->supplierProduct->barcode ?? null,
             ];
         }
     }
@@ -754,38 +758,80 @@ public function showNewProductSetup()
     return view('admin.new_products_setup', compact('newProducts'));
 }
 
-public function storeNewProducts(Request $request)
-{
-    $businessId = auth()->user()->business_id;
+// ...existing code...
+    public function storeNewProducts(Request $request)
+    {
+        $businessId = auth()->user()->business_id;
 
-    foreach ($request->products as $productData) {
-        Product::create([
-            'business_id' => $businessId,
-            'product_name' => $productData['product_name'],
-            'description' => $productData['description'],
-            'category' => $productData['category'],
-            'cost_price' => $productData['cost_price'],
-            'price' => $productData['price'],
-            'discount_price' => $productData['discount_price'] ?? null,
-            'quantity' => $productData['quantity'],
-            'opening_stock' => $productData['quantity'],
-            'in_stock' => true,
-        ]);
+        foreach ($request->products as $productData) {
+            $name = trim((string) ($productData['product_name'] ?? ''));
+            $barcode = trim((string) ($productData['barcode'] ?? ''));
 
-        InventoryMovement::create([
-            'product_id' => Product::latest()->first()->id,
-            'movement_type' => 'restock',
-            'quantity' => $productData['quantity'],
-            'reference' => 'Initial Stock from Supplier Invoice',
-            'cost_price' => $productData['cost_price'],
-            'business_id' => $businessId,
-        ]);
+            // fallback: require a usable name
+            if ($name === '') {
+                $name = $barcode ?: 'Unnamed product ' . substr(uniqid(), -6);
+            }
+
+            // try to find existing product by barcode first, then normalized name
+            $existingQuery = Product::where('business_id', $businessId);
+            if ($barcode !== '') {
+                $existingQuery->where('barcode', $barcode);
+            } else {
+                $existingQuery->whereRaw('LOWER(TRIM(product_name)) = ?', [mb_strtolower($name)]);
+            }
+
+            $existing = $existingQuery->first();
+            $quantity = (int) ($productData['quantity'] ?? 0);
+            $costPrice = isset($productData['cost_price']) ? (float) $productData['cost_price'] : 0;
+            $price = $productData['price'] ?? $productData['suggested_price'] ?? 0;
+
+            if ($existing) {
+                $existing->quantity = ($existing->quantity ?? 0) + $quantity;
+                $existing->cost_price = $costPrice ?: $existing->cost_price;
+                $existing->price = $price ?: $existing->price;
+                $existing->description = $productData['description'] ?? $existing->description;
+                $existing->barcode = $barcode ?: $existing->barcode;
+                $existing->in_stock = true;
+                $existing->save();
+
+                InventoryMovement::create([
+                    'product_id' => $existing->id,
+                    'movement_type' => 'restock',
+                    'quantity' => $quantity,
+                    'reference' => 'Initial Stock from Supplier Invoice',
+                    'cost_price' => $costPrice,
+                    'business_id' => $businessId,
+                ]);
+            } else {
+                $created = Product::create([
+                    'business_id' => $businessId,
+                    'product_name' => $name,
+                    'description' => $productData['description'] ?? null,
+                    'category' => $productData['category'] ?? null,
+                    'cost_price' => $costPrice,
+                    'price' => $price,
+                    'discount_price' => $productData['discount_price'] ?? null,
+                    'quantity' => $quantity,
+                    'opening_stock' => $quantity,
+                    'in_stock' => true,
+                    'barcode' => $barcode ?: null,
+                ]);
+
+                InventoryMovement::create([
+                    'product_id' => $created->id,
+                    'movement_type' => 'restock',
+                    'quantity' => $quantity,
+                    'reference' => 'Initial Stock from Supplier Invoice',
+                    'cost_price' => $costPrice,
+                    'business_id' => $businessId,
+                ]);
+            }
+        }
+
+        session()->forget('pending_new_products');
+
+        return redirect()->route('admin.products')->with('success', 'New products added successfully.');
     }
-
-    session()->forget('pending_new_products');
-
-    return redirect()->route('admin.products')->with('success', 'New products added successfully.');
-}
 
 
     public function viewCustomeradmin()
