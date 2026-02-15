@@ -35,7 +35,7 @@
           <div class="card">
             <div class="card-body p-0">
               <div class="table-responsive">
-                <table class="table table-bordered table-striped mb-0">
+                <table class="table table-bordered table-striped table-secondary mb-0">
                   <thead class="thead-light">
                     <tr>
                       <th>Supplier Name</th>
@@ -54,12 +54,12 @@
                         <td>{{ number_format($supplier->balance ?? $supplier->amount ?? 0, 2) }}</td>
                         <td>{{ ucfirst($supplier->status ?? '—') }}</td>
                         <td class="d-flex gap-2">
-                          <a href="{{ route('suppliers.invoices.draft', $supplier->id) }}" class="btn btn-sm btn-outline-dark">
+                          <a href="{{ route('suppliers.invoices.draft', $supplier->id) }}" class="btn btn-sm btn-outline-primary">
   <i class="mdi mdi-file-invoice"></i> View Draft Invoice
 </a>
 
 
-                          <a href="{{ route('suppliers.products', $supplier->id) }}" class="btn btn-sm btn-outline-secondary">
+                          <a href="{{ route('suppliers.products', $supplier->id) }}" class="btn btn-sm btn-outline-info">
                             <i class="fas fa-box"></i> View Products
                           </a>
 

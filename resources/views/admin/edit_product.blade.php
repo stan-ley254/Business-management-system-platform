@@ -28,6 +28,7 @@
       <!-- partial:partials/_sidebar.html -->
       @include('admin.sidebar')
       <!-- partial -->
+       <
       @include('admin.header')
         <!-- partial -->
         <div class="main-panel">
@@ -40,6 +41,7 @@
     {{session()->get('message')}}
 </div>
             @endif
+            div
 <div class="container-fluid">
           <div class="text ">
                 <h2>Edit Product</h2>
