@@ -55,6 +55,8 @@ RUN rm -f /etc/nginx/sites-enabled/default && \
     
 # Copy Supervisor config
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/ssl/ca.pem /etc/ssl/certs/ca.pem
+
 
 # Copy start script
 COPY docker/start.sh /start.sh
