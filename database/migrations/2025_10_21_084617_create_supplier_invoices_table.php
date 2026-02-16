@@ -16,7 +16,7 @@ return new class extends Migration
              $table->foreignId('supplier_id')->constrained()->onDelete('cascade');
             $table->string('invoice_number')->unique();
             $table->enum('status', ['draft', 'confirmed', 'cancelled'])->default('draft');
-             $table->timestamp('confirmed_at')->nullable()->after('status');
+             $table->timestamp('confirmed_at')->nullable();
             $table->decimal('total_cost', 15, 2)->default(0.00);
             $table->text('notes')->nullable();
             $table->string('created_by');
