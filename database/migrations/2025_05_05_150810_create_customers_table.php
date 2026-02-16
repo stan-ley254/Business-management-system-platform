@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('phone_number')->nullable();
             $table->decimal('total_debt', 10, 2)->default(0);
             $table->string('location')->nullable();
-            $table->foreignId('business_id')->after('id')->constrained('businesses')->onDelete('cascade');
+            $table->foreignId('business_id')->constrained('businesses')->onDelete('cascade');
             $table->timestamps();
         });
     }
