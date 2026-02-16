@@ -24,10 +24,9 @@ return new class extends Migration
             $table->integer('quantity');
             $table->decimal('total');
              $table->enum('payment_status', ['cash', 'debt', 'mpesa'])
-                  ->default('cash')
-                  ->after('total');
-                  $table->enum('status', ['active', 'restored'])->default('active')->after('payment_status');
-            $table->timestamp('restored_at')->nullable()->after('status');
+                  ->default('cash');
+                  $table->enum('status', ['active', 'restored'])->default('active');
+            $table->timestamp('restored_at')->nullable();
             $table->timestamps();
         });
     }
