@@ -162,12 +162,7 @@ public function addCartByBarcode(Request $request)
             ]);
         }
 
-        // Decrease stock
-        $product->quantity -= $quantity;
-        if ($product->quantity <= 0) {
-            $product->in_stock = false;
-        }
-        $product->save();
+        // NOTE: stock is adjusted only at checkout/add-to-debt. Do not decrement here.
 
         // Refresh cartItem with full data (in case we need to send it to frontend)
         $cartItem->refresh();
@@ -275,21 +270,8 @@ public function filterSales(Request $request)
     $cartItems = CartItem::where('cart_id', $cartId)->get();
 
     foreach ($cartItems as $item) {
-        // Restore stock
-        $product = Product::find($item->product_id);
-
-        if ($product) {
-            $product->quantity += $item->quantity;
-
-            // Optionally re-flag it as in stock
-            if (!$product->in_stock && $product->quantity > 0) {
-                $product->in_stock = true;
-            }
-
-            $product->save();
-        }
-
-        // Delete the item
+        // Simply remove the cart item. Stock is not restored here because
+        // stock is only adjusted on finalization (checkout / add to debt).
         $item->delete();
     }
 
@@ -475,12 +457,7 @@ public function filterSales(Request $request)
                 $cartItem->save();
             }
 
-            // Update product quantity - SQLite compatible way
-            $product->quantity = $product->quantity - $quantity;
-            if ($product->quantity <= 0) {
-                $product->in_stock = false;
-            }
-            $product->save();
+            // NOTE: stock is adjusted only at checkout/add-to-debt. Do not decrement here when adding to cart.
 
             DB::commit();
 
@@ -580,10 +557,7 @@ public function filterSales(Request $request)
             $cartItem->active_price = $request->input('active_price');
             $cartItem->save();
             
-            // Update product quantity
-            $product->quantity -= $quantityDifference;
-            $product->in_stock = $product->quantity > 0;
-            $product->save();
+            // NOTE: stock adjustments happen at checkout/add-to-debt only.
             
             DB::commit();
     
@@ -681,10 +655,7 @@ public function filterSales(Request $request)
             $cartItem->active_price = $request->input('active_price');
             $cartItem->save();
             
-            // Update product stock
-            $product->quantity -= $quantityDifference;
-            $product->in_stock = $product->quantity > 0;
-            $product->save();
+            // NOTE: stock adjustments happen at checkout/add-to-debt only.
             
             DB::commit();
             
@@ -891,14 +862,8 @@ public function addByBarcode(Request $request)
             $cartItem = CartItem::findOrFail($id);
             $product = Product::find($cartItem->product_id);
             
-            if ($product) {
-                // Return the quantity back to product stock
-                $product->quantity += $cartItem->quantity;
-                $product->in_stock = $product->quantity > 0;
-                $product->save();
-            }
-            
-            // Delete the cart item
+            // Delete the cart item (do not modify product stock here;
+            // stock is adjusted only at checkout/add-to-debt).
             $productId = $cartItem->product_id;
             $cartItem->delete();
             

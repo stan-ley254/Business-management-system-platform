@@ -21,8 +21,8 @@
                         <select class="form-control" name="product_id" id="product-select">
                             <option value="">Select a product</option>
                             @foreach($product as $item)
-                                <option value="{{ $item->id }}" data-price="{{ $item->price }}" data-stock="{{ $item->quantity }}">
-                                    {{ $item->product_name }} ({{ $item->category }})
+                                <option value="{{ $item->id }}" data-price="{{ $item->price }}" data-stock="{{ $item->quantity }}" @if($item->quantity <= 0) disabled @endif>
+                                    {{ $item->product_name }} ({{ $item->category }}) — @if($item->quantity > 0) {{ $item->quantity }} in stock @else Out of stock @endif
                                 </option>
                             @endforeach
                         </select>
