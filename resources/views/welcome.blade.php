@@ -178,9 +178,9 @@
         <div class="row">
             <div class="col-md-6">
                 <h5 class="text-success">Email</h5>
-                <p><i class="fas fa-envelope"></i> justarttech@gmail.com</p>
+                <p><i class="fas fa-envelope"><.com</p>
                 <h5 class="text-success">Phone</h5>
-                <p><i class="fas fa-phone"></i> +254 712 345 678</p>
+                <p><i class="fas fa-phone"></i> +254768181843</p>
                 <h5 class="text-success">Location</h5>
                 <p><i class="fas fa-map-marker-alt"></i> Nairobi, Kenya</p>
             </div>
