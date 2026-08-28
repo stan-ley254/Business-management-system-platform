@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MpesaTransaction;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use GuzzleHttp\Client;
-use App\Models\MpesaTranscations;
+use Illuminate\Support\Facades\Storage;
 
 class BusinessSettingsController extends Controller
 {
-
     public function stkPush(Request $request)
     {
         $request->validate([
-             'phone' => 'required|string|min:10',
-    'amount' => 'required|numeric|min:1'
+            'phone' => 'required|string|min:10',
+            'amount' => 'required|numeric|min:1',
         ]);
 
         $business = Auth::user()->business;
@@ -25,10 +24,9 @@ class BusinessSettingsController extends Controller
         $consumerKey = decrypt($business->mpesa_consumer_key);
         $consumerSecret = decrypt($business->mpesa_consumer_secret);
         $passkey = decrypt($business->mpesa_passkey);
-        $amount = $request->amount; // Replace with actual cart total logic if needed
 
         $timestamp = now()->format('YmdHis');
-        $password = base64_encode($shortCode . $passkey . $timestamp);
+        $password = base64_encode($shortCode.$passkey.$timestamp);
 
         $tokenResponse = Http::withBasicAuth($consumerKey, $consumerSecret)
             ->get('https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials');
@@ -45,7 +43,7 @@ class BusinessSettingsController extends Controller
             'PartyB' => $shortCode,
             'PhoneNumber' => $request->phone,
             'CallBackURL' => route('mpesa.callback', ['business' => $business->id]),
-            'AccountReference' => 'POS-' . now()->timestamp,
+            'AccountReference' => 'POS-'.now()->timestamp,
             'TransactionDesc' => 'Point of Sale Payment',
         ];
 
@@ -88,42 +86,111 @@ class BusinessSettingsController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-  
-      // New method: createMpesa
-      public function createMpesa()
-      {
-          $business = Auth::user()->business;
-          return view('business.settings.mpesa', compact('business'));
-      }
-  
-      // New method: storeMpesa
-      public function storeMpesa(Request $request)
-      {
-          $request->validate([
-              'mpesa_short_code' => 'required|string|unique:businesses,mpesa_short_code',
-              'mpesa_consumer_key' => 'required|string',
-              'mpesa_consumer_secret' => 'required|string',
-              'mpesa_passkey' => 'required|string',
-              'mpesa_initiator_name' => 'nullable|string',
-              'mpesa_security_credential' => 'nullable|string',
-          ]);
-  
-          $business = Auth::user()->business;
-  
-          try {
-              $business->update([
-                  'mpesa_short_code' => $request->mpesa_short_code,
-                  'mpesa_consumer_key' => encrypt($request->mpesa_consumer_key),
-                  'mpesa_consumer_secret' => encrypt($request->mpesa_consumer_secret),
-                  'mpesa_passkey' => encrypt($request->mpesa_passkey),
-                  'mpesa_initiator_name' => $request->mpesa_initiator_name,
-                  'mpesa_security_credential' => $request->mpesa_security_credential ? encrypt($request->mpesa_security_credential) : null,
-              ]);
-  
-              return redirect()->route('business.settings.mpesa')->with('success', 'M-Pesa settings created successfully.');
-          } catch (\Exception $e) {
-              Log::error('Error creating M-Pesa settings: ' . $e->getMessage(), ['exception' => $e]);
-              return back()->with('error', 'Failed to create M-Pesa settings. Please try again.');
-          }
-      }
+    public function editBusinessProfile()
+    {
+        $business = Auth::user()->business;
+
+        return view('business.settings.profile', compact('business'));
+    }
+
+    public function updateBusinessProfile(Request $request)
+    {
+        $request->validate([
+            'name' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'logo_path' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        $business = Auth::user()->business;
+
+        $payload = [
+            'name' => $request->input('name', $business->name),
+            'address' => $request->input('address'),
+            'phone' => $request->input('phone'),
+        ];
+
+        if ($request->hasFile('logo_path')) {
+            $path = $request->file('logo_path')->store('business-logos', 'public');
+            $payload['logo_path'] = $path;
+
+            if ($business->logo_path && Storage::disk('public')->exists($business->logo_path)) {
+                Storage::disk('public')->delete($business->logo_path);
+            }
+        }
+
+        $business->update($payload);
+
+        return redirect()->route('business.profile.edit')->with('success', 'Business details updated successfully.');
+    }
+
+    public function createMpesa()
+    {
+        $business = Auth::user()->business;
+
+        return view('business.settings.mpesa', compact('business'));
+    }
+
+    public function editMpesa()
+    {
+        $business = Auth::user()->business;
+
+        return view('business.settings.edit_mpesa', compact('business'));
+    }
+
+    public function storeMpesa(Request $request)
+    {
+        $request->validate([
+            'mpesa_short_code' => 'required|string|unique:businesses,mpesa_short_code',
+            'mpesa_consumer_key' => 'required|string',
+            'mpesa_consumer_secret' => 'required|string',
+            'mpesa_passkey' => 'required|string',
+            'mpesa_initiator_name' => 'nullable|string',
+            'mpesa_security_credential' => 'nullable|string',
+        ]);
+
+        $business = Auth::user()->business;
+
+        try {
+            $business->update([
+                'mpesa_short_code' => $request->mpesa_short_code,
+                'mpesa_consumer_key' => encrypt($request->mpesa_consumer_key),
+                'mpesa_consumer_secret' => encrypt($request->mpesa_consumer_secret),
+                'mpesa_passkey' => encrypt($request->mpesa_passkey),
+                'mpesa_initiator_name' => $request->mpesa_initiator_name,
+                'mpesa_security_credential' => $request->mpesa_security_credential ? encrypt($request->mpesa_security_credential) : null,
+            ]);
+
+            return redirect()->route('business.mpesa.create')->with('success', 'M-Pesa settings created successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error creating M-Pesa settings: '.$e->getMessage(), ['exception' => $e]);
+
+            return back()->with('error', 'Failed to create M-Pesa settings. Please try again.');
+        }
+    }
+
+    public function updateMpesa(Request $request)
+    {
+        $request->validate([
+            'mpesa_short_code' => ['required', 'string', 'max:255'],
+            'mpesa_consumer_key' => 'required|string',
+            'mpesa_consumer_secret' => 'required|string',
+            'mpesa_passkey' => 'required|string',
+            'mpesa_initiator_name' => 'nullable|string',
+            'mpesa_security_credential' => 'nullable|string',
+        ]);
+
+        $business = Auth::user()->business;
+
+        $business->update([
+            'mpesa_short_code' => $request->mpesa_short_code,
+            'mpesa_consumer_key' => encrypt($request->mpesa_consumer_key),
+            'mpesa_consumer_secret' => encrypt($request->mpesa_consumer_secret),
+            'mpesa_passkey' => encrypt($request->mpesa_passkey),
+            'mpesa_initiator_name' => $request->mpesa_initiator_name,
+            'mpesa_security_credential' => $request->mpesa_security_credential ? encrypt($request->mpesa_security_credential) : null,
+        ]);
+
+        return redirect()->route('business.mpesa.edit')->with('success', 'M-Pesa settings updated successfully.');
+    }
 }

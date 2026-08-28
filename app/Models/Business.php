@@ -2,13 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use App\Models\User;
-use App\Models\Product;
-use App\Models\Sales;
-use App\Models\Expense;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Business extends Model
 {
@@ -17,6 +12,9 @@ class Business extends Model
 
     protected $fillable = [
         'name',
+        'address',
+        'phone',
+        'logo_path',
         'type',
         'next_payment_due',
         'is_active',
@@ -25,26 +23,40 @@ class Business extends Model
         'mpesa_consumer_secret',
         'mpesa_passkey',
         'mpesa_initiator_name',
-        'mpesa_security_credential'
-            ];
+        'mpesa_security_credential',
+    ];
 
-            protected $casts = [
-    'next_payment_due' => 'datetime',
-];
+    protected $casts = [
+        'next_payment_due' => 'datetime',
+    ];
 
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 
-                public function users() { return $this->hasMany(User::class); }
-                public function products() { return $this->hasMany(Product::class); }
-                public function sales() { return $this->hasMany(Sales::class); }
-                public function expense(){return $this->hasMany(Expense::class);}
-                // etc.
-            
-                public function owner()
-                {
-                    return $this->hasMany(User::class);
-                }
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 
-            // Mutators for sanitization
+    public function sales()
+    {
+        return $this->hasMany(Sales::class);
+    }
+
+    public function expense()
+    {
+        return $this->hasMany(Expense::class);
+    }
+    // etc.
+
+    public function owner()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    // Mutators for sanitization
     public function setProductNameAttribute($value)
     {
         $this->attributes['name'] = strip_tags($value);
@@ -64,17 +76,19 @@ class Business extends Model
     {
         $this->attributes['mpesa_consumer_secret'] = strip_tags($value);
     }
-     public function setMpesaPassKeyAttribute($value)
+
+    public function setMpesaPassKeyAttribute($value)
     {
         $this->attributes['mpesa_passkey'] = strip_tags($value);
     }
-       public function setMpesaInitiatorNameAttribute($value)
+
+    public function setMpesaInitiatorNameAttribute($value)
     {
         $this->attributes['mpesa_initiator_name'] = strip_tags($value);
     }
-       public function setMpesaSecretCredentialAttribute($value)
+
+    public function setMpesaSecretCredentialAttribute($value)
     {
         $this->attributes['mpesa_secret_credential'] = strip_tags($value);
     }
-            
 }

@@ -75,8 +75,11 @@
             <!-- Alert Messages -->
             <div id="alert-container" class="message rounded">
                 @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show">
-                        {{ session('success') }}
+                    <div class="alert alert-success alert-dismissible fade show d-flex justify-content-between align-items-center gap-3">
+                        <span>{{ session('success') }}</span>
+                        @if(session('last_receipt_cart_id'))
+                            <a href="{{ route('receipt.download', ['cartId' => session('last_receipt_cart_id')]) }}" class="btn btn-sm btn-light">Download Receipt</a>
+                        @endif
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
