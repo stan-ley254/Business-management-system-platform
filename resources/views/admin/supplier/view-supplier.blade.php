@@ -22,7 +22,7 @@
         <div class="container-md">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0">Suppliers</h4>
-            <a href="" class="btn btn-primary btn-sm">New Supplier</a>
+            <a href="{{ url('/createSupplier') }}" class="btn btn-primary btn-sm">New Supplier</a>
           </div>
 
           @if(session('success'))

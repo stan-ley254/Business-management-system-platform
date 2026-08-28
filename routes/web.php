@@ -150,6 +150,17 @@ Route::middleware(['role:user'])->get('/serviceUser', [ServiceUserController::cl
  Route::get('/download-sales-csv/{filename}', [AdminController::class, 'downloadCsv'])
      ->name('download.sales.csv');
 
+      // Suppliers Routes
+     Route::get('/viewSupplier', [SuperController::class, 'viewSupplier']);
+     Route::get('/createSupplier', [SuperController::class, 'createSupplier']);
+     Route::post('/storeSupplier', [SuperController::class, 'storeSupplier']);
+     Route::get('/showSupplier/{id}', [SuperController::class, 'showSupplier']);
+     Route::get('/editSupplier/{id}', [SuperController::class, 'editSupplier']);
+     Route::post('/updateSupplier/{id}', [SuperController::class, 'updateSupplier']);
+     Route::delete('/destroySupplier/{id}', [SuperController::class, 'destroySupplier']);
+     Route::post('/scan-product', [SuperController::class, 'addByBarcode']);
+     Route::post('/add-cart-by-barcode', [SuperController::class, 'addCartByBarcode']);
+
  
         Route::get('income-statement', [IncomeStatementController::class, 'index'])->name('admin.income-statement');
     Route::post('income-statement/generate', [IncomeStatementController::class, 'generate'])->name('admin.income-statement.generate');
