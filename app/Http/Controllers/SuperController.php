@@ -894,19 +894,33 @@ class SuperController extends Controller
 
     public function checkout(Request $request)
     {
+        $isAjax = $request->expectsJson() || $request->ajax() || $request->wantsJson();
+
         $cartId = session('cart_id');
         if (! $cartId) {
+            if ($isAjax) {
+                return response()->json(['success' => false, 'message' => 'No active cart found.'], 400);
+            }
+
             return redirect()->back()->with('error', 'No active cart found.');
         }
 
         $cart = Cart::find($cartId);
         if (! $cart) {
+            if ($isAjax) {
+                return response()->json(['success' => false, 'message' => 'Cart not found.'], 404);
+            }
+
             return redirect()->back()->with('error', 'Cart not found.');
         }
 
         $cartItems = CartItem::where('cart_id', $cartId)->get();
 
         if ($cartItems->isEmpty()) {
+            if ($isAjax) {
+                return response()->json(['success' => false, 'message' => 'Cart is empty.'], 400);
+            }
+
             return redirect()->back()->with('error', 'Cart is empty.');
         }
 
@@ -967,6 +981,14 @@ class SuperController extends Controller
         // Clear session
         session()->forget('cart_id');
         session(['last_receipt_cart_id' => $cartId]);
+
+        if ($isAjax) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Product Sold!',
+                'cart_id' => $cartId,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Product Sold!');
     }
