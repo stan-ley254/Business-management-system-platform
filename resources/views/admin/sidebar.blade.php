@@ -119,12 +119,19 @@
 </li>
 
 <li class="nav-item menu-items">
-    <a class="nav-link" href="{{url('view_sales')}}">
+    <a class="nav-link" data-bs-toggle="collapse" href="#sales-menu" aria-expanded="false" aria-controls="sales-menu">
       <span class="menu-icon">
         <i class="mdi mdi-cart-outline"></i> <!-- Sales as cart -->
       </span>
       <span class="menu-title">Sales</span>
+      <i class="menu-arrow"></i>
     </a>
+    <div class="collapse" id="sales-menu">
+      <ul class="nav flex-column sub-menu">
+        <li class="nav-item"> <a class="nav-link" href="{{url('view_sales')}}">Manage Sales</a></li>
+        <li class="nav-item"> <a class="nav-link" href="{{url('view_receipts')}}">Receipts</a></li>
+      </ul>
+    </div>
 </li>
 
 <li class="nav-item menu-items">

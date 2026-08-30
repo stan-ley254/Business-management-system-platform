@@ -3,62 +3,6 @@
   <head>
     <!-- Required meta tags -->
     @include('admin.css')
-    <style>
-      /* Lively invoice styles */
-      .invoice-header {
-        background: linear-gradient(90deg, #0f172a 0%, #0ea5a4 100%);
-        color: #fff;
-        padding: 1rem 1.25rem;
-        border-radius: .5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 6px 20px rgba(2,6,23,0.08);
-      }
-
-      .invoice-meta .badge {
-        font-weight: 600;
-        color: #0f172a;
-      }
-
-      .supplier-card {
-        background: linear-gradient(180deg,#ffffff,#f8fafc);
-        border-left: 6px solid #06b6d4;
-        padding: 0.9rem;
-        border-radius: .5rem;
-        box-shadow: 0 6px 18px rgba(15,23,42,0.04);
-      }
-
-      .product-avatar {
-        width:44px;
-        height:44px;
-        display:inline-flex;
-        align-items:center;
-        justify-content:center;
-        border-radius:50%;
-        color:#fff;
-        font-weight:700;
-        font-size:1rem;
-        flex:0 0 44px;
-      }
-
-      .table-hover tbody tr:hover {
-        background: rgba(14,165,164,0.04);
-      }
-
-      .totals-wrap {
-        border-radius:.5rem;
-        padding: .75rem;
-        background: linear-gradient(180deg,#fff,#fbfdfe);
-        box-shadow: 0 6px 18px rgba(2,6,23,0.03);
-      }
-
-      .btn-spinner { display: inline-block; margin-left: .5rem; vertical-align: middle; }
-      .small-muted { color:#6b7280; font-size: .9rem; }
-
-      @media (max-width: 767px) {
-        .invoice-header { flex-direction: column; gap: .5rem; }
-        .product-avatar { width:36px; height:36px; font-size:.9rem; }
-      }
-    </style>
   </head>
   <body>
       @include('admin.sidebar')
@@ -67,50 +11,35 @@
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="container">
-            <div class="invoice-header d-flex justify-content-between align-items-center">
-              <div>
-                <h4 class="mb-0">Draft Invoice
-                  <small class="small-muted">#{{ $invoice->invoice_number ?? '—' }}</small>
-                </h4>
-                <div class="invoice-meta mt-1">
-                  <span class="badge bg-white me-2">Status: {{ ucfirst($invoice->status) }}</span>
-                  <span class="badge bg-white">Items: {{ $invoice->items->count() }}</span>
+            <div class="row g-3 mb-3 align-items-center">
+              <div class="col-12 col-md-8">
+                <h2 class="mb-3 text-success">Draft Invoice <small class="text-muted">#{{ $invoice->invoice_number ?? '—' }}</small></h2>
+                <div class="mb-2">
+                  <span class="badge bg-secondary me-2">Status: {{ ucfirst($invoice->status) }}</span>
+                  <span class="badge bg-secondary">Items: {{ $invoice->items->count() }}</span>
                 </div>
-              </div>
-
-              <div class="text-end">
-                <div class="small-muted">Supplier</div>
-                <div class="fw-semibold">
-                  {{ $invoice->supplier->supplier_name ?? $invoice->supplier->name ?? '—' }}
-                </div>
-                <div class="small-muted mt-1">
-                  {{ $invoice->supplier->phone_number ?? '' }}
-                </div>
-              </div>
-            </div>
-
-            <div class="row g-3 mb-3">
-              <div class="col-md-8">
-                <div class="supplier-card">
-                  <div class="d-flex align-items-center gap-3">
+                <div class="card mt-2">
+                  <div class="card-body d-flex align-items-center">
                     <div>
-                      <small class="small-muted">Invoice from</small>
+                      <small class="text-muted">Invoice from</small>
                       <div class="fw-semibold">{{ $invoice->supplier->supplier_name ?? '—' }}</div>
-                      <div class="small-muted">{{ $invoice->supplier->phone_number ?? '' }}</div>
+                      <div class="text-muted">{{ $invoice->supplier->phone_number ?? '' }}</div>
                     </div>
                     <div class="ms-auto text-end">
-                      <small class="small-muted">Draft total</small>
+                      <small class="text-muted">Draft total</small>
                       <div class="h5 mb-0" id="headerTotal">Ksh {{ number_format($invoice->items->sum(fn($i) => $i->cost_price * $i->quantity), 2) }}</div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div class="col-md-4">
-                <div class="totals-wrap text-end">
-                  <div class="mb-2 small-muted">Summary</div>
-                  <div class="fw-semibold">Items: {{ $invoice->items->count() }}</div>
-                  <div class="fw-semibold mt-2">Total: <span id="grandTotal">Ksh {{ number_format($invoice->items->sum(fn($i) => $i->cost_price * $i->quantity), 2) }}</span></div>
+              <div class="col-12 col-md-4">
+                <div class="card">
+                  <div class="card-body text-end">
+                    <div class="mb-2 text-muted">Summary</div>
+                    <div class="fw-semibold">Items: {{ $invoice->items->count() }}</div>
+                    <div class="fw-semibold mt-2">Total: <span id="grandTotal">Ksh {{ number_format($invoice->items->sum(fn($i) => $i->cost_price * $i->quantity), 2) }}</span></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -120,7 +49,7 @@
               <div class="card">
                 <div class="card-body p-0">
                   <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <table class="table table-bordered jsgrid jsgrid-table dataTables_wrapper table-primary mb-0">
                       <thead class="table-light">
                         <tr>
                           <th>Product</th>
@@ -138,15 +67,15 @@
                           <tr data-item-id="{{ $item->id }}">
                             <td class="align-middle">
                               <div class="d-flex align-items-center gap-3">
-                                <div class="product-avatar" style="background: {{ $avatarBg }};">
+                                <div class="rounded-circle d-inline-flex align-items-center justify-content-center" style="width:44px;height:44px;background: {{ $avatarBg }};color:#fff;font-weight:700;">
                                   {{ strtoupper(mb_substr($name, 0, 1)) }}
                                 </div>
                                 <div>
                                   <div class="fw-semibold">{{ $name }}</div>
-                                  <div class="small-muted small">
+                                  <div class="text-muted small">
                                     {{ $item->description ?? ($item->supplierProduct->description ?? '') }}
                                   </div>
-                                  <div class="small-muted small mt-1">
+                                  <div class="text-muted small mt-1">
                                     Barcode: {{ $item->barcode ?? ($item->supplierProduct->barcode ?? '—') }}
                                   </div>
                                 </div>

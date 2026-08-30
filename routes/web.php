@@ -34,6 +34,9 @@ Route::middleware('weigher', 'auth')->group(function () {
         Route::get('/deleteSale{id}', [SuperController::class, 'deleteSale']);
         Route::post('/filterSales', [SuperController::class, 'filterSales']);
         Route::get('/viewCart', [SuperController::class, 'viewCart']);
+        // Receipts (user)
+        Route::get('/viewReceipts', [SuperController::class, 'viewReceipts']);
+        Route::post('/filterReceipts', [SuperController::class, 'filterReceipts']);
         Route::get('/viewProduct', [SuperController::class, 'viewProduct']);
         Route::post('/addToCartAll', [SuperController::class, 'addToCartAll']);
         Route::post('/addToCart/{productId}', [SuperController::class, 'addToCart']);
@@ -159,6 +162,9 @@ Route::middleware('weigher', 'auth')->group(function () {
 
         // Sales Routes
         Route::get('/view_sales', [AdminController::class, 'view_sales']);
+        // Receipts (admin)
+        Route::get('/view_receipts', [AdminController::class, 'view_receipts']);
+        Route::post('/filter_receipts', [AdminController::class, 'filter_receipts']);
 
         // Orders Routes
         Route::get('/show_orders', [AdminController::class, 'show_orders']);

@@ -211,6 +211,48 @@ class SuperController extends Controller
         return view('sales.view_sales', compact('sales'))->with('success', 'Sales Filtered Successfully');
     }
 
+    // Receipts list (user) - shows receipts for the logged-in cashier only
+    public function viewReceipts(Request $request)
+    {
+        $user = Auth::user();
+        $businessId = $user->business_id;
+
+        $receipts = Receipt::where('business_id', $businessId)
+            ->where('cashier_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(25);
+
+        return view('receipts.index', compact('receipts'));
+    }
+
+    public function filterReceipts(Request $request)
+    {
+        $startDate = $request->input('from_date');
+        $endDate = $request->input('to_date');
+
+        if (! ($startDate && $endDate)) {
+            return redirect()->back()->with('error', 'Please provide both start and end dates.');
+        }
+
+        $startDate = $startDate . ' 00:00:00';
+        $endDate = $endDate . ' 23:59:59';
+
+        $user = Auth::user();
+        $businessId = $user->business_id;
+
+        $receipts = Receipt::where('business_id', $businessId)
+            ->where('cashier_id', $user->id)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'desc')
+            ->paginate(25);
+
+        if ($receipts->isEmpty()) {
+            return view('receipts.index', compact('receipts'))->with('success', 'No receipts found for the selected period.');
+        }
+
+        return view('receipts.index', compact('receipts'))->with('success', 'Receipts Filtered Successfully');
+    }
+
     public function viewCart()
     {
         $product = Product::all();
