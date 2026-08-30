@@ -97,7 +97,6 @@ Route::middleware('weigher', 'auth')->group(function () {
         ]);
     });
 
-    Route::middleware('auth:sanctum')->post('/sync/receive', [SyncController::class, 'receive'])->name('sync.receive');
 
     Route::middleware(['auth'])->group(function () {
         Route::post('/sync/push', [SyncController::class, 'push'])->name('sync.push');
