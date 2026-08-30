@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Http\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -52,6 +55,11 @@ class AppServiceProvider extends ServiceProvider
                 }
             });
         }
+
+        // Register the standard API rate limiter so 'throttle:api' resolves correctly
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
+        });
     }
 }
 

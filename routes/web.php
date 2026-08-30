@@ -42,7 +42,7 @@ Route::middleware('weigher', 'auth')->group(function () {
         Route::post('/addToCart/{productId}', [SuperController::class, 'addToCart']);
         Route::post('/deleteCartItem/{id}', [SuperController::class, 'deleteCartItem']);
         Route::post('/searchProductCart', [SuperController::class, 'searchProductCart']);
-        Route::get('/related-products', [ProductController::class, 'relatedProducts']);
+        Route::get('/related-products', [SuperController::class, 'relatedProducts']);
         Route::post('/addCart', [SuperController::class, 'addCart']);
         Route::get('/getCartItems', [SuperController::class, 'getCartItems']);
         Route::get('/getCartItem/{productId}', [SuperController::class, 'getCartItem']);
