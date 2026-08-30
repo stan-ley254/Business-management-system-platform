@@ -108,7 +108,13 @@
                                     <i class="fas fa-shopping-bag"></i> Checkout
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="checkoutDropdown">
-                                <li><a class="dropdown-item checkout-option" data-method="cash" href="{{ url('/checkout') }}">Cash</a></li>
+                                <li>
+                                    <form action="{{ url('/checkout') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="method" value="cash">
+                                        <button type="submit" class="dropdown-item checkout-option" data-method="cash">Cash</button>
+                                    </form>
+                                </li>
     <li><a class="dropdown-item checkout-option" data-method="mpesa" href="#" data-bs-toggle="modal" data-bs-target="#mpesaModal">M-Pesa</a></li>
     <li><a class="dropdown-item checkout-option" data-method="card" href="#">Card</a></li>
                                 </ul>

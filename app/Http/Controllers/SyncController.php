@@ -175,19 +175,28 @@ public function receive(Request $request)
                     return $request->user();
                 });
 
+                // Log the sub-request for debugging
+                Log::info('Sync dispatching sub-request', ['url' => $url, 'method' => $method, 'data' => $data, 'user_id' => optional($request->user())->id]);
+
                 // Dispatch internally to Laravel
                 $response = Route::dispatch($subRequest);
 
-                $decoded = json_decode($response->getContent(), true);
+                // Capture response details for debugging
+                $content = $response->getContent();
+                $status = $response->status();
+                Log::info('Sync sub-request response', ['url' => $url, 'status' => $status, 'content' => $content]);
+
+                $decoded = json_decode($content, true);
                 $results[] = [
                     'ok' => $response->isOk(),
-                    'status' => $response->status(),
-                    'response' => $decoded ?? $response->getContent(),
+                    'status' => $status,
+                    'response' => $decoded ?? $content,
                 ];
             } catch (\Throwable $e) {
                 Log::error("Sync action failed", [
                     'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
+                    'trace' => $e->getTraceAsString(),
+                    'action' => $action,
                 ]);
                 $results[] = ['ok' => false, 'error' => $e->getMessage()];
             }

@@ -50,7 +50,7 @@ Route::middleware('weigher', 'auth')->group(function () {
         Route::get('/updateCart/{cartItemId}', [SuperController::class, 'updateCart']);
         Route::post('/updateCart/{id}', [SuperController::class, 'updateCartItem']);
         Route::post('/clearAllItems', [SuperController::class, 'clearAllItems']);
-        Route::get('/checkout', [SuperController::class, 'checkout']);
+        Route::post('/checkout', [SuperController::class, 'checkout']);
         Route::get('/download-receipt/{cartId}', [SuperController::class, 'downloadReceipt'])->name('receipt.download');
         Route::get('/debtItems', [SuperController::class, 'debtItems']);
         Route::post('/holdCart', [SuperController::class, 'holdCart']);
