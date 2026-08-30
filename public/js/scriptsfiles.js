@@ -825,12 +825,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // online checkout: follow default navigation or AJAX call based on your current behavior
+        // online checkout: always POST to the actual checkout route; do not rely on an href
         if (method === 'cash') {
-            // If your current checkout flow uses a GET to /checkout, trigger it:
-            window.location.href = $(this).attr('href');
-        } else {
-            // fallback: use AJAX
             OfflineSync.sendOrQueueAjax({
                 url: '/checkout',
                 type: 'POST',
@@ -845,7 +841,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
             });
+            return;
         }
+
+        // fallback: use AJAX for other methods
+        OfflineSync.sendOrQueueAjax({
+            url: '/checkout',
+            type: 'POST',
+            method: 'POST',
+            data: { method },
+            success: function (response) {
+                if (response.success) {
+                    showResponseMessage('Checkout successful', 'success');
+                    loadCartItems(); // refresh
+                } else {
+                    showResponseMessage(response.message || 'Checkout failed', 'danger');
+                }
+            }
+        });
     });
 
     // Payment calculator form
