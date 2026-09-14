@@ -1,24 +1,21 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SuperController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\UserManagementController;
-use App\Http\Controllers\MpesaController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusinessSettingsController;
+use App\Http\Controllers\ChatWithBusinessController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\HuggingFaceController;
 use App\Http\Controllers\IncomeStatementController;
 use App\Http\Controllers\OtherIncomeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ServiceAdminController;
 use App\Http\Controllers\ServiceUserController;
-use App\Http\Controllers\ExpenseController;
-use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\ChatWithBusinessController;
-use App\Http\Controllers\HuggingFaceController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\SuperController;
 use App\Http\Controllers\SyncController;
-
+use App\Http\Controllers\UserManagementController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,129 +24,122 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-
-
-
-Route::middleware('weigher','auth')->group(function () {
+Route::middleware('weigher', 'auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware(['weigher', 'role:user'])->group(function () {
-    Route::get('/viewSales', [SuperController::class, 'viewSales']);
-    Route::get('/deleteSale{id}', [SuperController::class, 'deleteSale']);
-    Route::post('/filterSales', [SuperController::class, 'filterSales']);
-    Route::get('/viewCart', [SuperController::class, 'viewCart']);
-    Route::get('/viewProduct', [SuperController::class, 'viewProduct']);
-    Route::post('/addToCartAll', [SuperController::class, 'addToCartAll']);
-    Route::post('/addToCart/{productId}', [SuperController::class, 'addToCart']);
-    Route::post('/deleteCartItem/{id}', [SuperController::class, 'deleteCartItem']);
-    Route::post('/searchProductCart', [SuperController::class, 'searchProductCart']);
-    Route::get('/related-products', [ProductController::class, 'relatedProducts']);
-    Route::post('/addCart', [SuperController::class, 'addCart']);
-    Route::get('/getCartItems', [SuperController::class, 'getCartItems']);
-    Route::get('/getCartItem/{productId}', [SuperController::class, 'getCartItem']);
-    Route::get('/removeFromCart/{cartItemId}', [SuperController::class, 'removeFromCart']);
-    Route::get('/updateCart/{cartItemId}', [SuperController::class, 'updateCart']);
-    Route::post('/updateCart/{id}', [SuperController::class, 'updateCartItem']);
-    Route::post('/clearAllItems', [SuperController::class, 'clearAllItems']);
-    Route::get('/checkout', [SuperController::class, 'checkout']);
-    Route::get('/debtItems', [SuperController::class, 'debtItems']);
-    Route::post('/holdCart', [SuperController::class, 'holdCart']);
-    Route::get('/calculateTotalAmount', [SuperController::class, 'calculateTotalAmount']);
-    Route::post('/resumeCart/{cartId}', [SuperController::class, 'resumeCart']);
-    Route::get('/getHeldCarts', [SuperController::class, 'getHeldCarts']);
-    Route::post('/deleteCart/{cartId}', [SuperController::class, 'deleteCart']);
-    Route::get('/createCart/{productId}', [SuperController::class, 'createCart']);
-    Route::post('/addToDebt', [SuperController::class, 'addToDebt']);
-    Route::get('/viewDebts', [SuperController::class, 'viewDebts']);
-    Route::get('debtItems/{debtId}', [SuperController::class, 'viewDebtItems']);
-    Route::post('/settleDebt', [SuperController::class, 'settleDebt']);
-    Route::post('/searchSalesCart', [SuperController::class, 'searchSalesCart']);
-    Route::post('/searchProduct', [SuperController::class, 'searchProduct']);
-    Route::post('/searchDebt', [SuperController::class, 'searchDebt']);
-    Route::get('/processPayment', [SuperController::class, 'processPayment']);
-    Route::get('/stockReports', [SuperController::class, 'stockReports']);
-     // Customers Routes
-     Route::get('/viewCustomer', [SuperController::class, 'viewCustomer']);
-     Route::get('/createCustomer', [SuperController::class, 'createCustomer']);
-     Route::post('/storeCustomer', [SuperController::class, 'storeCustomer']);
-     Route::get('/showCustomer/{id}', [SuperController::class, 'showCustomer']);
-     Route::get('/editCustomer/{id}', [SuperController::class, 'editCustomer']);
-     Route::put('/updateCustomer/{id}', [SuperController::class, 'updateCustomer']);
-     Route::get('/destroyCustomer/{id}', [SuperController::class, 'destroyCustomer']);
-     Route::post('/searchCustomer', [SuperController::class, 'searchCustomer']);
-     Route::post('/searchSupplier', [SuperController::class, 'searchSupplier']);
- 
-     // Suppliers Routes
-     Route::get('/viewSupplier', [SuperController::class, 'viewSupplier']);
-     Route::get('/createSupplier', [SuperController::class, 'createSupplier']);
-     Route::post('/storeSupplier', [SuperController::class, 'storeSupplier']);
-     Route::get('/showSupplier/{id}', [SuperController::class, 'showSupplier']);
-     Route::get('/editSupplier/{id}', [SuperController::class, 'editSupplier']);
-     Route::post('/updateSupplier/{id}', [SuperController::class, 'updateSupplier']);
-     Route::delete('/destroySupplier/{id}', [SuperController::class, 'destroySupplier']);
-     Route::post('/scan-product', [SuperController::class, 'addByBarcode']);
-     Route::post('/add-cart-by-barcode', [SuperController::class, 'addCartByBarcode']);
+        Route::get('/viewSales', [SuperController::class, 'viewSales']);
+        Route::get('/deleteSale{id}', [SuperController::class, 'deleteSale']);
+        Route::post('/filterSales', [SuperController::class, 'filterSales']);
+        Route::get('/viewCart', [SuperController::class, 'viewCart']);
+        // Receipts (user)
+        Route::get('/viewReceipts', [SuperController::class, 'viewReceipts']);
+        Route::post('/filterReceipts', [SuperController::class, 'filterReceipts']);
+        Route::get('/viewProduct', [SuperController::class, 'viewProduct']);
+        Route::post('/addToCartAll', [SuperController::class, 'addToCartAll']);
+        Route::post('/addToCart/{productId}', [SuperController::class, 'addToCart']);
+        Route::post('/deleteCartItem/{id}', [SuperController::class, 'deleteCartItem']);
+        Route::post('/searchProductCart', [SuperController::class, 'searchProductCart']);
+        Route::get('/related-products', [SuperController::class, 'relatedProducts']);
+        Route::post('/addCart', [SuperController::class, 'addCart']);
+        Route::get('/getCartItems', [SuperController::class, 'getCartItems']);
+        Route::get('/getCartItem/{productId}', [SuperController::class, 'getCartItem']);
+        Route::get('/removeFromCart/{cartItemId}', [SuperController::class, 'removeFromCart']);
+        Route::get('/updateCart/{cartItemId}', [SuperController::class, 'updateCart']);
+        Route::post('/updateCart/{id}', [SuperController::class, 'updateCartItem']);
+        Route::post('/clearAllItems', [SuperController::class, 'clearAllItems']);
+        Route::post('/checkout', [SuperController::class, 'checkout']);
+        Route::get('/download-receipt/{cartId}', [SuperController::class, 'downloadReceipt'])->name('receipt.download');
+        Route::get('/debtItems', [SuperController::class, 'debtItems']);
+        Route::post('/holdCart', [SuperController::class, 'holdCart']);
+        Route::get('/calculateTotalAmount', [SuperController::class, 'calculateTotalAmount']);
+        Route::post('/resumeCart/{cartId}', [SuperController::class, 'resumeCart']);
+        Route::get('/getHeldCarts', [SuperController::class, 'getHeldCarts']);
+        Route::post('/deleteCart/{cartId}', [SuperController::class, 'deleteCart']);
+        Route::get('/createCart/{productId}', [SuperController::class, 'createCart']);
+        Route::post('/addToDebt', [SuperController::class, 'addToDebt']);
+        Route::get('/viewDebts', [SuperController::class, 'viewDebts']);
+        Route::get('debtItems/{debtId}', [SuperController::class, 'viewDebtItems']);
+        Route::post('/settleDebt', [SuperController::class, 'settleDebt']);
+        Route::post('/searchSalesCart', [SuperController::class, 'searchSalesCart']);
+        Route::post('/searchProduct', [SuperController::class, 'searchProduct']);
+        Route::post('/searchDebt', [SuperController::class, 'searchDebt']);
+        Route::get('/processPayment', [SuperController::class, 'processPayment']);
+        Route::get('/stockReports', [SuperController::class, 'stockReports']);
+        // Customers Routes
+        Route::get('/viewCustomer', [SuperController::class, 'viewCustomer']);
+        Route::get('/createCustomer', [SuperController::class, 'createCustomer']);
+        Route::post('/storeCustomer', [SuperController::class, 'storeCustomer']);
+        Route::get('/showCustomer/{id}', [SuperController::class, 'showCustomer']);
+        Route::get('/editCustomer/{id}', [SuperController::class, 'editCustomer']);
+        Route::put('/updateCustomer/{id}', [SuperController::class, 'updateCustomer']);
+        Route::get('/destroyCustomer/{id}', [SuperController::class, 'destroyCustomer']);
+        Route::post('/searchCustomer', [SuperController::class, 'searchCustomer']);
+        Route::post('/searchSupplier', [SuperController::class, 'searchSupplier']);
+
+        // Suppliers Routes
+        Route::get('/viewSupplier', [SuperController::class, 'viewSupplier']);
+        Route::get('/createSupplier', [SuperController::class, 'createSupplier']);
+        Route::post('/storeSupplier', [SuperController::class, 'storeSupplier']);
+        Route::get('/showSupplier/{id}', [SuperController::class, 'showSupplier']);
+        Route::get('/editSupplier/{id}', [SuperController::class, 'editSupplier']);
+        Route::post('/updateSupplier/{id}', [SuperController::class, 'updateSupplier']);
+        Route::delete('/destroySupplier/{id}', [SuperController::class, 'destroySupplier']);
+        Route::post('/scan-product', [SuperController::class, 'addByBarcode']);
+        Route::post('/add-cart-by-barcode', [SuperController::class, 'addCartByBarcode']);
+
+    });
+    Route::get('/service-worker.js', function () {
+        return response()->file(public_path('service-worker.js'), [
+            'Content-Type' => 'application/javascript',
+        ]);
+    });
 
 
- 
-});
-Route::get('/service-worker.js', function () {
-    return response()->file(public_path('service-worker.js'), [
-        'Content-Type' => 'application/javascript',
-    ]);
-});
+    Route::middleware(['auth'])->group(function () {
+        Route::post('/sync/push', [SyncController::class, 'push'])->name('sync.push');
+        Route::get('/sync/pull', [SyncController::class, 'pull'])->name('sync.pull'); // optional: server -> client updates
+    });
 
-
-Route::middleware('auth:sanctum')->post('/sync/receive', [SyncController::class, 'receive'])->name('sync.receive');
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/sync/push', [SyncController::class, 'push'])->name('sync.push');
-    Route::get('/sync/pull', [SyncController::class, 'pull'])->name('sync.pull'); // optional: server -> client updates
-});
-
-Route::post('/sync/sales', [SyncController::class, 'sales'])->middleware('auth');
-Route::post('/sync/updates', [SyncController::class, 'updates'])->middleware('auth');
-
-
+    Route::post('/sync/sales', [SyncController::class, 'sales'])->middleware('auth');
+    Route::post('/sync/updates', [SyncController::class, 'updates'])->middleware('auth');
 
     Route::get('/smart-analyst', [ChatWithBusinessController::class, 'showChat'])->name('sales.chat');
-     Route::get('/userChat', [ChatWithBusinessController::class, 'userChat']);
+    Route::get('/userChat', [ChatWithBusinessController::class, 'userChat']);
     Route::post('/upload-sales', [ChatWithBusinessController::class, 'uploadSales'])->name('sales.upload');
     Route::post('/ask-question', [ChatWithBusinessController::class, 'askBusinessQuestion'])->name('sales.ask');
 
-
-Route::post('/huggingface/query', [HuggingFaceController::class, 'query']);
-
+    Route::post('/huggingface/query', [HuggingFaceController::class, 'query']);
 
     Route::middleware(['weigher', 'role:admin'])->get('/homeAdmin', [AdminController::class, 'homeAdmin']);
 
-    Route::middleware(['weigher' ,'role:user'])->get('/homeUser', [SuperController::class, 'homeUser']);
+    Route::middleware(['weigher', 'role:user'])->get('/homeUser', [SuperController::class, 'homeUser']);
 
-    Route::middleware([ 'only.superadmin'])->get('/homeSuperAdmin', [BusinessController::class, 'homeSuperAdmin']);
-    
-    Route::middleware(['weigher','role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(['only.superadmin'])->get('/homeSuperAdmin', [BusinessController::class, 'homeSuperAdmin']);
+
+    Route::middleware(['weigher', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
         Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
         Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
         Route::get('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
-  
+
     });
-Route::middleware(['role:admin'])->get('/serviceAdmin', [ServiceAdminController::class, 'serviceAdmin']);
-Route::middleware(['role:admin'])->get('/serviceAdminClients', [ServiceAdminController::class, 'serviceAdminClients']);
-Route::middleware(['role:user'])->get('/serviceUser', [ServiceUserController::class, 'serviceUser']);
+    Route::middleware(['role:admin'])->get('/serviceAdmin', [ServiceAdminController::class, 'serviceAdmin']);
+    Route::middleware(['role:admin'])->get('/serviceAdminClients', [ServiceAdminController::class, 'serviceAdminClients']);
+    Route::middleware(['role:user'])->get('/serviceUser', [ServiceUserController::class, 'serviceUser']);
 
-    Route::middleware(['weigher','role:admin'])->group(function () {
- // Category Routes
- Route::get('/view_category', [AdminController::class, 'view_category']);
- Route::post('/add_category', [AdminController::class, 'add_category']);
- Route::get('/delete_category/{id}', [AdminController::class, 'delete_category']);
- Route::get('/serviceAdmin/chat', [HuggingFaceController::class, 'index'])->name('serviceadmin.chat');
- Route::get('/download-sales-csv/{filename}', [AdminController::class, 'downloadCsv'])
-     ->name('download.sales.csv');
+    Route::middleware(['weigher', 'role:admin'])->group(function () {
+        // Category Routes
+        Route::get('/view_category', [AdminController::class, 'view_category']);
+        Route::post('/add_category', [AdminController::class, 'add_category']);
+        Route::get('/delete_category/{id}', [AdminController::class, 'delete_category']);
+        Route::get('/serviceAdmin/chat', [HuggingFaceController::class, 'index'])->name('serviceadmin.chat');
+        Route::get('/download-sales-csv/{filename}', [AdminController::class, 'downloadCsv'])
+            ->name('download.sales.csv');
 
+<<<<<<< HEAD
       // Suppliers Routes
      Route::get('/viewSupplier', [SuperController::class, 'viewSupplier']);
      Route::get('/createSupplier', [SuperController::class, 'createSupplier']);
@@ -162,106 +152,110 @@ Route::middleware(['role:user'])->get('/serviceUser', [ServiceUserController::cl
      Route::post('/add-cart-by-barcode', [SuperController::class, 'addCartByBarcode']);
 
  
+=======
+>>>>>>> agents/add-digital-receipt-feature-laravel-pos
         Route::get('income-statement', [IncomeStatementController::class, 'index'])->name('admin.income-statement');
-    Route::post('income-statement/generate', [IncomeStatementController::class, 'generate'])->name('admin.income-statement.generate');
-Route::get('/documentation', [AdminController::class, 'documentation']);
-    Route::resource('expenses', ExpenseController::class)->except(['show']);
-    Route::resource('other-incomes', OtherIncomeController::class)->except(['show']);
- // Product Routes
- Route::get('/view_product', [AdminController::class, 'view_product']);
- Route::post('/add_product', [AdminController::class, 'add_product']);
- Route::get('/show_product', [AdminController::class, 'show_product'])->name('admin.products');
- Route::get('/delete_product/{id}', [AdminController::class, 'delete_product']);
- Route::get('/edit_product/{id}', [AdminController::class, 'edit_product']);
- Route::post('/update_product/{id}', [AdminController::class, 'update_product']);
- Route::post('/importProducts', [AdminController::class, 'importProducts']);
- Route::get('/exportSales', [AdminController::class, 'exportSales']);
- Route::post('/search', [AdminController::class, 'search']);
- Route::post('/searchSales', [AdminController::class, 'searchSales']);
- Route::post('/filterSalesAdmin', [AdminController::class, 'filterSalesAdmin']);
- Route::post('/clearAllproducts', [AdminController::class, 'clearAllproducts']);
-  Route::get('/stockReports_admin', [AdminController::class, 'stockReports_admin']);
+        Route::post('income-statement/generate', [IncomeStatementController::class, 'generate'])->name('admin.income-statement.generate');
+        Route::get('/documentation', [AdminController::class, 'documentation']);
+        Route::resource('expenses', ExpenseController::class)->except(['show']);
+        Route::resource('other-incomes', OtherIncomeController::class)->except(['show']);
+        // Product Routes
+        Route::get('/view_product', [AdminController::class, 'view_product']);
+        Route::post('/add_product', [AdminController::class, 'add_product']);
+        Route::get('/show_product', [AdminController::class, 'show_product'])->name('admin.products');
+        Route::get('/delete_product/{id}', [AdminController::class, 'delete_product']);
+        Route::get('/edit_product/{id}', [AdminController::class, 'edit_product']);
+        Route::post('/update_product/{id}', [AdminController::class, 'update_product']);
+        Route::post('/importProducts', [AdminController::class, 'importProducts']);
+        Route::get('/exportSales', [AdminController::class, 'exportSales']);
+        Route::post('/search', [AdminController::class, 'search']);
+        Route::post('/searchSales', [AdminController::class, 'searchSales']);
+        Route::post('/filterSalesAdmin', [AdminController::class, 'filterSalesAdmin']);
+        Route::post('/clearAllproducts', [AdminController::class, 'clearAllproducts']);
+        Route::get('/stockReports_admin', [AdminController::class, 'stockReports_admin']);
 
- // Sales Routes
- Route::get('/view_sales', [AdminController::class, 'view_sales']);
+        // Sales Routes
+        Route::get('/view_sales', [AdminController::class, 'view_sales']);
+        // Receipts (admin)
+        Route::get('/view_receipts', [AdminController::class, 'view_receipts']);
+        Route::post('/filter_receipts', [AdminController::class, 'filter_receipts']);
 
- // Orders Routes
- Route::get('/show_orders', [AdminController::class, 'show_orders']);
- Route::get('/viewCustomeradmin', [AdminController::class, 'viewCustomeradmin']);
- Route::post('/searchCustomeradmin', [AdminController::class, 'searchCustomeradmin']);
- Route::get('/editCustomeradmin/{id}', [AdminController::class, 'editCustomeradmin']);
- Route::get('/destroyCustomeradmin/{id}', [AdminController::class, 'destroyCustomeradmin']);
- Route::put('/updateCustomeradmin/{id}', [AdminController::class, 'updateCustomeradmin']);
- Route::get('/admin/import-logs', [AdminController::class, 'viewImportLogs'])->name('admin.import.logs');
- Route::get('/admin/import-logs/export', [AdminController::class, 'exportProductImportLogs'])->name('admin.import.logs.export');
-Route::patch('/restoreSale/{id}', [AdminController::class, 'restoreSale'])->name('restoreSale');
+        // Orders Routes
+        Route::get('/show_orders', [AdminController::class, 'show_orders']);
+        Route::get('/viewCustomeradmin', [AdminController::class, 'viewCustomeradmin']);
+        Route::post('/searchCustomeradmin', [AdminController::class, 'searchCustomeradmin']);
+        Route::get('/editCustomeradmin/{id}', [AdminController::class, 'editCustomeradmin']);
+        Route::get('/destroyCustomeradmin/{id}', [AdminController::class, 'destroyCustomeradmin']);
+        Route::put('/updateCustomeradmin/{id}', [AdminController::class, 'updateCustomeradmin']);
+        Route::get('/admin/import-logs', [AdminController::class, 'viewImportLogs'])->name('admin.import.logs');
+        Route::get('/admin/import-logs/export', [AdminController::class, 'exportProductImportLogs'])->name('admin.import.logs.export');
+        Route::patch('/restoreSale/{id}', [AdminController::class, 'restoreSale'])->name('restoreSale');
 
-// Supplier Product Routes
-Route::get('/suppliers/{supplier}/products', [AdminController::class, 'showSupplierProducts'])->name('suppliers.products');
-Route::get('/suppliers/{supplier}/products/create', [AdminController::class, 'createSupplierProduct'])->name('suppliers.products.create');
-Route::post('/suppliers/{supplier}/products/store', [AdminController::class, 'storeSupplierProduct'])->name('suppliers.products.store');
-Route::get('/suppliers/products/{id}/edit', [AdminController::class, 'editSupplierProduct'])->name('suppliers.products.edit');
-Route::post('/suppliers/products/{id}/update', [AdminController::class, 'updateSupplierProduct'])->name('suppliers.products.update');
-Route::delete('/suppliers/products/{id}', [AdminController::class, 'destroySupplierProduct'])->name('suppliers.products.destroy');
-Route::get('/suppliers', [AdminController::class, 'viewSupplier'])->name('suppliers.view');
+        // Supplier Product Routes
+        Route::get('/suppliers/{supplier}/products', [AdminController::class, 'showSupplierProducts'])->name('suppliers.products');
+        Route::get('/suppliers/{supplier}/products/create', [AdminController::class, 'createSupplierProduct'])->name('suppliers.products.create');
+        Route::post('/suppliers/{supplier}/products/store', [AdminController::class, 'storeSupplierProduct'])->name('suppliers.products.store');
+        Route::get('/suppliers/products/{id}/edit', [AdminController::class, 'editSupplierProduct'])->name('suppliers.products.edit');
+        Route::post('/suppliers/products/{id}/update', [AdminController::class, 'updateSupplierProduct'])->name('suppliers.products.update');
+        Route::delete('/suppliers/products/{id}', [AdminController::class, 'destroySupplierProduct'])->name('suppliers.products.destroy');
+        Route::get('/suppliers', [AdminController::class, 'viewSupplier'])->name('suppliers.view');
 
-// Supplier Invoicing
-Route::get('/suppliers/{supplier}/invoice/create', [AdminController::class, 'createSupplierInvoice'])
-    ->name('suppliers.invoice.create');
+        // Supplier Invoicing
+        Route::get('/suppliers/{supplier}/invoice/create', [AdminController::class, 'createSupplierInvoice'])
+            ->name('suppliers.invoice.create');
 
-Route::post('/invoice/draft/add/{supplierProduct}', [AdminController::class, 'addToDraftInvoice'])
-    ->name('invoice.draft.add');
+        Route::post('/invoice/draft/add/{supplierProduct}', [AdminController::class, 'addToDraftInvoice'])
+            ->name('invoice.draft.add');
 
-Route::get('/suppliers/{supplier}/invoices/draft', [AdminController::class, 'viewDraftInvoice'])
-    ->name('suppliers.invoices.draft');
+        Route::get('/suppliers/{supplier}/invoices/draft', [AdminController::class, 'viewDraftInvoice'])
+            ->name('suppliers.invoices.draft');
 
-// Update quantities or cost prices in draft
-Route::post('/supplier/invoices/{invoice}/update-draft', [AdminController::class, 'updateDraftInvoice'])
-    ->name('supplier.invoice.updateDraft');
-Route::post('/invoice/draft/confirm/{invoice}', [AdminController::class, 'confirmDraftInvoice'])
-    ->name('invoice.draft.confirm');
+        // Update quantities or cost prices in draft
+        Route::post('/supplier/invoices/{invoice}/update-draft', [AdminController::class, 'updateDraftInvoice'])
+            ->name('supplier.invoice.updateDraft');
+        Route::post('/invoice/draft/confirm/{invoice}', [AdminController::class, 'confirmDraftInvoice'])
+            ->name('invoice.draft.confirm');
 
-// Restock
-Route::post('/supplier/invoices/{invoice}/restock', [AdminController::class, 'restockFromInvoice'])->name('supplier.invoice.restock');
+        // Restock
+        Route::post('/supplier/invoices/{invoice}/restock', [AdminController::class, 'restockFromInvoice'])->name('supplier.invoice.restock');
 
-// Show confirmed invoice & "Restock Now" button
-Route::get('/supplier/invoices/{invoice}/restock', [AdminController::class, 'showRestockView'])
-    ->name('supplier.invoice.restock.view');
+        // Show confirmed invoice & "Restock Now" button
+        Route::get('/supplier/invoices/{invoice}/restock', [AdminController::class, 'showRestockView'])
+            ->name('supplier.invoice.restock.view');
 
-Route::get('/admin/new-products/setup', [AdminController::class, 'showNewProductSetup'])
-    ->name('admin.showNewProductSetup');
-Route::post('/admin/new-products/store', [AdminController::class, 'storeNewProducts'])
-    ->name('admin.storeNewProducts');
+        Route::get('/admin/new-products/setup', [AdminController::class, 'showNewProductSetup'])
+            ->name('admin.showNewProductSetup');
+        Route::post('/admin/new-products/store', [AdminController::class, 'storeNewProducts'])
+            ->name('admin.storeNewProducts');
 
     });
 
-   
-       
-      // M-Pesa Payment Trigger (POST)
-Route::post('/stkPush', [BusinessSettingsController::class, 'stkPush']);
+    // M-Pesa Payment Trigger (POST)
+    Route::post('/stkPush', [BusinessSettingsController::class, 'stkPush']);
 
-// Callback URL for STK Push Response
-Route::post('/mpesa/callback/{business}', [BusinessSettingsController::class, 'handleCallback'])->name('mpesa.callback');
+    // Callback URL for STK Push Response
+    Route::post('/mpesa/callback/{business}', [BusinessSettingsController::class, 'handleCallback'])->name('mpesa.callback');
+    Route::get('/business/settings/profile', [BusinessSettingsController::class, 'editBusinessProfile'])->name('business.profile.edit');
+    Route::post('/business/settings/profile', [BusinessSettingsController::class, 'updateBusinessProfile'])->name('business.profile.update');
     Route::get('/business/settings/mpesa', [BusinessSettingsController::class, 'createMpesa'])->name('business.mpesa.create');
     Route::post('/business/settings/mpesa', [BusinessSettingsController::class, 'storeMpesa'])->name('business.mpesa.store');
-    
+    Route::get('/business/settings/mpesa/edit', [BusinessSettingsController::class, 'editMpesa'])->name('business.mpesa.edit');
+    Route::post('/business/settings/mpesa/edit', [BusinessSettingsController::class, 'updateMpesa'])->name('business.mpesa.update');
+
     Route::middleware(['only.superadmin'])->group(function () {
         Route::resource('businesses', BusinessController::class);
-       // routes/web.php
+        // routes/web.php
 
     });
-    Route::middleware([ 'only.superadmin'])->get('/homeSuperAdmin', [BusinessController::class, 'homeSuperAdmin']);
-    Route::middleware([ 'only.superadmin'])->get('register', [RegisteredUserController::class, 'create'])
+    Route::middleware(['only.superadmin'])->get('/homeSuperAdmin', [BusinessController::class, 'homeSuperAdmin']);
+    Route::middleware(['only.superadmin'])->get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
 
-        Route::middleware(['only.superadmin'])->post('register', [RegisteredUserController::class, 'store']);
-Route::get('/superadmin/set-due-date', [BusinessController::class, 'showSetDueDateForm'])->name('superadmin.businesses.set_due_date_form');
-Route::post('/superadmin/set-due-date', [BusinessController::class, 'updateDueDate'])->name('superadmin.businesses.set_due_date');
-
+    Route::middleware(['only.superadmin'])->post('register', [RegisteredUserController::class, 'store']);
+    Route::get('/superadmin/set-due-date', [BusinessController::class, 'showSetDueDateForm'])->name('superadmin.businesses.set_due_date_form');
+    Route::post('/superadmin/set-due-date', [BusinessController::class, 'updateDueDate'])->name('superadmin.businesses.set_due_date');
 
 });
 Route::middleware(['only.superadmin'])->patch('/toggleBusiness/{business}', [BusinessController::class, 'toggleBusiness']);
-
-
 
 require __DIR__.'/auth.php';

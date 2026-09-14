@@ -556,6 +556,44 @@ public function viewSupplier(){
         $sales=Sales::all();
         return view('admin.sales',compact('sales'));
     }
+
+    // Receipts list (admin) - shows all receipts for the business
+    public function view_receipts(Request $request)
+    {
+        $businessId = auth()->user()->business_id;
+
+        $receipts = \App\Models\Receipt::where('business_id', $businessId)
+            ->orderBy('created_at', 'desc')
+            ->paginate(25);
+
+        return view('admin.admin_receipts', compact('receipts'));
+    }
+
+    public function filter_receipts(Request $request)
+    {
+        $startDate = $request->input('from_date');
+        $endDate = $request->input('to_date');
+
+        if (! ($startDate && $endDate)) {
+            return redirect()->back()->with('error', 'Please provide both start and end dates.');
+        }
+
+        $startDate = $startDate . ' 00:00:00';
+        $endDate = $endDate . ' 23:59:59';
+
+        $businessId = auth()->user()->business_id;
+
+        $receipts = \App\Models\Receipt::where('business_id', $businessId)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'desc')
+            ->paginate(25);
+
+        if ($receipts->isEmpty()) {
+            return view('admin.admin_receipts', compact('receipts'))->with('success', 'No receipts found for the selected period.');
+        }
+
+        return view('admin.admin_receipts', compact('receipts'));
+    }
     public function show_orders(){
         $orders=Order::all();
         return view('admin.show_orders',compact('orders'));
@@ -701,6 +739,13 @@ public function restockFromInvoice($invoiceId)
             ->where('product_name', $item->product_name)
             ->first();
 
+        // If item->product_name was not stored on the invoice item, try the supplier product name fallback
+        if (!$product && $item->supplierProduct && !empty($item->supplierProduct->supplier_product_name)) {
+            $product = Product::where('business_id', $businessId)
+                ->where('product_name', trim((string) $item->supplierProduct->supplier_product_name))
+                ->first();
+        }
+
         if ($product) {
             // ✅ Existing product: update stock & weighted average cost
             $oldQty = $product->quantity;
@@ -712,10 +757,16 @@ public function restockFromInvoice($invoiceId)
             $product->cost_price = round($weightedCost, 2);
             $product->quantity = $oldQty + $newQty;
             $product->in_stock = true;
-            $product->save();
 
-            // Record inventory movement
-            InventoryMovement::create([
+        // Only set barcode if it's currently empty/null — do not overwrite existing barcodes
+        if (empty($product->barcode)) {
+            $product->barcode = $item->barcode ?? ($item->supplierProduct->barcode ?? $product->barcode);
+        }
+
+        $product->save();
+
+        // Record inventory movement
+        InventoryMovement::create([
                 'product_id' => $product->id,
                 'movement_type' => 'restock',
                 'quantity' => $newQty,

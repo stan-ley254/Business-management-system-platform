@@ -75,8 +75,11 @@
             <!-- Alert Messages -->
             <div id="alert-container" class="message rounded">
                 @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show">
-                        {{ session('success') }}
+                    <div class="alert alert-success alert-dismissible fade show d-flex justify-content-between align-items-center gap-3">
+                        <span>{{ session('success') }}</span>
+                        @if(session('last_receipt_cart_id'))
+                            <a href="{{ route('receipt.download', ['cartId' => session('last_receipt_cart_id')]) }}" class="btn btn-sm btn-light">Download Receipt</a>
+                        @endif
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
@@ -105,7 +108,13 @@
                                     <i class="fas fa-shopping-bag"></i> Checkout
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="checkoutDropdown">
-                                <li><a class="dropdown-item checkout-option" data-method="cash" href="{{ url('/checkout') }}">Cash</a></li>
+                                <li>
+                                    <form action="{{ url('/checkout') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="method" value="cash">
+                                        <button type="submit" class="dropdown-item checkout-option" data-method="cash">Cash</button>
+                                    </form>
+                                </li>
     <li><a class="dropdown-item checkout-option" data-method="mpesa" href="#" data-bs-toggle="modal" data-bs-target="#mpesaModal">M-Pesa</a></li>
     <li><a class="dropdown-item checkout-option" data-method="card" href="#">Card</a></li>
                                 </ul>

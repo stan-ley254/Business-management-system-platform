@@ -61,55 +61,93 @@ async function processQueueOnce() {
     const queue = await getQueue();
     if (!queue.length) return;
 
-    if (navigator.onLine) {
-        console.log("[OfflineSync] trying to sync queue", queue);
+    if (!navigator.onLine) return;
 
-        const apiToken = localStorage.getItem('api_token');
-        if (!apiToken) {
-            console.warn("[OfflineSync] No API token found, cannot sync.");
-            return;
-        }
+    console.log("[OfflineSync] trying to sync queue", queue);
 
-        const res = await fetch('/sync/receive', {
+    const apiToken = localStorage.getItem('api_token');
+    const authHeaderValue = 'Bearer ' + apiToken;
+    if (!apiToken) {
+        console.warn("[OfflineSync] No API token found, cannot sync.");
+        showResponseMessage('Please sign in again to sync offline changes', 'warning');
+        return;
+    }
+
+    // Send to the API endpoint using the Sanctum token created at login
+    let res;
+    try {
+        res = await fetch(SYNC_ENDPOINT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiToken}`
+                'Accept': 'application/json',
+                'Authorization': authHeaderValue
             },
             body: JSON.stringify({ actions: queue })
         });
+    } catch (e) {
+        console.error('[OfflineSync] Network error while posting queue', e);
+        return; // network failed; will retry when online event fires again
+    }
 
-        const rawText = await res.text();
-        console.log("[OfflineSync] Raw server response:", rawText);
+    const contentType = (res.headers.get('content-type') || '').toLowerCase();
 
-        let result;
-        try {
-            result = JSON.parse(rawText);
-        } catch (e) {
-            console.error("[OfflineSync] JSON parse error", e);
+    if (!res.ok) {
+        if (res.status === 401) {
+            // Invalid/Revoked token — inform user and stop retrying until they sign in again
+            console.warn('[OfflineSync] Unauthenticated while syncing queue');
+            showResponseMessage('Please sign in again to sync offline changes', 'danger');
             return;
         }
 
-        if (result.ok && Array.isArray(result.results)) {
-            // Keep only failed actions in the queue
-            const failed = [];
-            result.results.forEach((r, idx) => {
-                if (!r.ok) {
-                    // Increase attempt count
-                    const action = queue[idx];
-                    action.attempts = (action.attempts || 0) + 1;
-                    if (action.attempts <= MAX_ATTEMPTS) {
-                        failed.push(action);
-                    } else {
-                        console.warn("[OfflineSync] Dropping action after max attempts", action);
-                    }
-                }
-            });
-
-            await saveQueue(failed);
+        // Other server-side error: attempt to log JSON if available, otherwise log text
+        if (contentType.includes('application/json')) {
+            const errJson = await res.json().catch(() => null);
+            console.error('[OfflineSync] Server error response', errJson || await res.text());
+        } else {
+            const txt = await res.text().catch(() => null);
+            console.error('[OfflineSync] Non-JSON server response', txt);
         }
+        return;
     }
+
+    // Parse response defensively
+    let result = null;
+    try {
+        if (contentType.includes('application/json')) {
+            result = await res.json();
+        } else {
+            const rawText = await res.text();
+            try { result = JSON.parse(rawText); } catch (e) { result = { ok: false, message: rawText }; }
+        }
+    } catch (e) {
+        console.error('[OfflineSync] Failed to parse server response', e);
+        return;
+    }
+
+    if (!result || !result.ok || !Array.isArray(result.results)) {
+        console.warn('[OfflineSync] Unexpected / empty sync response', result);
+        return;
+    }
+
+    // Keep only failed actions in the queue, with attempt counting
+    const failed = [];
+    const maxAttempts = (typeof MAX_ATTEMPTS !== 'undefined') ? MAX_ATTEMPTS : 5;
+    result.results.forEach((r, idx) => {
+        if (!r.ok) {
+            const action = queue[idx];
+            action.attempts = (action.attempts || 0) + 1;
+            if (action.attempts <= maxAttempts) {
+                failed.push(action);
+            } else {
+                console.warn('[OfflineSync] Dropping action after max attempts', action);
+            }
+        }
+    });
+
+    await saveQueue(failed);
 }
+
 
 
     async function sendOrQueueAjax(options) {
@@ -787,12 +825,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // online checkout: follow default navigation or AJAX call based on your current behavior
+        // online checkout: always POST to the actual checkout route; do not rely on an href
         if (method === 'cash') {
-            // If your current checkout flow uses a GET to /checkout, trigger it:
-            window.location.href = $(this).attr('href');
-        } else {
-            // fallback: use AJAX
             OfflineSync.sendOrQueueAjax({
                 url: '/checkout',
                 type: 'POST',
@@ -807,7 +841,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 }
             });
+            return;
         }
+
+        // fallback: use AJAX for other methods
+        OfflineSync.sendOrQueueAjax({
+            url: '/checkout',
+            type: 'POST',
+            method: 'POST',
+            data: { method },
+            success: function (response) {
+                if (response.success) {
+                    showResponseMessage('Checkout successful', 'success');
+                    loadCartItems(); // refresh
+                } else {
+                    showResponseMessage(response.message || 'Checkout failed', 'danger');
+                }
+            }
+        });
     });
 
     // Payment calculator form

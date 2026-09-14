@@ -100,6 +100,11 @@
   </a>
   <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLinkPurchasing">
     <li><a class="dropdown-item" href="{{url('viewSales')}}"><i class="fas fa-edit"></i> Manage Sales</a></li>
+    @if(Auth::check() && isset(Auth::user()->role) && Auth::user()->role->name === 'admin')
+        <li><a class="dropdown-item" href="{{ url('view_receipts') }}"><i class="fas fa-receipt"></i> Receipts</a></li>
+    @else
+        <li><a class="dropdown-item" href="{{ url('viewReceipts') }}"><i class="fas fa-receipt"></i> Receipts</a></li>
+    @endif
   </ul>
 </li>
 
