@@ -139,7 +139,6 @@ Route::middleware('weigher', 'auth')->group(function () {
         Route::get('/download-sales-csv/{filename}', [AdminController::class, 'downloadCsv'])
             ->name('download.sales.csv');
 
-<<<<<<< HEAD
       // Suppliers Routes
      Route::get('/viewSupplier', [SuperController::class, 'viewSupplier']);
      Route::get('/createSupplier', [SuperController::class, 'createSupplier']);
@@ -152,8 +151,6 @@ Route::middleware('weigher', 'auth')->group(function () {
      Route::post('/add-cart-by-barcode', [SuperController::class, 'addCartByBarcode']);
 
  
-=======
->>>>>>> agents/add-digital-receipt-feature-laravel-pos
         Route::get('income-statement', [IncomeStatementController::class, 'index'])->name('admin.income-statement');
         Route::post('income-statement/generate', [IncomeStatementController::class, 'generate'])->name('admin.income-statement.generate');
         Route::get('/documentation', [AdminController::class, 'documentation']);
