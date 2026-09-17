@@ -92,6 +92,14 @@
       <span class="menu-title">Settings</span>
     </a>
 </li>
+<li class="nav-item menu-items">
+    <a class="nav-link" href="{{ route('business.mpesa.edit') }}">
+      <span class="menu-icon">
+        <i class="mdi mdi-cash-multiple"></i>
+      </span>
+      <span class="menu-title">M-Pesa Settings</span>
+    </a>
+</li>
 
 <li class="nav-item menu-items">
     <a class="nav-link" data-bs-toggle="collapse" href="#users-menu" aria-expanded="false" aria-controls="users-menu">

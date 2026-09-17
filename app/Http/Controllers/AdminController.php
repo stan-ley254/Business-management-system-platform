@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Cart;
@@ -679,6 +680,21 @@ public function viewDraftInvoice($supplierId)
 }
 
 
+public function downloadDraftInvoice($invoiceId)
+{
+    $invoice = SupplierInvoice::with(['items.supplierProduct', 'supplier'])
+        ->where('business_id', auth()->user()->business_id)
+        ->where('status', 'draft')
+        ->findOrFail($invoiceId);
+
+    $pdf = Pdf::loadView('admin.supplier_invoice_pdf', [
+        'invoice' => $invoice,
+        'business' => auth()->user()->business,
+    ])->setPaper('A4', 'portrait');
+
+    return $pdf->download('draft-invoice-'.($invoice->invoice_number ?: $invoice->id).'.pdf');
+}
+
 public function confirmDraftInvoice($invoiceId)
 {
     $invoice = SupplierInvoice::with('items')->findOrFail($invoiceId);
@@ -952,4 +968,3 @@ public function showNewProductSetup()
         return view('admin.view_customer',compact('customers'));
     }
 }
-
