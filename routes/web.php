@@ -194,6 +194,8 @@ Route::middleware('weigher', 'auth')->group(function () {
 
         Route::get('/suppliers/{supplier}/invoices/draft', [AdminController::class, 'viewDraftInvoice'])
             ->name('suppliers.invoices.draft');
+        Route::get('/supplier/invoices/{invoice}/draft/download', [AdminController::class, 'downloadDraftInvoice'])
+            ->name('supplier.invoice.draft.download');
 
         // Update quantities or cost prices in draft
         Route::post('/supplier/invoices/{invoice}/update-draft', [AdminController::class, 'updateDraftInvoice'])

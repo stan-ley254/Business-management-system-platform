@@ -114,6 +114,12 @@
                 </div>
 
                 <div class="d-flex gap-2">
+                  <div class="text-muted small align-self-center">
+                    Save your changes (Update Draft) before downloading to include the latest edits.
+                  </div>
+                  <a href="{{ route('supplier.invoice.draft.download', $invoice->id) }}" class="btn btn-outline-success">
+                    <i class="fas fa-file-pdf me-1"></i> Download Invoice PDF
+                  </a>
                   <button type="submit" class="btn btn-outline-primary" id="updateDraftBtn">
                     <i class="fas fa-save me-1"></i> Update Draft
                     <span class="btn-spinner spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:none;"></span>
