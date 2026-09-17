@@ -52,6 +52,7 @@ return array(
     'App\\Models\\Payment' => $baseDir . '/app/Models/Payment.php',
     'App\\Models\\Product' => $baseDir . '/app/Models/Product.php',
     'App\\Models\\ProductImportLog' => $baseDir . '/app/Models/ProductImportLog.php',
+    'App\\Models\\Receipt' => $baseDir . '/app/Models/Receipt.php',
     'App\\Models\\ReturnInward' => $baseDir . '/app/Models/ReturnInward.php',
     'App\\Models\\ReturnOutward' => $baseDir . '/app/Models/ReturnOutward.php',
     'App\\Models\\Role' => $baseDir . '/app/Models/Role.php',

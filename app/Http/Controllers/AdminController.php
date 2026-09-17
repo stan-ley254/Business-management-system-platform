@@ -168,7 +168,7 @@ return redirect()->back();
             }
         
             if ($sales->isEmpty()) {
-                return view('admin.sales', compact('sales'))->with('error', 'No sales records found for the selected period.');
+                return view('admin.sales', compact('sales'))->with('errConor', 'No sales records found for the selected period.');
             }
         
             return view('admin.sales', compact('sales'));
